@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.signal import convolve2d
+from bincountnd import bincountnd
 
 class accum:
 
@@ -10,6 +11,7 @@ class accum:
         :return: accumulated array
         '''
         # should this function really be here??
+        # also TODO: update to vectorized version
         i=0
         accum=np.empty(shape=fs.shape)
         for frame in fs.frames:
@@ -20,22 +22,40 @@ class accum:
         return accum
 
     @staticmethod
-    def accumcoinc(fs1,fs2):
-        i=0
-        accum=np.zeros(shape=(fs1.shape[0],fs1.shape[0],
-                              fs1.shape[1],fs1.shape[1]))
-        for frame in fs1.frames:
-            frame2 = fs2.frames[i]
-            if len(frame2) != 0 and len(frame) != 0:
-                cframe=np.hstack((
-                        np.dstack(np.meshgrid(frame[:,0], frame2[:,0])).reshape(-1, 2),
-                        np.dstack(np.meshgrid(frame[:,1], frame2[:,1])).reshape(-1, 2)
-                        ))
-                for coinc in cframe:
-                    accum[coinc[0],coinc[1],coinc[2],coinc[3]]=accum[coinc[0],
-                          coinc[1],coinc[2],coinc[3]]+1
-            i=i+1
-        return accum
+    def accumcoinc(fs1,fs2, method = 'bincount'):
+        if method == 'bincount':
+            i=0
+            cframes = []
+            for frame in fs1.frames:
+                frame2 = fs2.frames[i]
+                if len(frame2) != 0 and len(frame) != 0:
+                    cframe=np.hstack((
+                            np.dstack(np.meshgrid(frame[:,0], frame2[:,0])).reshape(-1, 2),
+                            np.dstack(np.meshgrid(frame[:,1], frame2[:,1])).reshape(-1, 2)
+                            ))
+                    cframes.append(cframe)
+                i=i+1
+            accum = bincountnd(np.concatenate(cframes),(fs1.shape[0],fs2.shape[0],fs1.shape[1],fs2.shape[1]))           
+            return accum
+        
+        elif method == 'accum':
+            i=0
+            accum=np.zeros(shape=(fs1.shape[0],fs1.shape[0],
+                                  fs1.shape[1],fs1.shape[1]))
+            for frame in fs1.frames:
+                frame2 = fs2.frames[i]
+                if len(frame2) != 0 and len(frame) != 0:
+                    cframe=np.hstack((
+                            np.dstack(np.meshgrid(frame[:,0], frame2[:,0])).reshape(-1, 2),
+                            np.dstack(np.meshgrid(frame[:,1], frame2[:,1])).reshape(-1, 2)
+                            ))
+                    for coinc in cframe:
+                        accum[coinc[0],coinc[1],coinc[2],coinc[3]]=accum[coinc[0],
+                              coinc[1],coinc[2],coinc[3]]+1
+                i=i+1
+            return accum
+        else:
+            print 'invalid method'
   
     @staticmethod
     def coinchist(fs1,fs2,signs):
@@ -67,9 +87,9 @@ class accum:
     
     @staticmethod
     def acchist(h1,h2,signs):
-        if not signs[0]:
+        if signs[0]:
               h1=np.flip(h1,axis=0)
-        if not signs[1]:
+        if signs[1]:
               h2=np.flip(h2,axis=1)
         return convolve2d(h1,h2)
             

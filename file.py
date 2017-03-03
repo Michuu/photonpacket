@@ -1,5 +1,6 @@
 import numpy as np
 from frameseries import frameseries
+import re
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 class file:
@@ -8,8 +9,11 @@ class file:
     accum = []
     # sparse_accum = 0
     Nframes = 0
-    shape = (100,600)
+    name = ''
 
+    def __init__(self,name):
+        self.name = name
+        
     @staticmethod
     def read(name, **kwargs):
         '''
@@ -18,8 +22,17 @@ class file:
         :return: instance of class File
         '''
         # TODO: add filename recognition and parsing, automatic shape and framenumber detection
+        
+        params = file.parsename(name)
+        if 'fs' in params:
+            shape = params['fs']
+            shapedetect = False
+        else:
+            shapedetect = True
+            
+        
         if 'Nframes' in kwargs:
-              maxframes=kwargs['Nframes']
+              maxframes = kwargs['Nframes']
               frames_limit = True
         else:
               maxframes = 0
@@ -27,15 +40,16 @@ class file:
               
         nframes=0
         f=open(name,'rb')
+        self.frames = []
         while(True):
             nxy=np.fromfile(f,'>i4',2)
             if nxy.size==0 or (nframes > maxframes and frames_limit):
                 break
-            N = nxy[0]*nxy[1]
+            N = np.prod(nxy)
             nframes = nframes+1
             img = np.fromfile(f,'>u2',N)
 
-            self=file()
+            self=file(name)
             if N != 0:
                 # dzielenie przez 10, nie wiadomo za bardzo czemu!
                 # TODO: automatic detection of /10 division
@@ -43,13 +57,32 @@ class file:
                 frame=np.reshape(img/10,nxy)[:,:2]
                 self.frames.append(frame)
         f.close()
-        self.Nframes=nframes
+        self.Nframes = nframes
+        self.shape = shape
         return self
 
     def getframeseries(self):
         if self.frames:
             return frameseries(self.frames,self.shape)
-
+    
+    @staticmethod
+    def parsename(name):
+        data = name.split('-')
+        seriesname = data[0]
+        data = data[1:]
+        params = {}
+        for i, p in enumerate(data):
+            m = re.match(r"(?P<param>[a-zA-Z]+)(?P<value>.+)$", p)
+            param = m.group('param')
+            value = m.group('value')
+            if param == 'fs':
+                value = map(int,value.split('x'))
+            if param == 'Nf':
+                value = int(value)              
+            params[param] = value
+        return params
+    
+    
     '''
     algorithms using sparse matrices
     proved to be quite ineffective due to conversion
@@ -76,9 +109,6 @@ class file:
             i=i+1
         return sparse_accum.toarray()
     '''
-    
-    def parsename(self):
-        # TODO: implement
-        pass
+        
 
 

@@ -17,10 +17,10 @@ plt.imshow(d)
 plt.show()
 #%%
 print 'selecting'
-c1 = pp.ring(10,40,(50,130))
+c1 = pp.ring(10,40,(55,107))
 fs1 = c1.getframeseries(fs)
 
-c2 = pp.ring(10,40,(50,483))
+c2 = pp.ring(10,40,(56,449))
 fs2 = c2.getframeseries(fs)
 #%%
 c1.plot()
@@ -29,10 +29,10 @@ plt.imshow(d)
 plt.show()
 #%%
 # select with reshaping
-c1 = pp.ring(3,40,(50,130))
+c1 = pp.ring(15,40,(55,107))
 fs1 = c1.getframeseries(fs, reshape=True)
 
-c2 = pp.ring(3,40,(50,483))
+c2 = pp.ring(15,40,(56,449))
 fs2 = c2.getframeseries(fs, reshape=True)
 #%%
 print 'plotting'
@@ -61,7 +61,7 @@ plt.show()
 #%%
 d1=fs1.accumframes()
 d2=fs2.accumframes()
-signs=(False,True)
+signs=(True,True)
 d=pp.accum.coinchist(fs1,fs2,signs)
 dac=pp.accum.acchist(d1,d2,signs)
 dac=dac/np.sum(dac)
