@@ -5,9 +5,11 @@ class frameseries:
     frames = []
     N = np.array([])
     shape = (())
+    frameN = 0
 
     def __init__(self, frames, shape, cut = True):
         self.frames = frames
+        self.frameN = len(frames)
         self.shape = shape
         self.N = np.zeros((len(self.frames)))
         for i, frame in enumerate(self.frames):
@@ -40,7 +42,6 @@ class frameseries:
         Accumulate photon through all frames
         :return: accumulated array
         '''
-        
         flat_fs = np.concatenate(self.frames)
         accum = bincountnd(flat_fs,self.shape)
         return accum
@@ -70,3 +71,6 @@ class frameseries:
     def rescale(self, factor, axis, **kwargs):
         # TODO: implement scaling
         pass
+    
+    def len(self):
+        return self.frameN

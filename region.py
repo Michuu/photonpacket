@@ -104,8 +104,14 @@ class rect(region):
         self.y1=y1
 
     def plot(self):
-        # TODO: implement
-        pass
+        v1 = np.array([[self.x0,self.y0],[self.x0,self.y1]])
+        v2 = np.array([[self.x0,self.y0],[self.x1,self.y0]])
+        v3 = np.array([[self.x0,self.y1],[self.x1,self.y1]])
+        v4 = np.array([[self.x1,self.y0],[self.x1,self.y1]])
+        plt.plot(v1,color='r')
+        plt.plot(v2,color='r')
+        plt.plot(v3,color='r')
+        plt.plot(v4,color='r')
 
     def isinregion(self,R):
         # TODO: implement
@@ -173,9 +179,9 @@ class ring(region):
                 frame = self.reshape(np.array(frame))
             frames.append(frame[mask])
         if reshape:
-              return frameseries(frames, self.shape, cut=False)
+              return frameseries(frames, self.shape, cut=True)
         else:
-              return frameseries(frames, fs.shape, cut=False)
+              return frameseries(frames, fs.shape, cut=True)
 
 class ellpise(region):
     a = 0

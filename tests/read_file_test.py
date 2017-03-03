@@ -37,6 +37,11 @@ fs1 = c1.getframeseries(fs, reshape=True)
 c2 = pp.ring(10,40,(50,283))
 fs2 = c2.getframeseries(fs, reshape=True)
 #%%
+r1 = pp.rect((50,50),(60,60))
+fs1 = r1.getframeseries(fs)
+plt.imshow(fs1.accumframes())
+plt.show()
+#%%
 print 'plotting'
 plt.clf()
 c1.plot()

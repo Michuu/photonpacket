@@ -10,18 +10,15 @@ class stat1d:
       
     @staticmethod
     def mean(fs):
-        # TODO: implement
-        pass
+        return np.mean(fs.N)
       
     @staticmethod
     def var(fs):
-        # TODO: implement
-        pass
+        return np.var(fs.N)
       
     @staticmethod
     def std(fs):
-        # TODO: implement
-        pass
+        return np.std(fs.N)
     
     @staticmethod
     def subbinomal(fs):

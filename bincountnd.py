@@ -2,6 +2,9 @@
 import numpy as np
 
 def bincountnd(array, shape):
+    '''
+    Multidimensional version of numpy function bincount
+    '''
     aux_shape = np.sort(shape)[::-1]
     sel = np.argsort(shape)[::-1]
     flat_array = np.zeros(shape=array.shape[0],dtype=np.uint16)
