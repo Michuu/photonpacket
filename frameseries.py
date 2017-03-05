@@ -37,12 +37,11 @@ class frameseries:
     def accumframes(self):
         '''
         Accumulate photon through all frames
-        :param shape: TODO: remove
         :return: accumulated array
         '''
 
         i=0
-        accum=np.empty(shape=self.shape)
+        accum=np.zeros(shape=self.shape)
         for frame in self.frames:
             for photon in frame:
                 accum[photon[0],photon[1]]=accum[photon[0],photon[1]]+1
@@ -61,3 +60,11 @@ class frameseries:
             i=i+1
 
         return accum
+  
+    def rotate(self, angle, **kwargs):
+        # TODO: implement rotation
+        pass
+    
+    def rescale(self, factor, axis, **kwargs):
+        # TODO: implement scaling
+        pass
