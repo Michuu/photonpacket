@@ -5,7 +5,7 @@ import numpy as np
 
 import photonpacket as pp
 #%%
-f=pp.file.read('tests/pom2-tw10.00u-tmem0.00u-tr10.00u-tg35.00u-dw0.00G-dr6.02G-pw0.0m-pr0.0m-fs100x600-nf50k-T0-fB0-fT0k-II2.70-sr1.dat')
+f=pp.file.read('tests/pom1-tw10.00u-tmem0.00u-tr10.00u-tg35.00u-dw0.00G-dr6.02G-pw0.0m-pr0.0m-fs100x400-nf50k-T0-fB0-fT0k-II2.60-sr0.dat')
 fs=f.getframeseries()
 
 #%%
@@ -60,8 +60,10 @@ dac=dac/np.sum(dac)
 d=d/np.sum(d)
 plt.imshow(d)
 plt.show()
+#%%
 plt.imshow(dac)
 plt.show()
+#%%
 plt.imshow(d-dac)
 plt.show()
 

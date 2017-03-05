@@ -1,5 +1,6 @@
 import numpy as np
 from frameseries import frameseries
+import re
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 class file:
@@ -8,7 +9,6 @@ class file:
     accum = []
     # sparse_accum = 0
     Nframes = 0
-    shape = (100,600)
 
     @staticmethod
     def read(name, **kwargs):
@@ -18,6 +18,15 @@ class file:
         :return: instance of class File
         '''
         # TODO: add filename recognition and parsing, automatic shape and framenumber detection
+        
+        params = file.parsename(name)
+        if 'fs' in params:
+            shape = params['fs']
+            shapedetect = False
+        else:
+            shapedetect = True
+            
+        
         if 'Nframes' in kwargs:
               maxframes=kwargs['Nframes']
               frames_limit = True
@@ -43,7 +52,8 @@ class file:
                 frame=np.reshape(img/10,nxy)[:,:2]
                 self.frames.append(frame)
         f.close()
-        self.Nframes=nframes
+        self.Nframes = nframes
+        self.shape = shape
         return self
 
     def getframeseries(self):
@@ -77,8 +87,22 @@ class file:
         return sparse_accum.toarray()
     '''
     
-    def parsename(self):
-        # TODO: implement
-        pass
+    @staticmethod
+    def parsename(name):
+        data = name.split('-')
+        seriesname = data[0]
+        data = data[1:]
+        params = {}
+        for i, p in enumerate(data):
+            m = re.match(r"(?P<param>[a-zA-Z]+)(?P<value>.+)$", p)
+            param = m.group('param')
+            value = m.group('value')
+            if param == 'fs':
+                value = map(int,value.split('x'))
+            if param == 'Nf':
+                value = int(value)              
+            params[param] = value
+        return params
+        
 
 

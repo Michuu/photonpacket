@@ -67,9 +67,9 @@ class accum:
     
     @staticmethod
     def acchist(h1,h2,signs):
-        if not signs[0]:
+        if signs[0]:
               h1=np.flip(h1,axis=0)
-        if not signs[1]:
+        if signs[1]:
               h2=np.flip(h2,axis=1)
         return convolve2d(h1,h2)
             
