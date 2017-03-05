@@ -26,7 +26,7 @@ class file:
               frames_limit = False
               
         nframes=0
-        f=open(name)
+        f=open(name,'rb')
         while(True):
             nxy=np.fromfile(f,'>i4',2)
             if nxy.size==0 or (nframes > maxframes and frames_limit):
