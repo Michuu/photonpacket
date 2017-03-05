@@ -22,13 +22,18 @@ class accum:
     @staticmethod
     def accumcoinc(fs1,fs2):
         i=0
-        accum=np.zeros(shape=(fs1.shape[0],fs1.shape[0],fs1.shape[1],fs1.shape[1]))
+        accum=np.zeros(shape=(fs1.shape[0],fs1.shape[0],
+                              fs1.shape[1],fs1.shape[1]))
         for frame in fs1.frames:
             frame2 = fs2.frames[i]
             if len(frame2) != 0 and len(frame) != 0:
-                cframe=np.hstack((np.dstack(np.meshgrid(frame[:,0], frame2[:,0])).reshape(-1, 2),np.dstack(np.meshgrid(frame[:,1], frame2[:,1])).reshape(-1, 2)))
+                cframe=np.hstack((
+                        np.dstack(np.meshgrid(frame[:,0], frame2[:,0])).reshape(-1, 2),
+                        np.dstack(np.meshgrid(frame[:,1], frame2[:,1])).reshape(-1, 2)
+                        ))
                 for coinc in cframe:
-                    accum[coinc[0],coinc[1],coinc[2],coinc[3]]=accum[coinc[0],coinc[1],coinc[2],coinc[3]]+1
+                    accum[coinc[0],coinc[1],coinc[2],coinc[3]]=accum[coinc[0],
+                          coinc[1],coinc[2],coinc[3]]+1
             i=i+1
         return accum
   
@@ -42,7 +47,10 @@ class accum:
         for frame in fs1.frames:
             frame2 = fs2.frames[i]
             if len(frame2) != 0 and len(frame) != 0:
-                cframe = np.hstack((np.dstack(np.meshgrid(frame[:,0], frame2[:,0])).reshape(-1, 2),np.dstack(np.meshgrid(frame[:,1], frame2[:,1])).reshape(-1, 2)))
+                cframe = np.hstack((
+                        np.dstack(np.meshgrid(frame[:,0], frame2[:,0])).reshape(-1, 2),
+                        np.dstack(np.meshgrid(frame[:,1], frame2[:,1])).reshape(-1, 2)
+                        ))
                 cframe2 = np.zeros(shape=(cframe.shape[0],2),dtype=np.uint16)
                 if signs[0]:
                       cframe2[:,0] = cframe[:,0] + cframe[:,1]

@@ -146,7 +146,8 @@ class ellpise(region):
 
     def plot(self):
         ax=plt.gca()
-        e=plt.Ellipse(xy=(self.y0,self.x0),width=self.a,height=self.b,angle=self.angle,fill=False,color='r')
+        e=plt.Ellipse(xy=(self.y0,self.x0),width=self.a,height=self.b,
+                      angle=self.angle,fill=False,color='r')
         ax.add_artist(e)
 
     def r2dist(self,R):

@@ -16,6 +16,8 @@ class stat2d:
     def plotjoint(histogram):
         X, Y = np.meshgrid(histogram[1], histogram[2])
         plt.pcolormesh(X, Y, histogram[0])
+        for i, v in np.ndenumerate(histogram[0]):
+            plt.text(i[0],i[1],"%d"%v)
 
     @staticmethod
     def g2(fs1,fs2):

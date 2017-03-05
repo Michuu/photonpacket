@@ -51,11 +51,17 @@ class frameseries:
 
     def accumautocoinc(self):
         i=0
-        accum=np.zeros(shape=(self.shape[0],self.shape[0],self.shape[1],self.shape[1]))
+        accum=np.zeros(
+                shape=(self.shape[0],self.shape[0],self.shape[1],self.shape[1])
+                )
         for frame in self.frames:
-            frame=np.hstack((np.dstack(np.meshgrid(frame[:,0], frame[:,0])).reshape(-1, 2),np.dstack(np.meshgrid(frame[:,1], frame[:,1])).reshape(-1, 2)))
+            frame=np.hstack((
+                    np.dstack(np.meshgrid(frame[:,0], frame[:,0])).reshape(-1, 2),
+                    np.dstack(np.meshgrid(frame[:,1], frame[:,1])).reshape(-1, 2)
+                    ))
             for coinc in frame:
-                accum[coinc[0],coinc[1],coinc[2],coinc[3]]=accum[coinc[0],coinc[1],coinc[2],coinc[3]]+1
+                accum[coinc[0],coinc[1],coinc[2],coinc[3]]=accum[coinc[0],
+                      coinc[1],coinc[2],coinc[3]]+1
             print i
             i=i+1
 
