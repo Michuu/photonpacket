@@ -41,15 +41,15 @@ class file:
               
         nframes=0
         f=open(name,'rb')
+        self=file(name)
         while(True):
             nxy=np.fromfile(f,'>i4',2)
             if nxy.size==0 or (nframes > maxframes and frames_limit):
                 break
-            N = np.prod(nxy)
+            N = nxy[0]*nxy[1]
             nframes = nframes+1
             img = np.fromfile(f,'>u2',N)
 
-            self=file(name)
             if N != 0:
                 # dzielenie przez 10, nie wiadomo za bardzo czemu!
                 # TODO: automatic detection of /10 division
