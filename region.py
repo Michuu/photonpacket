@@ -62,7 +62,7 @@ class circle(region):
         self.x0=x0
         self.y0=y0
         self.shape = [2*r, 2*r]
-        self.corner = np.array([self.x0-self.r, self,y0-self.r])
+        self.corner = np.array([self.x0-self.r, self.y0-self.r])
 
     def plot(self):
         ax=plt.gca()
@@ -78,7 +78,7 @@ class circle(region):
     def getframeseries(self,fs,reshape = False):
         frames = []
         for frame in fs.frames:
-            aux_frame = np.array(frame)
+            aux_frame = np.array(frame, dtype=np.uint32)
             aux_frame[:,0] = aux_frame[:,0] - self.x0
             aux_frame[:,1] = aux_frame[:,1] - self.y0
             mask = np.sum(aux_frame**2,axis=1) < self.r**2
@@ -86,9 +86,9 @@ class circle(region):
                 frame = self.reshape(np.array(frame))
             frames.append(frame[mask])
         if reshape:
-              return frameseries(frames, self.shape, cut=False)
+              return frameseries(frames, self.shape, cut=True)
         else:
-              return frameseries(frames, fs.shape, cut=False)
+              return frameseries(frames, fs.shape, cut=True)
 
 class rect(region):
     # TODO: add rotation angle?
@@ -132,9 +132,9 @@ class rect(region):
                 frame = self.reshape(np.array(frame))
             frames.append(frame[mask])
         if reshape:
-              return frameseries(frames, self.shape, cut=False)
+              return frameseries(frames, self.shape, cut=True)
         else:
-              return frameseries(frames, fs.shape, cut=False)
+              return frameseries(frames, fs.shape, cut=True)
 
 class ring(region):
     r1 = 0
@@ -169,7 +169,7 @@ class ring(region):
     def getframeseries(self,fs,reshape = False):
         frames = []
         for frame in fs.frames:
-            aux_frame = np.array(frame)
+            aux_frame = np.array(frame, dtype=np.uint32)
             aux_frame[:,0] = aux_frame[:,0]-self.x0
             aux_frame[:,1] = aux_frame[:,1]-self.y0
             mask1 = np.sum(aux_frame**2,axis=1) > self.r1**2

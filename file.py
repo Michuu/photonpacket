@@ -24,7 +24,7 @@ class file:
         '''
         # TODO: add filename recognition and parsing, automatic shape and framenumber detection
         
-        params = file.parsename(name)
+        params = file.parsename(name.split('\\')[-1])
         if 'fs' in params:
             shape = params['fs']
             shapedetect = False

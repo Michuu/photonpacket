@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 
 class stat1d:
     # TODO: let instance of this class be a representation of statistics (histogram)

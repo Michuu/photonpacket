@@ -65,6 +65,8 @@ class accum:
         i=0
         accum = np.zeros(shape=(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1))
         for frame in fs1.frames:
+            if i%10000==0:
+                print i
             frame2 = fs2.frames[i]
             if len(frame2) != 0 and len(frame) != 0:
                 cframe = np.hstack((
