@@ -45,3 +45,7 @@ for dim, size in enumerate(aux_shape):
     exp = exp * size
 accum = np.bincount(flat_array, minlength = np.prod(aux_shape))
 accum = np.reshape(accum,shape)
+#%%
+sk = np.argsort(map(len,fs.frames))
+sN = np.sort(map(len,fs.frames))
+np.array(fs.frames)[sk]

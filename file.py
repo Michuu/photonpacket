@@ -40,11 +40,12 @@ class file:
               
         nframes=0
         f=open(name,'rb')
+        self.frames = []
         while(True):
             nxy=np.fromfile(f,'>i4',2)
             if nxy.size==0 or (nframes > maxframes and frames_limit):
                 break
-            N = nxy[0]*nxy[1]
+            N = np.prod(nxy)
             nframes = nframes+1
             img = np.fromfile(f,'>u2',N)
 

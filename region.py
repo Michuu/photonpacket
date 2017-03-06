@@ -43,8 +43,8 @@ class region:
         return N
     
     def reshape(self, frame):
-        frame[:,0]=frame[:,0]-self.corner[0]
-        frame[:,1]=frame[:,1]-self.corner[1]
+        frame[:,0] = frame[:,0] - self.corner[0]
+        frame[:,1] = frame[:,1] - self.corner[1]
         return frame
         
 
@@ -86,9 +86,9 @@ class circle(region):
                 frame = self.reshape(np.array(frame))
             frames.append(frame[mask])
         if reshape:
-              return frameseries(frames, self.shape)
+              return frameseries(frames, self.shape, cut=False)
         else:
-              return frameseries(frames, fs.shape)
+              return frameseries(frames, fs.shape, cut=False)
 
 class rect(region):
     # TODO: add rotation angle?
@@ -126,9 +126,9 @@ class rect(region):
                 frame = self.reshape(np.array(frame))
             frames.append(frame[mask])
         if reshape:
-              return frameseries(frames, self.shape)
+              return frameseries(frames, self.shape, cut=False)
         else:
-              return frameseries(frames, fs.shape)
+              return frameseries(frames, fs.shape, cut=False)
 
 class ring(region):
     r1 = 0
@@ -173,9 +173,9 @@ class ring(region):
                 frame = self.reshape(np.array(frame))
             frames.append(frame[mask])
         if reshape:
-              return frameseries(frames, self.shape)
+              return frameseries(frames, self.shape, cut=False)
         else:
-              return frameseries(frames, fs.shape)
+              return frameseries(frames, fs.shape, cut=False)
 
 class ellpise(region):
     a = 0
