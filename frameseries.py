@@ -31,12 +31,6 @@ class frameseries:
             mask = mask0 * mask1
             self.frames[j] = frame[mask]
             self.N[j] = np.sum(mask)
-            # i=0
-            # for photon in frame:
-            #    if(photon[0]>=shape[0] or photon[1]>=shape[1]):
-            #        self.frames[j]=np.delete(self.frames[j],i,axis=0)
-            #        self.N[j]=self.N[j]-1
-            #    i=i+1
             j=j+1
 
 
@@ -45,15 +39,18 @@ class frameseries:
         Accumulate photon through all frames
         :return: accumulated array
         '''
-
-        i=0
+        
         accum=np.zeros(shape=self.shape)
-        for frame in self.frames:
-            for photon in frame:
-                accum[photon[0],photon[1]]=accum[photon[0],photon[1]]+1
-            i=i+1
-
-        return accum
+        i = np.argmax(self.shape)
+        m = np.max(self.shape)
+        j = int(not i)
+        flat_fs = np.concatenate(self.frames)
+        flat_fs = flat_fs[:,i] + m * flat_fs[:,j]
+        accum = np.bincount(flat_fs,minlength = np.prod(self.shape))
+        if i==1:
+            return np.reshape(accum,self.shape)
+        else:
+            return np.transpose(np.reshape(accum,self.shape))
 
     def accumautocoinc(self):
         i=0
