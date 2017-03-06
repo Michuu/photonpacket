@@ -24,7 +24,6 @@ class file:
         :param name: file name
         :return: instance of class File
         '''
-        # TODO: add filename recognition and parsing, automatic shape and framenumber detection
         
         name = os.path.split(path)[-1]
         name = os.path.splitext(name)[0]
@@ -95,7 +94,7 @@ class file:
     
     @staticmethod
     def getattribute(name, attr):
-        pattern = r"-" + attr + "(?P<attr>[\d+.])(?P<si>[yafnumkMGTZ]{,1})"
+        pattern = r"-" + attr + "(?P<attr>[\d.]+)(?P<si>[yafnumkMGTZ]{,1})"
         s = re.search(pattern, name)
         try:
             if s.group('attr') and s.group('si') and file.siprefix(s.group('si')):
@@ -109,6 +108,7 @@ class file:
         except IndexError:
             return False
         
+    @staticmethod
     def siprefix(prefix):
         prefixes = {'y' : 1e-21, 'a' : 1e-18, 'f' : 1e-15, 'p' : 1e-12,
                     'n' : 1e-9, 'u' : 1e-6, 'm' : 1e-3, 'k' : 1e3,
