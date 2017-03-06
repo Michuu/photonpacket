@@ -63,7 +63,7 @@ class accum:
         fs1 and fs2 should rather be reshaped, and have the same number of frames
         '''
         i=0
-        accum = np.zeros(shape=(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1))
+        cframes = []
         for frame in fs1.frames:
             if i%10000==0:
                 print i
@@ -82,9 +82,9 @@ class accum:
                       cframe2[:,1] = cframe[:,2] + cframe[:,3]
                 else:
                       cframe2[:,1] = cframe[:,2] - cframe[:,3] + fs2.shape[1]
-                for coinc in cframe2:
-                      accum[coinc[0],coinc[1]] = accum[coinc[0],coinc[1]] + 1
+                cframes.append(cframe2)
             i = i + 1
+        accum = bincountnd(np.concatenate(cframes),(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1))
         return accum
     
     @staticmethod
