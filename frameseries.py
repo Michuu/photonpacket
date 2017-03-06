@@ -5,13 +5,14 @@ class frameseries:
     N = np.array([])
     shape = (())
 
-    def __init__(self, frames, shape):
+    def __init__(self, frames, shape, cut = True):
         self.frames = frames
         self.shape = shape
         self.N = np.zeros((len(self.frames)))
         for i, frame in enumerate(self.frames):
             self.N[i] = int(frame.shape[0])
-        self.cuttoshape(self.shape)
+        if cut:
+            self.cuttoshape(self.shape)
 
 
     def cuttoshape(self,shape):
@@ -25,12 +26,17 @@ class frameseries:
         j=0
         aux_frames = self.frames
         for frame in aux_frames:
-            i=0
-            for photon in frame:
-                if(photon[0]>=shape[0] or photon[1]>=shape[1]):
-                    self.frames[j]=np.delete(self.frames[j],i,axis=0)
-                    self.N[j]=self.N[j]-1
-                i=i+1
+            mask0 = frame[:,0] < shape[0]
+            mask1 = frame[:,1] < shape[1]
+            mask = mask0 * mask1
+            self.frames[j] = frame[mask]
+            self.N[j] = np.sum(mask)
+            # i=0
+            # for photon in frame:
+            #    if(photon[0]>=shape[0] or photon[1]>=shape[1]):
+            #        self.frames[j]=np.delete(self.frames[j],i,axis=0)
+            #        self.N[j]=self.N[j]-1
+            #    i=i+1
             j=j+1
 
 
