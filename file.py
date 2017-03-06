@@ -13,6 +13,7 @@ class file:
 
     def __init__(self,name):
         self.name = name
+        self.frames = []
         
     @staticmethod
     def read(name, **kwargs):
@@ -40,7 +41,6 @@ class file:
               
         nframes=0
         f=open(name,'rb')
-        self.frames = []
         while(True):
             nxy=np.fromfile(f,'>i4',2)
             if nxy.size==0 or (nframes > maxframes and frames_limit):
