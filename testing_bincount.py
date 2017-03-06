@@ -18,20 +18,30 @@ i = np.argmax(fs.shape)
 m = np.max(fs.shape)
 j = int(not i)
 flat_fs = np.concatenate(fs.frames)
-# for fr in fs.frames:
-    # flat_fs=np.concatenate((flat_fs,fr[:,i] + m * fr[:,j]))
-    # bc = np.bincount(flat_frame,minlength = np.prod(fs.shape))
-    # bc = np.reshape(bc,fs.shape)
-    # accum=accum+bc
-accum = np.bincount(flat_fs,minlength = np.prod(fs.shape))
-accum = np.reshape(accum,fs.shape)
+flat_fs = flat_fs[:,i] + m * flat_fs[:,j]
+accum1 = np.bincount(flat_fs,minlength = np.prod(fs.shape))
+accum1 = np.reshape(accum1,fs.shape)
 
 m2=int(round(time.time() * 1000))
-accum=np.zeros(shape=fs.shape)
+accum2=np.zeros(shape=fs.shape)
 for fr in fs.frames:
     for photon in fr:
-        accum[photon[0],photon[1]]=accum[photon[0],photon[1]]+1
+        accum2[photon[0],photon[1]]=accum2[photon[0],photon[1]]+1
 m3=int(round(time.time() * 1000))
 
 print m2-m1
 print m3-m2
+#%%
+flat_fs = np.concatenate(fs.frames)
+shape=(100,400)
+array=flat_fs
+aux_shape = np.sort(shape)[::-1]
+sel = np.argsort(shape)[::-1]
+flat_array = np.zeros(shape=array.shape[0],dtype=np.uint16)
+exp = 1
+array = array[:,sel]
+for dim, size in enumerate(aux_shape):
+    flat_array = flat_array + array[:,dim] * exp
+    exp = exp * size
+accum = np.bincount(flat_array, minlength = np.prod(aux_shape))
+accum = np.reshape(accum,shape)

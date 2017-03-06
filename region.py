@@ -83,8 +83,8 @@ class circle(region):
             aux_frame[:,1] = aux_frame[:,1] - self.y0
             mask = np.sum(aux_frame**2,axis=1) < self.r**2
             if reshape:
-                aux_frame = self.reshape(np.array(frame))
-            frames.append(aux_frame[mask])
+                frame = self.reshape(np.array(frame))
+            frames.append(frame[mask])
         if reshape:
               return frameseries(frames, self.shape)
         else:
@@ -123,8 +123,8 @@ class rect(region):
             mask4 = aux_frame[:,1] < self.y1
             mask = mask1 * mask2 * mask3 * mask4
             if reshape:
-                aux_frame = self.reshape(np.array(frame))
-            frames.append(aux_frame[mask])
+                frame = self.reshape(np.array(frame))
+            frames.append(frame[mask])
         if reshape:
               return frameseries(frames, self.shape)
         else:
@@ -170,8 +170,8 @@ class ring(region):
             mask2 = np.sum(aux_frame**2,axis=1) < self.r2**2
             mask = mask1 * mask2
             if reshape:
-                aux_frame = self.reshape(np.array(frame))
-            frames.append(aux_frame[mask])
+                frame = self.reshape(np.array(frame))
+            frames.append(frame[mask])
         if reshape:
               return frameseries(frames, self.shape)
         else:

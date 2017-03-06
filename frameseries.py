@@ -1,4 +1,5 @@
 import numpy as np
+from bincountnd import bincountnd
 
 class frameseries:
     frames = []
@@ -40,17 +41,9 @@ class frameseries:
         :return: accumulated array
         '''
         
-        accum=np.zeros(shape=self.shape)
-        i = np.argmax(self.shape)
-        m = np.max(self.shape)
-        j = int(not i)
         flat_fs = np.concatenate(self.frames)
-        flat_fs = flat_fs[:,i] + m * flat_fs[:,j]
-        accum = np.bincount(flat_fs,minlength = np.prod(self.shape))
-        if i==1:
-            return np.reshape(accum,self.shape)
-        else:
-            return np.transpose(np.reshape(accum,self.shape))
+        accum = bincountnd(flat_fs,self.shape)
+        return accum
 
     def accumautocoinc(self):
         i=0

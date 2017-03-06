@@ -9,7 +9,11 @@ class file:
     accum = []
     # sparse_accum = 0
     Nframes = 0
+    name = ''
 
+    def __init__(self,name):
+        self.name = name
+        
     @staticmethod
     def read(name, **kwargs):
         '''
@@ -28,7 +32,7 @@ class file:
             
         
         if 'Nframes' in kwargs:
-              maxframes=kwargs['Nframes']
+              maxframes = kwargs['Nframes']
               frames_limit = True
         else:
               maxframes = 0
@@ -44,7 +48,7 @@ class file:
             nframes = nframes+1
             img = np.fromfile(f,'>u2',N)
 
-            self=file()
+            self=file(name)
             if N != 0:
                 # dzielenie przez 10, nie wiadomo za bardzo czemu!
                 # TODO: automatic detection of /10 division
@@ -59,7 +63,25 @@ class file:
     def getframeseries(self):
         if self.frames:
             return frameseries(self.frames,self.shape)
-
+    
+    @staticmethod
+    def parsename(name):
+        data = name.split('-')
+        seriesname = data[0]
+        data = data[1:]
+        params = {}
+        for i, p in enumerate(data):
+            m = re.match(r"(?P<param>[a-zA-Z]+)(?P<value>.+)$", p)
+            param = m.group('param')
+            value = m.group('value')
+            if param == 'fs':
+                value = map(int,value.split('x'))
+            if param == 'Nf':
+                value = int(value)              
+            params[param] = value
+        return params
+    
+    
     '''
     algorithms using sparse matrices
     proved to be quite ineffective due to conversion
@@ -86,23 +108,6 @@ class file:
             i=i+1
         return sparse_accum.toarray()
     '''
-    
-    @staticmethod
-    def parsename(name):
-        data = name.split('-')
-        seriesname = data[0]
-        data = data[1:]
-        params = {}
-        for i, p in enumerate(data):
-            m = re.match(r"(?P<param>[a-zA-Z]+)(?P<value>.+)$", p)
-            param = m.group('param')
-            value = m.group('value')
-            if param == 'fs':
-                value = map(int,value.split('x'))
-            if param == 'Nf':
-                value = int(value)              
-            params[param] = value
-        return params
         
 
 
