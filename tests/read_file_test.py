@@ -6,7 +6,9 @@ import time
 
 import photonpacket as pp
 #%%
-f=pp.file.read('tests/pom1-tw10.00u-tmem0.00u-tr10.00u-tg35.00u-dw0.00G-dr6.02G-pw0.0m-pr0.0m-fs100x400-nf50k-T0-fB0-fT0k-II2.60-sr0.dat')
+#f=pp.file.read('tests/pom1-tw10.00u-tmem0.00u-tr10.00u-tg35.00u-dw0.00G-dr6.02G-pw0.0m-pr0.0m-fs100x400-nf50k-T0-fB0-fT0k-II2.60-sr0.dat')
+# pom1_nearSnearAS-Raman-AOMw441-nf300k-las11.0-tg5.55u-tw3.00u-tr2.00u-tmem-250n-fs250x600-sr0.dat
+f=pp.file.read('/Volumes/E/pom1_farSfarAS_Raman-AOMw441-nf300k-las11.0-tg4.55u-tw2.00u-tr2.00u-tmem250n-fs250x600-sr0.dat',Nframes=10000)
 fs=f.getframeseries()
 
 #%%
@@ -17,10 +19,10 @@ plt.imshow(d)
 plt.show()
 #%%
 # selecting circles
-c1 = pp.circle(40,(50,130))
+c1 = pp.circle(40,(130,160))
 fs1 = c1.getframeseries(fs)
 
-c2 = pp.circle(40,(50,283))
+c2 = pp.circle(40,(135,440))
 fs2 = c2.getframeseries(fs)
 #%%
 # selecting rings
@@ -31,10 +33,10 @@ c2 = pp.ring(10,40,(50,283))
 fs2 = c2.getframeseries(fs)
 #%%
 # selecting rings with reshaping
-c1 = pp.ring(10,40,(50,130))
+c1 = pp.circle(40,(130,160))
 fs1 = c1.getframeseries(fs, reshape=True)
 
-c2 = pp.ring(10,40,(50,283))
+c2 = pp.circle(40,(135,440))
 fs2 = c2.getframeseries(fs, reshape=True)
 #%%
 # plotting with reshaping
@@ -85,7 +87,7 @@ print m4-m3
 print 'calculating statistics'
 print pp.stat2d.g2(fs1,fs2)
 H=pp.stat2d.joint(fs1,fs2)
-pp.stat2d.plotjoint(H)
+pp.stat2d.plotjoint(H,showvalues=False)
 print H[0][0,1]
 print H[0][1,0]
 print H[0][1,1]
@@ -95,12 +97,12 @@ d1=fs1.accumframes()
 d2=fs2.accumframes()
 signs=(True, True)
 d=pp.accum.coinchist(fs1,fs2,signs)
-#dac=pp.accum.acchist(d1,d2,signs)
-if signs[0]:
-    d2=np.flip(d2,axis=0)
-if signs[1]:
-    d2=np.flip(d2,axis=1)
-dac=convolve2d(d1,d2)
+dac=pp.accum.acchist(d1,d2,signs)
+#if not signs[0]:
+#    d2=np.flip(d2,axis=0)
+#if not signs[1]:
+#    d2=np.flip(d2,axis=1)
+#dac=convolve2d(d1,d2)
 dac=dac/float(fs1.len())
 plt.imshow(d-dac)
 plt.show()
@@ -108,7 +110,7 @@ plt.show()
 plt.imshow(dac)
 plt.show()
 #%%
-plt.imshow(d)
+plt.imshow(d.T)
 plt.show()
 
 #%%
@@ -118,3 +120,34 @@ cc=np.mean(cc,axis=(2,3))
 plt.imshow(cc)
 plt.show()
 '''
+#%%
+t1=int(round(time.time() * 1000))
+i=0
+cframes = []
+for frame in fs1.frames:
+    if i%10000==0:
+        print i
+    frame2 = fs2.frames[i]
+    if len(frame2) != 0 and len(frame) != 0:
+        #cframe = np.hstack((
+        #                np.dstack(np.meshgrid(frame[:,0], frame2[:,0])).reshape(-1, 2),
+        #                np.dstack(np.meshgrid(frame[:,1], frame2[:,1])).reshape(-1, 2)
+        #                ))
+        cfx=np.meshgrid(frame[:,0],frame2[:,0])
+        cfy=np.meshgrid(frame[:,1],frame2[:,1])
+        cframe2 = np.zeros(shape=(len(cfx[0].flatten()),2),dtype=np.uint16)
+        if signs[0]:
+            cframe2[:,0] = cfx[0].flatten() + cfx[1].flatten()
+        else:
+            cframe2[:,0] = cfx[0].flatten() - cfx[1].flatten() + fs2.shape[0]
+        if signs[1]:
+            cframe2[:,1] = cfy[0].flatten() + cfy[1].flatten()
+        else:
+            cframe2[:,1] = cfy[0].flatten() - cfy[1].flatten() + fs2.shape[1]
+        cframes.append(cframe2)
+    i = i + 1
+t2=int(round(time.time() * 1000))
+accum = bincountnd(np.concatenate(cframes),(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1))
+t3=int(round(time.time() * 1000))
+print t2-t1
+print t3-t2
