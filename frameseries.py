@@ -74,3 +74,7 @@ class frameseries:
     
     def len(self):
         return self.frameN
+    
+    def shift(self, n):
+        # TODO: implement shifting of frames
+        pass
