@@ -33,7 +33,7 @@ class stat1d:
         pass
         
     @staticmethod   
-    def mandel(fs):
+    def qmandel(fs):
         '''
         Q_M
         Mandel Q parameter

@@ -28,8 +28,10 @@ class file:
         name = os.path.split(path)[-1]
         name = os.path.splitext(name)[0]
         
+        self=file(path,name)
+        
         try:
-            shape = file.getshape(name)
+            shape = self.getshape()
             if isinstance(shape, np.ndarray):
                 shapedetect = False
             else:
@@ -37,15 +39,15 @@ class file:
         except:
             shapedetect = True
             
-        
-        if 'Nframes' in kwargs and file.getattribute(name,'Nf'):
-              maxframes = min(kwargs['Nframes'], int(file.getattribute(name,'Nf')))
+
+        if 'Nframes' in kwargs and self.getattribute('Nf'):
+              maxframes = min(kwargs['Nframes'], int(self.getattribute('Nf')))
               frames_limit = True
         elif 'Nframes' in kwargs:
               maxframes = kwargs['Nframes']
               frames_limit = True
-        elif file.getattribute(name,'Nf'):
-              maxframes = file.getattribute(name,'Nf')
+        elif self.getattribute('Nf'):
+              maxframes = self.getattribute('Nf')
               frames_limit = True        
         else:
               maxframes = 0
@@ -53,7 +55,7 @@ class file:
               
         nframes=0
         f=open(path,'rb')
-        self=file(path,name)
+
         while(True):
             nxy=np.fromfile(f,'>i4',2)
             if nxy.size==0 or (nframes >= maxframes and frames_limit):
@@ -79,9 +81,8 @@ class file:
         if self.frames:
             return frameseries(self.frames,self.shape)
     
-    @staticmethod
-    def getshape(name):
-        s = re.search(r"-fs(?P<x>\d+)x(?P<y>\d+)", name)
+    def getshape(self):
+        s = re.search(r"-fs(?P<x>\d+)x(?P<y>\d+)", self.name)
         try:
             if s.group('x') and s.group('y'):
                 return np.array([int(s.group('x')),int(s.group('y'))])
@@ -92,10 +93,9 @@ class file:
         except IndexError:
             return False
     
-    @staticmethod
-    def getattribute(name, attr):
+    def getattribute(self, attr):
         pattern = r"-" + attr + "(?P<attr>[\d.]+)(?P<si>[yafnumkMGTZ]{,1})"
-        s = re.search(pattern, name)
+        s = re.search(pattern, self.name)
         try:
             if s.group('attr') and s.group('si') and file.siprefix(s.group('si')):
                 return float(s.group('attr')) * file.siprefix(s.group('si'))
