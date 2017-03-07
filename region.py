@@ -64,9 +64,12 @@ class circle(region):
         self.shape = [2*r, 2*r]
         self.corner = np.array([self.x0-self.r, self.y0-self.r])
 
-    def plot(self):
+    def plot(self,reshaped = False):
         ax=plt.gca()
-        c1=plt.Circle((self.y0,self.x0),self.r,fill=False,color='r')
+        if reshaped:
+            c1=plt.Circle((self.y0-self.corner[1],self.x0-self.corner[0]),self.r,fill=False,color='r') 
+        else:
+            c1=plt.Circle((self.y0,self.x0),self.r,fill=False,color='r')
         ax.add_artist(c1)
 
     def r2dist(self,R):
@@ -104,14 +107,14 @@ class rect(region):
         self.y1=y1
 
     def plot(self):
-        v1 = np.array([[self.x0,self.y0],[self.x0,self.y1]])
-        v2 = np.array([[self.x0,self.y0],[self.x1,self.y0]])
-        v3 = np.array([[self.x0,self.y1],[self.x1,self.y1]])
-        v4 = np.array([[self.x1,self.y0],[self.x1,self.y1]])
-        plt.plot(v1,color='r')
-        plt.plot(v2,color='r')
-        plt.plot(v3,color='r')
-        plt.plot(v4,color='r')
+        v1 = np.array([[self.x0,self.x1],[self.y0,self.y0]])
+        v2 = np.array([[self.x0,self.x0],[self.y0,self.y1]])
+        v3 = np.array([[self.x1,self.x0],[self.y1,self.y1]])
+        v4 = np.array([[self.x1,self.x1],[self.y1,self.y0]])
+        plt.plot(v1[0],v1[1],color='r')
+        plt.plot(v2[0],v2[1],color='r')
+        plt.plot(v3[0],v3[1],color='r')
+        plt.plot(v4[0],v4[1],color='r')
 
     def isinregion(self,R):
         # TODO: implement
@@ -153,11 +156,15 @@ class ring(region):
         self.shape = [2*r2, 2*r2]
         self.corner = np.array([self.x0-self.r2,self.y0-self.r2])
 
-    def plot(self):
+    def plot(self, reshaped = False):
         ax=plt.gca()
-        c1=plt.Circle((self.y0,self.x0),self.r1,fill=False,color='r')
+        if reshaped:
+            c1=plt.Circle((self.y0-self.corner[1],self.x0-self.corner[0]),self.r1,fill=False,color='r')
+            c2=plt.Circle((self.y0-self.corner[1],self.x0-self.corner[0]),self.r2,fill=False,color='g')
+        else:
+            c1=plt.Circle((self.y0,self.x0),self.r1,fill=False,color='r')
+            c2=plt.Circle((self.y0,self.x0),self.r2,fill=False,color='g')
         ax.add_artist(c1)
-        c2=plt.Circle((self.y0,self.x0),self.r2,fill=False,color='g')
         ax.add_artist(c2)
 
     def r2dist(self,R):

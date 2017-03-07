@@ -84,7 +84,7 @@ class file:
         s = re.search(r"-fs(?P<x>\d+)x(?P<y>\d+)", name)
         try:
             if s.group('x') and s.group('y'):
-                return np.array([s.group('x'),s.group('y')])
+                return np.array([int(s.group('x')),int(s.group('y'))])
             else:
                 return False
         except AttributeError:
