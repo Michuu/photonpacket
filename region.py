@@ -13,26 +13,18 @@ class region:
     def isinregion(self):
         pass
 
-    def getframeseries(self,fs,reshape=False):
-        self.frames = []
+    def getframeseries(self,fs,reshape = False):
+        frames = []
         for frame in fs.frames:
-            i=0
-            for photon in frame:
-                if self.isinregion((photon[0],photon[1])):
-                    if reshape:
-                          photon = photon - self.corner
-                    if i==0:
-                        newframe=np.array([photon])
-                    else:
-                        newframe=np.append(newframe,np.array([photon]),axis=0)
-                    i=i+1
-            if i == 0:
-                newframe=np.empty(shape=(0,2),dtype=np.uint16)
-            self.frames.append(newframe)
+            aux_frame = np.array(frame, dtype = np.uint32)
+            mask = self.getmask(aux_frame)
+            if reshape:
+                frame = self.reshape(np.array(frame))
+            frames.append(frame[mask])
         if reshape:
-              return frameseries(self.frames, self.shape)
+              return frameseries(frames, self.shape, cut=True)
         else:
-              return frameseries(self.frames, fs.shape)
+              return frameseries(frames, fs.shape, cut=True)
 
     def getcounts(self,fs):
         N=np.zeros((len(fs.frames)))
@@ -77,21 +69,13 @@ class circle(region):
 
     def isinregion(self,R):
         return (self.r2dist(R)<self.r**2)
-    
-    def getframeseries(self,fs,reshape = False):
-        frames = []
-        for frame in fs.frames:
-            aux_frame = np.array(frame, dtype=np.uint32)
-            aux_frame[:,0] = aux_frame[:,0] - self.x0
-            aux_frame[:,1] = aux_frame[:,1] - self.y0
-            mask = np.sum(aux_frame**2,axis=1) < self.r**2
-            if reshape:
-                frame = self.reshape(np.array(frame))
-            frames.append(frame[mask])
-        if reshape:
-              return frameseries(frames, self.shape, cut=True)
-        else:
-              return frameseries(frames, fs.shape, cut=True)
+                     
+    def getmask(self, frame):
+        frame[:,0] = frame[:,0] - self.x0
+        frame[:,1] = frame[:,1] - self.y0
+        mask = np.sum(frame**2,axis=1) < self.r**2
+        return mask
+        
 
 class rect(region):
     # TODO: add rotation angle?
@@ -119,25 +103,15 @@ class rect(region):
     def isinregion(self,R):
         # TODO: implement
         pass
-    
-    def getframeseries(self,fs,reshape = False):
-        frames = []
-        for frame in fs.frames:
-            aux_frame = np.array(frame)
-            aux_frame[:,0] = aux_frame[:,0] - self.x0
-            aux_frame[:,1] = aux_frame[:,1] - self.y0
-            mask1 = aux_frame[:,0] > self.x0
-            mask2 = aux_frame[:,1] > self.y0
-            mask3 = aux_frame[:,0] < self.x1
-            mask4 = aux_frame[:,1] < self.y1
-            mask = mask1 * mask2 * mask3 * mask4
-            if reshape:
-                frame = self.reshape(np.array(frame))
-            frames.append(frame[mask])
-        if reshape:
-              return frameseries(frames, self.shape, cut=True)
-        else:
-              return frameseries(frames, fs.shape, cut=True)
+         
+    def getmask(self, frame):
+        frame[:,0] = frame[:,0] - self.x0
+        frame[:,1] = frame[:,1] - self.y0
+        mask1 = frame[:,0] > self.x0
+        mask2 = frame[:,1] > self.y0
+        mask3 = frame[:,0] < self.x1
+        mask4 = frame[:,1] < self.y1
+        return mask1 * mask2 * mask3 * mask4
 
 class ring(region):
     r1 = 0
@@ -172,23 +146,14 @@ class ring(region):
 
     def isinregion(self,R):
         return ((self.r2dist(R)>self.r1**2) and (self.r2dist(R)<self.r2**2))
-    
-    def getframeseries(self,fs,reshape = False):
-        frames = []
-        for frame in fs.frames:
-            aux_frame = np.array(frame, dtype=np.uint32)
-            aux_frame[:,0] = aux_frame[:,0]-self.x0
-            aux_frame[:,1] = aux_frame[:,1]-self.y0
-            mask1 = np.sum(aux_frame**2,axis=1) > self.r1**2
-            mask2 = np.sum(aux_frame**2,axis=1) < self.r2**2
-            mask = mask1 * mask2
-            if reshape:
-                frame = self.reshape(np.array(frame))
-            frames.append(frame[mask])
-        if reshape:
-              return frameseries(frames, self.shape, cut=True)
-        else:
-              return frameseries(frames, fs.shape, cut=True)
+          
+    def getmask(self, frame):
+        frame[:,0] = frame[:,0]-self.x0
+        frame[:,1] = frame[:,1]-self.y0
+        mask1 = np.sum(frame**2,axis=1) > self.r1**2
+        mask2 = np.sum(frame**2,axis=1) < self.r2**2
+        return mask1 * mask2
+            
 
 class ellpise(region):
     a = 0
@@ -225,6 +190,9 @@ class ellpise(region):
         # TODO: rewrite
         return ((self.r2dist(R)>self.r1**2) and (self.r2dist(R)<self.r2**2))
     
+    def getmask(self, frame):
+        pass
+    
 class halfcircle(region):
     r1 = 0
     angle = 0
@@ -259,6 +227,9 @@ class halfcircle(region):
     def isinregion(self,R):
         # TODO: rewrite
         return ((self.r2dist(R)>self.r1**2) and (self.r2dist(R)<self.r2**2))
+    
+    def getmask(self, frame):
+        pass
 
 
 

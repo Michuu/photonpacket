@@ -8,8 +8,9 @@ import photonpacket as pp
 #%%
 #f=pp.file.read('tests/pom1-tw10.00u-tmem0.00u-tr10.00u-tg35.00u-dw0.00G-dr6.02G-pw0.0m-pr0.0m-fs100x400-nf50k-T0-fB0-fT0k-II2.60-sr0.dat')
 # pom1_nearSnearAS-Raman-AOMw441-nf300k-las11.0-tg5.55u-tw3.00u-tr2.00u-tmem-250n-fs250x600-sr0.dat
-f=pp.file.read('/Volumes/E/pom1_farSfarAS_Raman-AOMw441-nf300k-las11.0-tg4.55u-tw2.00u-tr2.00u-tmem250n-fs250x600-sr0.dat',Nframes=100000)
+f=pp.file.read('/Volumes/E/pom1_farSfarAS_Raman-AOMw441-nf300k-las11.0-tg4.55u-tw2.00u-tr2.00u-tmem250n-fs250x600-sr0.dat',Nframes=10000)
 fs=f.getframeseries()
+
 
 #%%
 # accumulating
@@ -45,7 +46,7 @@ c1.plot(reshaped = True)
 c2.plot(reshaped = True)
 d1=fs1.accumframes()
 d2=fs2.accumframes()
-plt.imshow(d2)
+plt.imshow(d1)
 plt.show()
 #%%
 # selecting rectangle
@@ -78,6 +79,30 @@ plt.clf()
 m3=int(round(time.time() * 1000))
 d=pp.accum.accumcoinc(fs1,fs2,method='accum')
 m4=int(round(time.time() * 1000))
+plt.imshow(np.sum(d,axis=(0,1)))
+plt.show()
+
+print m2-m1
+print m4-m3
+#%%
+print 'coinc'
+c1 = pp.circle(40,(130,160))
+c2 = pp.circle(40,(135,440))
+
+m1=int(round(time.time() * 1000))
+fs1 = c1.getframeseries(fs, reshape=True)
+fs2 = c2.getframeseries(fs, reshape=True)
+d=pp.accum.accumcoinc(fs1,fs2)
+m2=int(round(time.time() * 1000))
+
+plt.imshow(np.sum(d,axis=(0,1)))
+plt.show()
+
+
+m3=int(round(time.time() * 1000))
+d=pp.accum.accumcoincinplace(fs,c1,c2)
+m4=int(round(time.time() * 1000))
+
 plt.imshow(np.sum(d,axis=(0,1)))
 plt.show()
 

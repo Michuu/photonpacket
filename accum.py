@@ -56,6 +56,27 @@ class accum:
             return accum
         else:
             print 'invalid method'
+            
+    @staticmethod
+    def accumcoincinplace(fs,r1,r2):
+        i = 0
+        cframes = []
+        for frame in fs.frames:
+            aux_frame = np.array(frame)
+            aux_frame2 = np.array(frame)
+            mframe = r1.reshape(np.array(aux_frame[r1.getmask(aux_frame2)]))
+            aux_frame = np.array(frame)
+            aux_frame2 = np.array(frame)
+            mframe2 = r2.reshape(np.array(aux_frame[r2.getmask(aux_frame2)]))
+            if len(frame) != 0:
+                cframe=np.hstack((
+                        np.dstack(np.meshgrid(mframe[:,0], mframe2[:,0])).reshape(-1, 2),
+                        np.dstack(np.meshgrid(mframe[:,1], mframe2[:,1])).reshape(-1, 2)
+                        ))
+                cframes.append(cframe)
+            i=i+1
+        accum = bincountnd(np.concatenate(cframes),(r1.shape[0],r2.shape[0],r1.shape[1],r2.shape[1])) 
+        return accum
   
     @staticmethod
     def coinchist(fs1,fs2,signs):
