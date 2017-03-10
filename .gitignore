@@ -5,3 +5,6 @@ frameseries.pyc
 region.pyc
 stat1d.pyc
 stat2d.pyc
+bincountnd.pyc
+exceptions.pyc
+multimethods.pyc
