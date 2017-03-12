@@ -13,7 +13,7 @@ class stat2d:
     def joint(fs1,fs2):
         # TODO: resolve strange problem with empty data...
         stat2d.checkfs(fs1,fs2)
-        maxn = max(np.max(fs1.N),np.max(fs2.N))
+        maxn = max(np.max(fs1.N)+1,np.max(fs2.N)+1)
         bins = np.arange(maxn)
         return np.histogram2d(fs1.N,fs2.N,bins = bins)
     

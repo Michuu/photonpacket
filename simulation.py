@@ -5,12 +5,12 @@ import numpy as np
 
 import photonpacket as pp
 #%%
-nph = 5
+nph = 200
 p1 = 0.8
 p2 = 0.8
 d = 80
 shape = (d,d)
-Nframes = 10000
+Nframes = 500000
 frames1 = []
 frames2 = []
 Nphot = np.random.poisson(lam = nph, size = Nframes)
@@ -66,3 +66,6 @@ plt.clf()
 d=pp.accum.accumcoinc(fs1,fs2,method='bincount')
 plt.imshow(np.sum(d,axis=(0,1)))
 plt.show()
+#%%
+h=pp.stat1d.stat(fs1)
+pp.stat1d.plotstat(h)
