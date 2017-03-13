@@ -5,9 +5,11 @@ import numpy as np
 import time
 
 import photonpacket as pp
+pp.settings.verbose = 2
+pp.settings.overwrite = True
 #%%
-Nframes=500000
-f=pp.file.read('tests/pom9_03-tw10.00u-tmem0.00u-tr10.00u-tg35.00u-dw0.00G-dr6.02G-pw0.0m-pr0.0m-fs100x600-nf500k-T0-fB0-fT0k-II2.75-sr0.dat',Nframes=Nframes)
+Nframes=100000
+f=pp.file.read('/Users/michal/data/pom1_farSfarAS_Raman-AOMw441-nf300k-las11.0-tg4.55u-tw2.00u-tr2.00u-tmem250n-fs250x600-sr0.dat',Nframes=Nframes)
 # pom1_nearSnearAS-Raman-AOMw441-nf300k-las11.0-tg5.55u-tw3.00u-tr2.00u-tmem-250n-fs250x600-sr0.dat
 #f=pp.file.read('/Volumes/E/pom1_farSfarAS_Raman-AOMw441-nf300k-las11.0-tg4.55u-tw2.00u-tr2.00u-tmem250n-fs250x600-sr0.dat',Nframes=10000)
 fs=f.getframeseries()
@@ -21,10 +23,10 @@ plt.imshow(d)
 plt.show()
 #%%
 # selecting circles
-c1 = pp.circle(40,(50,135))
+c1 = pp.circle(40,(130,160))
 fs1 = c1.getframeseries(fs)
 
-c2 = pp.circle(40,(50,483))
+c2 = pp.circle(40,(135,440))
 fs2 = c2.getframeseries(fs)
 #%%
 # selecting rings
@@ -42,10 +44,10 @@ c2 = pp.ring(40,45,(50,283))
 fs2 = c2.getframeseries(fs, reshape=True)
 #%%
 # selecting circles with reshaping
-c1 = pp.circle(30,(80,135))
+c1 = pp.circle(40,(130,160))
 fs1 = c1.getframeseries(fs, reshape=True)
 
-c2 = pp.circle(30,(20,483))
+c2 = pp.circle(40,(135,440))
 fs2 = c2.getframeseries(fs, reshape=True)
 #%%
 # plotting with reshaping
@@ -72,7 +74,7 @@ c1.plot()
 c2.plot()
 d1=fs1.accumframes()
 d2=fs2.accumframes()
-plt.imshow(d2)
+plt.imshow(d1)
 plt.show()
 #%%
 print 'coinc'
@@ -128,7 +130,7 @@ plt.show()
 #%%
 d1=fs1.accumframes()
 d2=fs2.accumframes()
-signs=(False, True)
+signs=(True, True)
 d=pp.accum.coinchist(fs1,fs2,signs)
 dac=pp.accum.acchist(d1,d2,signs)
 #if not signs[0]:
@@ -187,3 +189,10 @@ print t3-t2
 #%%
 h=pp.stat1d.stat(fs2)
 pp.stat1d.plotstat(h)
+#%%
+from sys import stdout
+for i in range(1000000):
+    
+    if(i%100==0):
+        stdout.write("\rstep=%d" % i)
+        stdout.flush()

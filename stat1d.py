@@ -17,7 +17,7 @@ class stat1d:
             log = kwargs['log']
         else:
             log = False
-        plt.bar(h[1][:-1],h[0],log=log)
+        plt.bar(h[1][:-1], h[0], log=log)
       
     @staticmethod
     def mean(fs):
@@ -57,7 +57,7 @@ class stat1d:
         number of modes estimated assuming the photons are distributed thermally
         M = mean^2 / (variance - mean)
         '''
-        return stat1d.mean(fs)**2 / ( stat1d.var(fs) - stat1d.mean(fs) )
+        return stat1d.mean(fs)**2/(stat1d.var(fs)-stat1d.mean(fs))
     
     @staticmethod
     def nmodethermal(n, navg, M):

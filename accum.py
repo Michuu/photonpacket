@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import convolve2d
 from bincountnd import bincountnd
-
+from message import message, progress
 
 class accum:
 
@@ -28,9 +28,10 @@ class accum:
             i = 0
             cframes = []
             for frame in fs1.frames:
+                progress(i)
                 frame2 = fs2.frames[i]
                 if len(frame2) != 0 and len(frame) != 0:
-                    cframe=np.hstack((
+                    cframe = np.hstack((
                             np.dstack(np.meshgrid(frame[:, 0], frame2[:, 0])).reshape(-1, 2),
                             np.dstack(np.meshgrid(frame[:, 1], frame2[:, 1])).reshape(-1, 2)
                             ))
@@ -63,6 +64,7 @@ class accum:
         i = 0
         cframes = []
         for frame in fs.frames:
+            progress(i)
             aux_frame = np.array(frame)
             aux_frame2 = np.array(frame)
             mframe = r1.reshape(np.array(aux_frame[r1.getmask(aux_frame2)]))
@@ -84,11 +86,11 @@ class accum:
         '''
         fs1 and fs2 should rather be reshaped, and have the same number of frames
         '''
+        message('Generating coincidences', 1)
         i = 0
         cframes = []
         for frame in fs1.frames:
-            if i%10000==0:
-                print str(10+i/1000)+'k'
+            progress(i)
             frame2 = fs2.frames[i]
             if len(frame2) != 0 and len(frame) != 0:
                 #cframe = np.hstack((
@@ -108,6 +110,7 @@ class accum:
                         cframe2[:,1] = cfy[0].flatten() - cfy[1].flatten() + fs2.shape[1]
                 cframes.append(cframe2)
             i += 1
+        message("\nCounting coincidences", 1)
         accum = bincountnd(np.concatenate(cframes),(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1))
         return accum
     

@@ -9,7 +9,7 @@ class stat2d:
     # TODO: let instance of this class be a representation of joint statistics
     
     @staticmethod
-    @overload( frameseries, frameseries)
+    @overload(frameseries, frameseries)
     def joint(fs1,fs2):
         # TODO: resolve strange problem with empty data...
         stat2d.checkfs(fs1,fs2)
@@ -18,7 +18,7 @@ class stat2d:
         return np.histogram2d(fs1.N,fs2.N,bins = bins)
     
     @staticmethod
-    @overload( np.ndarray, np.ndarray)
+    @overload(np.ndarray, np.ndarray)
     def joint(N1, N2):
         # TODO: resolve strange problem with empty data...
         stat2d.checkcounts(N1,N2)
@@ -28,17 +28,17 @@ class stat2d:
 
 
     @staticmethod
-    def plotjoint(histogram,showvalues=True):
+    def plotjoint(histogram, showvalues=True):
         # TODO: choose counts or probabilites
         X, Y = np.meshgrid(histogram[1], histogram[2])
         plt.pcolormesh(X, Y, histogram[0])
         if showvalues:
             for i, v in np.ndenumerate(histogram[0]):
                 # FIXME: better text positioning
-                plt.text(i[0]+0.4,i[1]+0.4,"%d"%v)
+                plt.text(i[0]+0.4, i[1]+0.4, "%d"%v)
 
     @staticmethod
-    @overload( frameseries, frameseries)
+    @overload(frameseries, frameseries)
     def g2(fs1,fs2):
         stat2d.checkfs(fs1,fs2)
         avgprod = np.mean(fs1.N*fs2.N)
@@ -47,9 +47,9 @@ class stat2d:
         return avgprod/(avgfs1*avgfs2)
 
     @staticmethod
-    @overload( np.ndarray, np.ndarray)
+    @overload(np.ndarray, np.ndarray)
     def g2(N1,N2):
-        stat2d.checkcount(N1,N2)
+        stat2d.checkcount(N1, N2)
         avgprod = np.mean(N1*N2)
         avgfs1 = np.mean(N1)
         avgfs2 = np.mean(N2)
@@ -69,6 +69,15 @@ class stat2d:
     def checkcounts(N1,N2):
         if (N1.shape[0] != N2.shape[0]):
             raise FrameSeriesLenError()
+    
+    @staticmethod
+    def covar(fs1,fs2):
+        # covariance
+        pass
+    
+    def corr(fs1,fs2):
+        # normalized correlation coefficient
+        pass
     
     
     

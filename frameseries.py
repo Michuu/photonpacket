@@ -12,8 +12,10 @@ class frameseries:
         self.frameN = len(frames)
         self.shape = shape
         self.N = np.zeros((len(self.frames)))
+        # calculate photon numbers
         for i, frame in enumerate(self.frames):
             self.N[i] = int(frame.shape[0])
+        # cut to rectangular shape if requested
         if cut:
             self.cuttoshape(self.shape)
 
@@ -26,15 +28,18 @@ class frameseries:
         '''
 
         self.shape = shape
-        j=0
+        j = 0
         aux_frames = self.frames
         for frame in aux_frames:
-            mask0 = frame[:,0] < shape[0]
-            mask1 = frame[:,1] < shape[1]
+            # prepare mask to cut out photons outside rectangular shape
+            mask0 = frame[:, 0] < shape[0]
+            mask1 = frame[:, 1] < shape[1]
             mask = mask0 * mask1
+            # apply mask
             self.frames[j] = frame[mask]
+            # calculate total photon number
             self.N[j] = np.sum(mask)
-            j=j+1
+            j += 1
 
 
     def accumframes(self):
@@ -42,8 +47,10 @@ class frameseries:
         Accumulate photon through all frames
         :return: accumulated array
         '''
+        # concatenate all frames
         flat_fs = np.concatenate(self.frames)
-        accum = bincountnd(flat_fs,self.shape)
+        # count photons in each pixel
+        accum = bincountnd(flat_fs, self.shape)
         return accum
 
     def accumautocoinc(self):

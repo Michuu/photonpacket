@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from frameseries import frameseries
 
+
 class region:
 
     def __init__(self):
@@ -31,16 +32,14 @@ class region:
         for i, frame in enumerate(fs.frames):
             for photon in frame:
                 if self.isinregion((photon[0],photon[1])):
-                    N[i]=N[i]+1
+                    N[i] += 1
         return N
     
     def reshape(self, frame):
-        frame[:,0] = frame[:,0] - self.corner[0]
-        frame[:,1] = frame[:,1] - self.corner[1]
+        frame[:,0] -= self.corner[0]
+        frame[:,1] -= self.corner[1]
         return frame
-        
-
-
+     
 
 class circle(region):
     r = 0
@@ -49,10 +48,10 @@ class circle(region):
     shape = []
     corner = np.array([])
 
-    def __init__(self,r,(x0,y0)):
-        self.r=r
-        self.x0=x0
-        self.y0=y0
+    def __init__(self, r, (x0, y0)):
+        self.r = r
+        self.x0 = x0
+        self.y0 = y0
         self.shape = [2*r, 2*r]
         self.corner = np.array([self.x0-self.r, self.y0-self.r])
 
@@ -65,14 +64,14 @@ class circle(region):
         ax.add_artist(c1)
 
     def r2dist(self,R):
-        return (self.x0-R[0])**2+(self.y0-R[1])**2
+        return (self.x0-R[0])**2 + (self.y0-R[1])**2
 
     def isinregion(self,R):
-        return (self.r2dist(R)<self.r**2)
+        return (self.r2dist(R) < self.r**2)
                      
     def getmask(self, frame):
-        frame[:,0] = frame[:,0] - self.x0
-        frame[:,1] = frame[:,1] - self.y0
+        frame[:, 0] -= self.x0
+        frame[:, 1] -= self.y0
         mask = np.sum(frame**2,axis=1) < self.r**2
         return mask
         
@@ -85,10 +84,10 @@ class rect(region):
     y1 = 0
 
     def __init__(self,(x0,y0),(x1,y1)):
-        self.x0=x0
-        self.y0=y0
-        self.x1=x1
-        self.y1=y1
+        self.x0 = x0
+        self.y0 = y0
+        self.x1 = x1
+        self.y1 = y1
 
     def plot(self):
         v1 = np.array([[self.x0,self.x1],[self.y0,self.y0]])
@@ -123,10 +122,10 @@ class ring(region):
     
 
     def __init__(self,r1,r2,(x0,y0)):
-        self.r1=r1
-        self.r2=r2
-        self.x0=x0
-        self.y0=y0
+        self.r1 = r1
+        self.r2 = r2
+        self.x0 = x0
+        self.y0 = y0
         self.shape = [2*r2, 2*r2]
         self.corner = np.array([self.x0-self.r2,self.y0-self.r2])
 
@@ -167,11 +166,11 @@ class ellpise(region):
     
 
     def __init__(self,a,b,(x0,y0),angle):
-        self.a=b
-        self.a=b
-        self.x0=x0
-        self.y0=y0
-        self.angle=angle
+        self.a = b
+        self.a = b
+        self.x0 = x0
+        self.y0 = y0
+        self.angle = angle
         # TODO: rewrite shape calc
         self.shape = [2*a, 2*b]
         # TODO: rewrite corner calc

@@ -2,6 +2,7 @@ import numpy as np
 from frameseries import frameseries
 import re
 import os
+from message import message, progress
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 class file:
@@ -13,10 +14,10 @@ class file:
     name = ''
     path = ''
 
-    def __init__(self,path,name):
+    def __init__(self, path,name):
         self.name = name
         self.frames = []
-        
+
     @staticmethod
     def read(path, **kwargs):
         '''
@@ -24,68 +25,85 @@ class file:
         :param name: file name
         :return: instance of class File
         '''
-        
+        # extract name of the file from the path
         name = os.path.split(path)[-1]
+        # remove file extension
         name = os.path.splitext(name)[0]
-        
-        self=file(path,name)
-        
+
+        # create file instance
+        self = file(path, name)
+
+        # try to obtain shape from file name
         try:
             shape = self.getshape()
             if isinstance(shape, np.ndarray):
                 shapedetect = False
             else:
                 shapedetect = True
+        # if not possible, plan for shape detection
         except:
             shapedetect = True
             
-
+        # try to extract number of frames from file
+        # if number given both in filename and as argument
         if 'Nframes' in kwargs and self.getattribute('Nf'):
-              maxframes = min(kwargs['Nframes'], int(self.getattribute('Nf')))
-              frames_limit = True
+            maxframes = min(kwargs['Nframes'], int(self.getattribute('Nf')))
+            frames_limit = True
+        # number given only by argument
         elif 'Nframes' in kwargs:
-              maxframes = kwargs['Nframes']
-              frames_limit = True
+            maxframes = kwargs['Nframes']
+            frames_limit = True
+        # number given only in filename
         elif self.getattribute('Nf'):
-              maxframes = self.getattribute('Nf')
-              frames_limit = True        
+            maxframes = self.getattribute('Nf')
+            frames_limit = True
+        # number not given, turn off frame number limit
         else:
-              maxframes = 0
-              frames_limit = False
-              
-        nframes=0
-        f=open(path,'rb')
+            maxframes = 0
+            frames_limit = False
+
+        nframes = 0
+        # open file for binary reading
+        f = open(path,'rb')
 
         while(True):
-            nxy=np.fromfile(f,'>i4',2)
-            if nxy.size==0 or (nframes >= maxframes and frames_limit):
+            # read number of photons in a frame
+            # nxy = (number of photons, information per photon)
+            nxy = np.fromfile(f,'>i4', 2)
+            # break if file ended or acquired enough frames
+            if nxy.size == 0 or (nframes >= maxframes and frames_limit):
                 break
             N = np.prod(nxy)
-            nframes = nframes+1
+            nframes += 1
+            # read frame data
             img = np.fromfile(f,'>u2',N)
 
             if N != 0:
                 # dzielenie przez 10, nie wiadomo za bardzo czemu!
                 # TODO: automatic detection of /10 division
                 # TODO: possibility of getting other info about photons
-                frame=np.reshape(img/10,nxy)[:,:2]
+                # extract only photon positions
+                frame = np.reshape(img/10,nxy)[:, :2]
                 self.frames.append(frame)
             # if shapedetect: TODO: implement shape detection
+        # close file access
         f.close()
         self.Nframes = nframes
-        print 'Read ' + str(nframes) + ' frames'
+        message('Read ' + str(nframes) + ' frames', 1)
         self.shape = shape
         return self
 
     def getframeseries(self):
         if self.frames:
-            return frameseries(self.frames,self.shape)
+            return frameseries(self.frames, self.shape)
     
     def getshape(self):
+        # search for shape info in a string
         s = re.search(r"-fs(?P<x>\d+)x(?P<y>\d+)", self.name)
         try:
+            # extract x and y dimensions
             if s.group('x') and s.group('y'):
-                return np.array([int(s.group('x')),int(s.group('y'))])
+                return np.array([int(s.group('x')), int(s.group('y'))])
             else:
                 return False
         except AttributeError:
@@ -94,6 +112,8 @@ class file:
             return False
     
     def getattribute(self, attr):
+        # search for a given attribute 
+        # pattern: (attribute_name)[number,dots,+-][optionalsi prefix]
         pattern = r"-" + attr + "(?P<attr>[\d.]+)(?P<si>[yafnumkMGTZ]{,1})"
         s = re.search(pattern, self.name)
         try:
@@ -111,10 +131,10 @@ class file:
     @staticmethod
     def siprefix(prefix):
         # we will not be using da (deca)
-        prefixes = {'y' : 1e-24, 'z' : 1e-21, 'a' : 1e-18, 'f' : 1e-15, 'p' : 1e-12,
-                    'n' : 1e-9, 'u' : 1e-6, 'm' : 1e-3, 'k' : 1e3,
-                    'M' : 1e6, 'G' : 1e9, 'T' : 1e12, 'c' : 1e-2, 'd' : 1e-1,
-                    'P' : 1e15, 'E' : 1e18, 'Z' : 1e21, 'Y' : 1e24}
+        prefixes = {'y': 1e-24, 'z': 1e-21, 'a': 1e-18, 'f': 1e-15, 'p': 1e-12,
+                    'n': 1e-9, 'u': 1e-6, 'm': 1e-3, 'k': 1e3,
+                    'M': 1e6, 'G': 1e9, 'T': 1e12, 'c': 1e-2, 'd': 1e-1,
+                    'P': 1e15, 'E': 1e18, 'Z': 1e21, 'Y': 1e24}
         if prefix in prefixes:
             return prefixes[prefix]
         else:
@@ -168,6 +188,3 @@ class file:
             i=i+1
         return sparse_accum.toarray()
     '''
-        
-
-
