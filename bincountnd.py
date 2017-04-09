@@ -4,6 +4,27 @@ import numpy as np
 def bincountnd(array, shape):
     '''
     Multidimensional histogram
+    
+    Parameters
+    ---------
+    array : :class:`numpy.ndarray`
+            Array of something
+        
+    Returns
+    ----------
+            
+    See Also
+    ----------
+         
+    Notes
+    ----------
+    
+    References
+    ----------
+    
+    Examples
+    ----------
+    
     '''
     #if len(shape)==2:
     #    return bincount2d(array,shape)

@@ -10,12 +10,12 @@ class stat2d:
     
     @staticmethod
     @overload(frameseries, frameseries)
-    def joint(fs1,fs2):
+    def joint(fs1, fs2, normed=False):
         # TODO: resolve strange problem with empty data...
         stat2d.checkfs(fs1,fs2)
         maxn = max(np.max(fs1.N)+1,np.max(fs2.N)+1)
         bins = np.arange(maxn)
-        return np.histogram2d(fs1.N,fs2.N,bins = bins)
+        return np.histogram2d(fs1.N, fs2.N, bins = bins, normed=normed)
     
     @staticmethod
     @overload(np.ndarray, np.ndarray)
@@ -35,7 +35,7 @@ class stat2d:
         if showvalues:
             for i, v in np.ndenumerate(histogram[0]):
                 # FIXME: better text positioning
-                plt.text(i[0]+0.4, i[1]+0.4, "%d"%v)
+                plt.text(i[1]+0.4, i[0]+0.4, "%d"%v)
 
     @staticmethod
     @overload(frameseries, frameseries)

@@ -61,6 +61,9 @@ class accum:
             
     @staticmethod
     def accumcoincinplace(fs,r1,r2):
+        '''
+        
+        '''
         i = 0
         cframes = []
         for frame in fs.frames:
@@ -125,4 +128,4 @@ class accum:
         if not signs[1]:
               h2=np.flip(h2,axis=1)
         return convolve2d(h1,h2)/div
-            
+    

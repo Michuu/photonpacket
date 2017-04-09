@@ -8,7 +8,7 @@ import photonpacket as pp
 pp.settings.verbose = 2
 pp.settings.overwrite = True
 #%%
-Nframes=100000
+Nframes=10000
 f=pp.file.read('/Users/michal/data/pom1_farSfarAS_Raman-AOMw441-nf300k-las11.0-tg4.55u-tw2.00u-tr2.00u-tmem250n-fs250x600-sr0.dat',Nframes=Nframes)
 # pom1_nearSnearAS-Raman-AOMw441-nf300k-las11.0-tg5.55u-tw3.00u-tr2.00u-tmem-250n-fs250x600-sr0.dat
 #f=pp.file.read('/Volumes/E/pom1_farSfarAS_Raman-AOMw441-nf300k-las11.0-tg4.55u-tw2.00u-tr2.00u-tmem250n-fs250x600-sr0.dat',Nframes=10000)
@@ -44,10 +44,10 @@ c2 = pp.ring(40,45,(50,283))
 fs2 = c2.getframeseries(fs, reshape=True)
 #%%
 # selecting circles with reshaping
-c1 = pp.circle(40,(130,160))
+c1 = pp.circle(5,(130,160))
 fs1 = c1.getframeseries(fs, reshape=True)
 
-c2 = pp.circle(40,(135,440))
+c2 = pp.circle(5,(135,440))
 fs2 = c2.getframeseries(fs, reshape=True)
 #%%
 # plotting with reshaping
@@ -95,19 +95,19 @@ plt.show()
 print m2-m1
 print m4-m3
 #%%
-print 'coinc'
-c1 = pp.circle(40,(130,160))
-c2 = pp.circle(40,(135,440))
+#print 'coinc'
+#c1 = pp.circle(40,(130,160))
+#c2 = pp.circle(40,(135,440))
 
-m1=int(round(time.time() * 1000))
-fs1 = c1.getframeseries(fs, reshape=True)
-fs2 = c2.getframeseries(fs, reshape=True)
-d=pp.accum.accumcoinc(fs1,fs2)
-m2=int(round(time.time() * 1000))
+#m1=int(round(time.time() * 1000))
+#fs1 = c1.getframeseries(fs, reshape=True)
+#fs2 = c2.getframeseries(fs, reshape=True)
+d=pp.accum.accumcoinc(fs1,fs1)
+#m2=int(round(time.time() * 1000))
 
 plt.imshow(np.sum(d,axis=(0,1)))
 plt.show()
-
+#%%
 
 m3=int(round(time.time() * 1000))
 d=pp.accum.accumcoincinplace(fs,c1,c2)
@@ -119,6 +119,13 @@ plt.show()
 print m2-m1
 print m4-m3
 #%%
+
+c1 = pp.circle(5,(135,160))
+fs1 = c1.getframeseries(fs, reshape=True)
+
+c2 = pp.circle(5,(135,440))
+fs2 = c2.getframeseries(fs, reshape=True)
+
 print 'calculating statistics'
 print pp.stat2d.g2(fs1,fs2)
 H=pp.stat2d.joint(fs1,fs2)
@@ -128,10 +135,10 @@ print H[0][1,0]
 print H[0][1,1]
 plt.show()
 #%%
-d1=fs1.accumframes()
+d1=fs2.accumframes()
 d2=fs2.accumframes()
-signs=(True, True)
-d=pp.accum.coinchist(fs1,fs2,signs)
+signs=(0,0)
+d=pp.accum.coinchist(fs2,fs2,signs)
 dac=pp.accum.acchist(d1,d2,signs)
 #if not signs[0]:
 #    d2=np.flip(d2,axis=0)
@@ -139,7 +146,8 @@ dac=pp.accum.acchist(d1,d2,signs)
 #    d2=np.flip(d2,axis=1)
 #dac=convolve2d(d1,d2)
 dac=dac/float(fs1.len())
-plt.imshow(d-dac)
+#plt.imshow(d-dac)
+plt.plot(np.sum(d-dac,axis=0))
 plt.show()
 #%%
 plt.imshow(dac)
@@ -190,9 +198,5 @@ print t3-t2
 h=pp.stat1d.stat(fs2)
 pp.stat1d.plotstat(h)
 #%%
-from sys import stdout
-for i in range(1000000):
-    
-    if(i%100==0):
-        stdout.write("\rstep=%d" % i)
-        stdout.flush()
+plt.plot(np.sum(d,axis=0))
+plt.plot(np.sum(dac,axis=0))

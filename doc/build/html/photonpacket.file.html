@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>photonpacket.file module &#8212; photonpacket 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="photonpacket.exceptions module" href="photonpacket.exceptions.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="photonpacket.exceptions.html" title="photonpacket.exceptions module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">photonpacket 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-photonpacket.file">
+<span id="photonpacket-file-module"></span><h1>photonpacket.file module<a class="headerlink" href="#module-photonpacket.file" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="photonpacket.file.file">
+<em class="property">class </em><code class="descclassname">photonpacket.file.</code><code class="descname">file</code><span class="sig-paren">(</span><em>path</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.file.file.getattribute" title="photonpacket.file.file.getattribute"><code class="xref py py-obj docutils literal"><span class="pre">getattribute</span></code></a>(attr)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.file.file.getframeseries" title="photonpacket.file.file.getframeseries"><code class="xref py py-obj docutils literal"><span class="pre">getframeseries</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.file.file.getshape" title="photonpacket.file.file.getshape"><code class="xref py py-obj docutils literal"><span class="pre">getshape</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.file.file.read" title="photonpacket.file.file.read"><code class="xref py py-obj docutils literal"><span class="pre">read</span></code></a>(path,&nbsp;**kwargs)</td>
+<td>Parameters</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.file.file.siprefix" title="photonpacket.file.file.siprefix"><code class="xref py py-obj docutils literal"><span class="pre">siprefix</span></code></a>(prefix)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="photonpacket.file.file.Nframes">
+<code class="descname">Nframes</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.file.file.Nframes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.file.file.accum">
+<code class="descname">accum</code><em class="property"> = []</em><a class="headerlink" href="#photonpacket.file.file.accum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.file.file.frames">
+<code class="descname">frames</code><em class="property"> = []</em><a class="headerlink" href="#photonpacket.file.file.frames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.file.file.getattribute">
+<code class="descname">getattribute</code><span class="sig-paren">(</span><em>attr</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.getattribute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.file.file.getframeseries">
+<code class="descname">getframeseries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.getframeseries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.file.file.getshape">
+<code class="descname">getshape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.getshape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.file.file.name">
+<code class="descname">name</code><em class="property"> = ''</em><a class="headerlink" href="#photonpacket.file.file.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.file.file.path">
+<code class="descname">path</code><em class="property"> = ''</em><a class="headerlink" href="#photonpacket.file.file.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="photonpacket.file.file.read">
+<em class="property">static </em><code class="descname">read</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.read" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>path <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>path to file, passed to <a class="reference external" href="https://docs.python.org/2/library/functions.html#open" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">open()</span></code></a></dd>
+<dt>Nframes <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>number of frames to read</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>file</strong> : <a class="reference internal" href="#photonpacket.file.file" title="photonpacket.file.file"><code class="xref py py-class docutils literal"><span class="pre">file</span></code></a></p>
+<blockquote class="last">
+<div><p>instance of <a class="reference internal" href="#photonpacket.file.file" title="photonpacket.file.file"><code class="xref py py-class docutils literal"><span class="pre">file</span></code></a> class</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="photonpacket.file.file.siprefix">
+<em class="property">static </em><code class="descname">siprefix</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.siprefix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="photonpacket.exceptions.html"
+                        title="previous chapter">photonpacket.exceptions module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/photonpacket.file.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="photonpacket.exceptions.html" title="photonpacket.exceptions module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">photonpacket 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Quantum Memories Laboratory.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.4.
+    </div>
+  </body>
+</html>

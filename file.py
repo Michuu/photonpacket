@@ -21,9 +21,29 @@ class file:
     @staticmethod
     def read(path, **kwargs):
         '''
-        Read file to memory
-        :param name: file name
-        :return: instance of class File
+        
+        Parameters
+        ---------
+        path : string
+            path to file, passed to :func:`open`
+        Nframes : int
+            number of frames to read
+            
+        Returns
+        ---------
+        file : :class:`file`
+            instance of :class:`file` class
+            
+        Notes
+        ---------
+        
+        References
+        ---------
+        
+        Examples
+        ---------
+            
+        
         '''
         # extract name of the file from the path
         name = os.path.split(path)[-1]
