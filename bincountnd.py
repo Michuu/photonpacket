@@ -8,16 +8,24 @@ def bincountnd(array, shape):
     Parameters
     ---------
     array : :class:`numpy.ndarray`
-            Array of something
+            2D array, first dimension being the coordinates, second subsequent counts
+        
+    shape : tuple of ints
+            list of sizes of dimensions    
         
     Returns
     ----------
+    histogram : :class:`numpy.ndarray`
+            histogram of counts
             
     See Also
     ----------
          
     Notes
     ----------
+    This function is a wrapper around :func:`numpy.histogramdd` function, 
+    generating a set o simple unity bins. Thus, the behaviour of this function 
+    mimics :func:`numpy.bincount` in many dimensions.
     
     References
     ----------

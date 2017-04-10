@@ -15,6 +15,27 @@ class region:
         pass
 
     def getframeseries(self,fs,reshape = False):
+        '''
+        Select photon in region and obtain frameseries
+        
+        Parameters
+        ---------
+        fs : :class:`photonpacket.frameseries`
+        
+        reshape :  bool
+            
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         frames = []
         for frame in fs.frames:
             aux_frame = np.array(frame, dtype = np.uint32)
@@ -28,6 +49,27 @@ class region:
               return frameseries(frames, fs.shape, cut=True)
 
     def getcounts(self,fs):
+        '''
+        Get total photon number in each frame
+        
+        Parameters
+        ---------
+        fs : :class:`photonpacket.frameseries`
+            
+        Returns
+        ---------
+        counts : :class:`numpy.ndarray`
+            1D array of counts
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         N=np.zeros((len(fs.frames)))
         for i, frame in enumerate(fs.frames):
             for photon in frame:
@@ -36,12 +78,36 @@ class region:
         return N
     
     def reshape(self, frame):
+        '''
+        Reshape frane to gave (0,0) bottom-left corener
+        
+        Parameters
+        ---------
+        frane : :class:`numpy.ndarray`
+            
+        Returns
+        ---------
+        counts : :class:`numpy.ndarray`
+            photon frame
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         frame[:,0] -= self.corner[0]
         frame[:,1] -= self.corner[1]
         return frame
      
 
 class circle(region):
+    '''
+    Circle region
+    '''
     r = 0
     x0 = 0
     y0 = 0
@@ -77,6 +143,9 @@ class circle(region):
         
 
 class rect(region):
+    '''
+    Rectangle region
+    '''
     # TODO: add rotation angle?
     x0 = 0
     y0 = 0
@@ -113,6 +182,9 @@ class rect(region):
         return mask1 * mask2 * mask3 * mask4
 
 class ring(region):
+    '''
+    Ring region
+    '''
     r1 = 0
     r2 = 0
     x0 = 0
@@ -155,6 +227,9 @@ class ring(region):
             
 
 class ellpise(region):
+    '''
+    Ellipse region
+    '''
     a = 0
     b = 0
     x0 = 0
@@ -193,6 +268,9 @@ class ellpise(region):
         pass
     
 class halfcircle(region):
+    '''
+    Halfcircle region
+    '''
     r1 = 0
     angle = 0
     x0 = 0

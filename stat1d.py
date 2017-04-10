@@ -69,7 +69,7 @@ class stat1d:
         
         Parameters
         ----------
-        fs : frameseries
+        fs : :class:`photonpacket.frameseries`
             Series of photon frames
         
         Returns
@@ -109,7 +109,7 @@ class stat1d:
         
         Parameters
         ----------
-        fs : frameseries
+        fs : :class:`photonpacket.frameseries`
             Series of photon frames
         
         Returns

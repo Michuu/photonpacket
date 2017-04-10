@@ -6,6 +6,9 @@ from exceptions import FrameSeriesLenError
 overload = multimethod
 
 class stat2d:
+    '''
+    Class for 2D statistics
+    '''
     # TODO: let instance of this class be a representation of joint statistics
     
     @staticmethod
@@ -72,7 +75,9 @@ class stat2d:
     
     @staticmethod
     def covar(fs1,fs2):
-        # covariance
+        '''
+        Photon number covariance
+        '''
         pass
     
     def corr(fs1,fs2):

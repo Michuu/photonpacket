@@ -55,7 +55,8 @@
 <span class="target" id="module-photonpacket.accum"></span><dl class="class">
 <dt id="photonpacket.accum.accum">
 <em class="property">class </em><code class="descclassname">photonpacket.accum.</code><code class="descname">accum</code><a class="headerlink" href="#photonpacket.accum.accum" title="Permalink to this definition">¶</a></dt>
-<dd><p class="rubric">Methods</p>
+<dd><p>histogram generation from frameseries</p>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -63,48 +64,138 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="#photonpacket.accum.accum.acchist" title="photonpacket.accum.accum.acchist"><code class="xref py py-obj docutils literal"><span class="pre">acchist</span></code></a>(h1,&nbsp;h2,&nbsp;signs,&nbsp;**kwargs)</td>
-<td></td>
+<td>Obtain accidential coincidences histogram</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#photonpacket.accum.accum.accumcoinc" title="photonpacket.accum.accum.accumcoinc"><code class="xref py py-obj docutils literal"><span class="pre">accumcoinc</span></code></a>(fs1,&nbsp;fs2[,&nbsp;method])</td>
-<td></td>
+<td>Accumulate coincidences</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#photonpacket.accum.accum.accumcoincinplace" title="photonpacket.accum.accum.accumcoincinplace"><code class="xref py py-obj docutils literal"><span class="pre">accumcoincinplace</span></code></a>(fs,&nbsp;r1,&nbsp;r2)</td>
-<td></td>
+<td>Accumulate coincidences with simultaneous region selection</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#photonpacket.accum.accum.accumframes" title="photonpacket.accum.accum.accumframes"><code class="xref py py-obj docutils literal"><span class="pre">accumframes</span></code></a>(fs)</td>
 <td>Accumulate photon through all frames</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#photonpacket.accum.accum.coinchist" title="photonpacket.accum.accum.coinchist"><code class="xref py py-obj docutils literal"><span class="pre">coinchist</span></code></a>(fs1,&nbsp;fs2,&nbsp;signs)</td>
-<td>fs1 and fs2 should rather be reshaped, and have the same number of frames</td>
+<td>Obtain coincidence histogram</td>
 </tr>
 </tbody>
 </table>
 <dl class="staticmethod">
 <dt id="photonpacket.accum.accum.acchist">
 <em class="property">static </em><code class="descname">acchist</code><span class="sig-paren">(</span><em>h1</em>, <em>h2</em>, <em>signs</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.accum.accum.acchist" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Obtain accidential coincidences histogram</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>h1</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote>
+<div><p>first photon counts histogram</p>
+</div></blockquote>
+<p><strong>h2</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote>
+<div><p>second photon counts histogram</p>
+</div></blockquote>
+<p><strong>signs</strong> : tuple of booleans</p>
+<p><strong>Nframes</strong> : int</p>
+<blockquote class="last">
+<div><p>number of frames</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="photonpacket.accum.accum.accumcoinc">
 <em class="property">static </em><code class="descname">accumcoinc</code><span class="sig-paren">(</span><em>fs1</em>, <em>fs2</em>, <em>method='bincount'</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.accum.accum.accumcoinc" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Accumulate coincidences</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fs1</strong> : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<blockquote>
+<div><p>Series of photon frames</p>
+</div></blockquote>
+<p><strong>fs2</strong> : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<blockquote>
+<div><p>Series of photon frames</p>
+</div></blockquote>
+<p><strong>signs</strong> : tuple of two booleans</p>
+<blockquote>
+<div><p>Signs</p>
+</div></blockquote>
+<p><strong>method</strong> : bincount or accum</p>
+<blockquote>
+<div><p>Method</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>coinchist</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="photonpacket.accum.accum.accumcoincinplace">
 <em class="property">static </em><code class="descname">accumcoincinplace</code><span class="sig-paren">(</span><em>fs</em>, <em>r1</em>, <em>r2</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.accum.accum.accumcoincinplace" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Accumulate coincidences with simultaneous region selection</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fs1</strong> : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<p><strong>fs2</strong> : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<p class="last"><strong>signs :</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="photonpacket.accum.accum.accumframes">
 <em class="property">static </em><code class="descname">accumframes</code><span class="sig-paren">(</span><em>fs</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.accum.accum.accumframes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Accumulate photon through all frames
-:return: accumulated array</p>
+<dd><p>Accumulate photon through all frames</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fs</strong> : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<blockquote>
+<div><p>Series of photon frames</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>accum</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>photon counts histogram</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="photonpacket.accum.accum.coinchist">
 <em class="property">static </em><code class="descname">coinchist</code><span class="sig-paren">(</span><em>fs1</em>, <em>fs2</em>, <em>signs</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.accum.accum.coinchist" title="Permalink to this definition">¶</a></dt>
-<dd><p>fs1 and fs2 should rather be reshaped, and have the same number of frames</p>
+<dd><p>Obtain coincidence histogram</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fs1</strong> : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<p><strong>fs2</strong> : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<p class="last"><strong>signs :</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

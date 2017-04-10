@@ -8,6 +8,29 @@ class frameseries:
     frameN = 0
 
     def __init__(self, frames, shape, cut = True):
+        '''
+        Create `frameseries` object from array of frames
+        
+        Parameters
+        ---------
+        frames : :class:`numpy.ndarray`
+            
+        shape : tuple
+            
+        cut : bool
+            
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         self.frames = frames
         self.frameN = len(frames)
         self.shape = shape
@@ -20,11 +43,25 @@ class frameseries:
             self.cuttoshape(self.shape)
 
 
-    def cuttoshape(self,shape):
+    def cuttoshape(self, shape):
         '''
-        Delete out-of-bound photons
-        :param frameshape: shape of frame, tuple ((x0,y0),(x1,y1))
-        :return: none
+        Cut frames to shape
+        
+        Parameters
+        ---------
+        shape :            
+            
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
         '''
 
         self.shape = shape
@@ -44,8 +81,25 @@ class frameseries:
 
     def accumframes(self):
         '''
-        Accumulate photon through all frames
-        :return: accumulated array
+        Accumulate all photons from frames
+        
+        Parameters
+        ---------
+        fs1 : 
+            
+            
+        Returns
+        ---------
+        accum : :class:`numpy.ndarray`
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
         '''
         # concatenate all frames
         flat_fs = np.concatenate(self.frames)
@@ -54,6 +108,24 @@ class frameseries:
         return accum
 
     def accumautocoinc(self):
+        '''
+        Accumulate autocoincidences
+        
+        Parameters
+        ---------
+
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         i=0
         accum=np.zeros(
                 shape=(self.shape[0],self.shape[0],self.shape[1],self.shape[1])
@@ -72,16 +144,94 @@ class frameseries:
         return accum
   
     def rotate(self, angle, **kwargs):
+        '''
+        Rotate coordinate system
+        
+        Parameters
+        ---------
+        angle :
+            
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         # TODO: implement rotation
         pass
     
     def rescale(self, factor, axis, **kwargs):
+        '''
+        Rescale coordinate system
+        
+        Parameters
+        ---------
+        factor :
+            
+        axis :
+            
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         # TODO: implement scaling
         pass
     
     def len(self):
+        '''
+        Get total length fo series of frames `frameN`
+        
+        Parameters
+        ---------
+
+            
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         return self.frameN
     
     def shift(self, n):
+        '''
+        Shift frames
+        
+        Parameters
+        ---------
+        n : 
+            
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         # TODO: implement shifting of frames
         pass

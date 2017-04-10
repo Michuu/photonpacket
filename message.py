@@ -3,10 +3,16 @@ import settings
 from sys import stdout
 
 def message(str, v):
+    '''
+    Print message if verbosity is sufficient
+    '''
     if v <= settings.verbose:
         print(str)
 
 def progress(i):
+    '''
+    Display progress message
+    '''
     if settings.verbose == 0:
         pass
     elif settings.verbose == 1 and i % 100000 == 0:
@@ -19,6 +25,9 @@ def progress(i):
         pass
     
 def progressmessage(str):
+    '''
+    Print progress message
+    '''
     if settings.overwrite:
         stdout.write("\rprogress=%s" % str)
         stdout.flush()

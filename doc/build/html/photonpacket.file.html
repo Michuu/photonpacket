@@ -63,19 +63,19 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="#photonpacket.file.file.getattribute" title="photonpacket.file.file.getattribute"><code class="xref py py-obj docutils literal"><span class="pre">getattribute</span></code></a>(attr)</td>
-<td></td>
+<td>Get value for a given attribute in filename</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#photonpacket.file.file.getframeseries" title="photonpacket.file.file.getframeseries"><code class="xref py py-obj docutils literal"><span class="pre">getframeseries</span></code></a>()</td>
-<td></td>
+<td>Get <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a> from <a class="reference internal" href="#photonpacket.file.file" title="photonpacket.file.file"><code class="xref py py-class docutils literal"><span class="pre">file</span></code></a></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#photonpacket.file.file.getshape" title="photonpacket.file.file.getshape"><code class="xref py py-obj docutils literal"><span class="pre">getshape</span></code></a>()</td>
-<td></td>
+<td>Get shape of frame</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#photonpacket.file.file.read" title="photonpacket.file.file.read"><code class="xref py py-obj docutils literal"><span class="pre">read</span></code></a>(path,&nbsp;**kwargs)</td>
-<td>Parameters</td>
+<td>Read photon data file</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#photonpacket.file.file.siprefix" title="photonpacket.file.file.siprefix"><code class="xref py py-obj docutils literal"><span class="pre">siprefix</span></code></a>(prefix)</td>
-<td></td>
+<td>Obtain SI prefix factor from string prefix</td>
 </tr>
 </tbody>
 </table>
@@ -97,17 +97,58 @@
 <dl class="method">
 <dt id="photonpacket.file.file.getattribute">
 <code class="descname">getattribute</code><span class="sig-paren">(</span><em>attr</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.getattribute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get value for a given attribute in filename</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>attr</strong> : string</p>
+<blockquote>
+<div><p>attribute name</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>val</strong> : int or float</p>
+<blockquote class="last">
+<div><p>attribute value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="photonpacket.file.file.getframeseries">
 <code class="descname">getframeseries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.getframeseries" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a> from <a class="reference internal" href="#photonpacket.file.file" title="photonpacket.file.file"><code class="xref py py-class docutils literal"><span class="pre">file</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fs</strong> : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="photonpacket.file.file.getshape">
 <code class="descname">getshape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.getshape" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get shape of frame</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>shape</strong> : tuple</p>
+<blockquote class="last">
+<div><p>shape of frame</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="photonpacket.file.file.name">
@@ -122,17 +163,22 @@
 <dl class="staticmethod">
 <dt id="photonpacket.file.file.read">
 <em class="property">static </em><code class="descname">read</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.read" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>path <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
-<dd>path to file, passed to <a class="reference external" href="https://docs.python.org/2/library/functions.html#open" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">open()</span></code></a></dd>
-<dt>Nframes <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>number of frames to read</dd>
-</dl>
+<dd><p>Read photon data file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>file</strong> : <a class="reference internal" href="#photonpacket.file.file" title="photonpacket.file.file"><code class="xref py py-class docutils literal"><span class="pre">file</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path</strong> : string</p>
+<blockquote>
+<div><p>path to file, passed to <a class="reference external" href="https://docs.python.org/2/library/functions.html#open" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">open()</span></code></a></p>
+</div></blockquote>
+<p><strong>Nframes</strong> : int</p>
+<blockquote>
+<div><p>number of frames to read</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>file</strong> : <a class="reference internal" href="#photonpacket.file.file" title="photonpacket.file.file"><code class="xref py py-class docutils literal"><span class="pre">file</span></code></a></p>
 <blockquote class="last">
 <div><p>instance of <a class="reference internal" href="#photonpacket.file.file" title="photonpacket.file.file"><code class="xref py py-class docutils literal"><span class="pre">file</span></code></a> class</p>
 </div></blockquote>
@@ -140,13 +186,28 @@
 </tr>
 </tbody>
 </table>
-<p class="rubric">Notes</p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="photonpacket.file.file.siprefix">
 <em class="property">static </em><code class="descname">siprefix</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.file.file.siprefix" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Obtain SI prefix factor from string prefix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prefix</strong> : string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>factor</strong> : double</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">siprefix</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">)</span>
+<span class="go">1e-9</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </dd></dl>
 

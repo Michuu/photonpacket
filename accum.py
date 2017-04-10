@@ -3,13 +3,28 @@ from scipy.signal import convolve2d
 from bincountnd import bincountnd
 from message import message, progress
 
-class accum:
 
+class accum:
+    '''
+    histogram generation from frameseries
+    
+    '''
+    
     @staticmethod
     def accumframes(fs):
         '''
         Accumulate photon through all frames
-        :return: accumulated array
+        
+        Parameters
+        ----------
+        fs : :class:`photonpacket.frameseries`
+                Series of photon frames
+                
+        Returns
+        ---------
+        accum : :class:`numpy.ndarray`
+            photon counts histogram
+        
         '''
         # should this function really be here??
         # also TODO: update to vectorized version
@@ -24,6 +39,36 @@ class accum:
 
     @staticmethod
     def accumcoinc(fs1, fs2, method='bincount'):
+        '''
+        Accumulate coincidences
+        
+        Parameters
+        ----------
+        fs1 : :class:`photonpacket.frameseries`
+                Series of photon frames
+                
+        fs2 : :class:`photonpacket.frameseries`
+                Series of photon frames
+                
+        signs : tuple of two booleans
+                Signs
+                
+        method : bincount or accum
+                Method
+                
+        Returns
+        ----------
+        coinchist : :class:`numpy.ndarray`
+        
+        See Also
+        ----------
+        
+        Notes
+        ----------
+        
+        Examples
+        ----------
+        '''
         if method == 'bincount':
             i = 0
             cframes = []
@@ -62,7 +107,27 @@ class accum:
     @staticmethod
     def accumcoincinplace(fs,r1,r2):
         '''
+        Accumulate coincidences with simultaneous region selection
         
+        Parameters
+        ----------
+        fs1 : :class:`photonpacket.frameseries`
+            
+        fs2 : :class:`photonpacket.frameseries`
+            
+        signs : 
+            
+        Returns
+        ----------
+        
+        See Also
+        ----------
+        
+        Notes
+        ----------
+        
+        Examples
+        ----------
         '''
         i = 0
         cframes = []
@@ -87,7 +152,27 @@ class accum:
     @staticmethod
     def coinchist(fs1,fs2,signs):
         '''
-        fs1 and fs2 should rather be reshaped, and have the same number of frames
+        Obtain coincidence histogram
+        
+        Parameters
+        ----------
+        fs1 : :class:`photonpacket.frameseries`
+            
+        fs2 : :class:`photonpacket.frameseries`
+            
+        signs : 
+            
+        Returns
+        ----------
+        
+        See Also
+        ----------
+        
+        Notes
+        ----------
+        
+        Examples
+        ----------
         '''
         message('Generating coincidences', 1)
         i = 0
@@ -119,6 +204,34 @@ class accum:
     
     @staticmethod
     def acchist(h1,h2,signs,**kwargs):
+        '''
+        Obtain accidential coincidences histogram
+        
+        Parameters
+        ----------
+        h1 : :class:`numpy.ndarray`
+            first photon counts histogram
+            
+        h2 : :class:`numpy.ndarray`
+            second photon counts histogram
+            
+        signs : tuple of booleans
+            
+        Nframes : int
+            number of frames
+            
+        Returns
+        ----------
+        
+        See Also
+        ----------
+        
+        Notes
+        ----------
+        
+        Examples
+        ----------
+        '''
         if 'Nframes' in kwargs:
             div = float(kwargs['Nframes'])
         else:
