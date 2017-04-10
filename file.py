@@ -131,7 +131,9 @@ class file:
                 # TODO: possibility of getting other info about photons
                 # extract only photon positions
                 frame = np.reshape(img/10,nxy)[:, :2]
-                self.frames.append(frame)
+            else:
+                frame = np.empty(shape=(0, 2), dtype=np.uint16)
+            self.frames.append(frame)
             # if shapedetect: TODO: implement shape detection
         # close file access
         f.close()
