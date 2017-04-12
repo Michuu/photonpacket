@@ -9,3 +9,5 @@ bincountnd.pyc
 exceptions.pyc
 multimethods.pyc
 .spyproject/workspace.ini
+message.pyc
+settings.pyc
