@@ -8,14 +8,14 @@ pp.settings.overwrite = False
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.misc import factorial
 #%%
-Nframes=200000
-f=pp.file.read(r"H:\dane\1703 testy MOTa\21 03 korelacje\pom25_03-tw10.00u-tmem0.00u-tr10.00u-tg35.00u-dw0.00G-dr6.02G-pw0.0m-pr0.0m-fs170x640-nf200k-T0-fB0-fT0k-II2.80-sr1.dat",Nframes=Nframes)
+Nframes=1000000
+f=pp.file.read(r"H:\dane\1703 testy MOTa\11 04\pom2-tw10.00u-tmem0.00u-tr10.00u-tg35.00u-dw0.00G-dr6.02G-pw0.0m-pr0.0m-fs150x700-nf300k-T0-fB0-fT0k-II0.00-sr0.dat",Nframes=Nframes)
 fs=f.getframeseries()
 
 #%%
 print 'accumulating'
-c1 = pp.circle(15,(70+17,123+12))
-c2 = pp.circle(15,(70-15,530+10))
+c1 = pp.circle(60,(60,241))
+c2 = pp.circle(60,(61,540))
 d=fs.accumframes()
 plt.clf()
 plt.imshow(d)
@@ -23,8 +23,28 @@ c1.plot()
 c2.plot()
 plt.show()
 #%%
+d=fs2.accumframes()
+plt.imshow(d)
+#%%
 fs1 = c1.getframeseries(fs, reshape=True)
 fs2 = c2.getframeseries(fs, reshape=True)
+#%%
+c3 = pp.circle(4,(55,64))
+c4 = pp.circle(4,(60,60))
+fs3 = c3.getframeseries(fs1, reshape=True)
+fs4 = c4.getframeseries(fs2, reshape=True)
+#%%
+print pp.stat1d.mean(fs4)*pp.stat1d.mean(fs3)*300000
+print pp.stat1d.mean(fs4)*300000*0.1*0.3
+#%%
+print 'calculating statistics'
+print pp.stat2d.g2(fs3,fs4)
+H=pp.stat2d.joint(fs3,fs4)
+pp.stat2d.plotjoint(H,showvalues=True)
+print H[0][0,1]
+print H[0][1,0]
+print H[0][1,1]
+plt.show()
 #%%
 print 'calculating statistics'
 print pp.stat2d.g2(fs1,fs2)
@@ -47,7 +67,7 @@ plt.show()
 print 'coinc'
 plt.clf()
 d=pp.accum.accumcoinc(fs1,fs2)
-plt.imshow(np.sum(d,axis=(2,3)))
+plt.imshow(np.sum(d,axis=(0,1)))
 plt.show()
 #%%
 print 'calculating statistics'
@@ -61,21 +81,23 @@ plt.show()
 #%%
 d1=fs1.accumframes()
 d2=fs2.accumframes()
-signs=(False,True)
-d=pp.accum.coinchist(fs1,fs2,signs)
+signs=(True,False)
+dc=pp.accum.coinchist(fs1,fs2,signs)
 dac=pp.accum.acchist(d1,d2,signs,Nframes=fs.len())
 #dac=np.array(dac,dtype=np.float64)/float(fs.len())
 #dac=dac/np.sum(dac)
 #d=np.array(d,dtype=np.float64)
 #print np.sum(d)
-print np.sum(d-dac)
-plt.imshow(d)
+print np.sum(dc-dac)
+plt.imshow(dc)
 plt.show()
 plt.imshow(dac)
 plt.show()
-plt.imshow(d-dac)
+plt.imshow(dc-dac)
 plt.show()
-
+#%%
+plt.plot(dc[:,119])
+plt.plot(dac[:,119])
 #%%
 bins = np.arange(np.max(fs1.N)+2)
 h1=np.histogram(fs1.N, bins=bins,normed=True)

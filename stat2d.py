@@ -53,7 +53,7 @@ class stat2d:
             avgfs1 = np.mean(s1.N)
             avgfs2 = np.mean(s2.N)
         elif s1.__class__ == np.ndarray and s2.__class__ == np.ndarray:
-            stat2d.checkcount(s1, s2)
+            stat2d.checkcounts(s1, s2)
             avgprod = np.mean(s1*s2)
             avgfs1 = np.mean(s1)
             avgfs2 = np.mean(s2)
@@ -82,7 +82,7 @@ class stat2d:
         Notes
         
         '''
-        if s1.__class__ == frameseries and s2.__class == frameseries:
+        if s1.__class__ == frameseries and s2.__class__ == frameseries:
             stat2d.checkfs(s1,s2)
             N1 = s1.N
             N2 = s2.N
