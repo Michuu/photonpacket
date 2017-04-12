@@ -1,0 +1,609 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>photonpacket.region module &#8212; photonpacket 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">photonpacket 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="photonpacket-region-module">
+<h1>photonpacket.region module<a class="headerlink" href="#photonpacket-region-module" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-photonpacket.region"></span><dl class="class">
+<dt id="photonpacket.region.circle">
+<em class="property">class </em><code class="descclassname">photonpacket.region.</code><code class="descname">circle</code><a class="headerlink" href="#photonpacket.region.circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#photonpacket.region.region" title="photonpacket.region.region"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.region.region</span></code></a></p>
+<p>Circle region</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">getcounts</span></code>(fs)</td>
+<td>Get total photon number in each frame</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">getframeseries</span></code>(fs[,&nbsp;reshape])</td>
+<td>Select photon in region and obtain frameseries</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.circle.getmask" title="photonpacket.region.circle.getmask"><code class="xref py py-obj docutils literal"><span class="pre">getmask</span></code></a>(frame)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.circle.isinregion" title="photonpacket.region.circle.isinregion"><code class="xref py py-obj docutils literal"><span class="pre">isinregion</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.circle.plot" title="photonpacket.region.circle.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>([reshaped])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.circle.r2dist" title="photonpacket.region.circle.r2dist"><code class="xref py py-obj docutils literal"><span class="pre">r2dist</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">reshape</span></code>(frame)</td>
+<td>Reshape frane to gave (0,0) bottom-left corener</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="photonpacket.region.circle.corner">
+<code class="descname">corner</code><em class="property"> = array([], dtype=float64)</em><a class="headerlink" href="#photonpacket.region.circle.corner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.circle.getmask">
+<code class="descname">getmask</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.circle.getmask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.circle.isinregion">
+<code class="descname">isinregion</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.circle.isinregion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.circle.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>reshaped=False</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.circle.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.circle.r">
+<code class="descname">r</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.circle.r" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.circle.r2dist">
+<code class="descname">r2dist</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.circle.r2dist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.circle.shape">
+<code class="descname">shape</code><em class="property"> = []</em><a class="headerlink" href="#photonpacket.region.circle.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.circle.x0">
+<code class="descname">x0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.circle.x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.circle.y0">
+<code class="descname">y0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.circle.y0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="photonpacket.region.ellpise">
+<em class="property">class </em><code class="descclassname">photonpacket.region.</code><code class="descname">ellpise</code><a class="headerlink" href="#photonpacket.region.ellpise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#photonpacket.region.region" title="photonpacket.region.region"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.region.region</span></code></a></p>
+<p>Ellipse region</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">getcounts</span></code>(fs)</td>
+<td>Get total photon number in each frame</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">getframeseries</span></code>(fs[,&nbsp;reshape])</td>
+<td>Select photon in region and obtain frameseries</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.ellpise.getmask" title="photonpacket.region.ellpise.getmask"><code class="xref py py-obj docutils literal"><span class="pre">getmask</span></code></a>(frame)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.ellpise.isinregion" title="photonpacket.region.ellpise.isinregion"><code class="xref py py-obj docutils literal"><span class="pre">isinregion</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.ellpise.plot" title="photonpacket.region.ellpise.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.ellpise.r2dist" title="photonpacket.region.ellpise.r2dist"><code class="xref py py-obj docutils literal"><span class="pre">r2dist</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">reshape</span></code>(frame)</td>
+<td>Reshape frane to gave (0,0) bottom-left corener</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="photonpacket.region.ellpise.a">
+<code class="descname">a</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ellpise.a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ellpise.angle">
+<code class="descname">angle</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ellpise.angle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ellpise.b">
+<code class="descname">b</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ellpise.b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ellpise.corner">
+<code class="descname">corner</code><em class="property"> = array([], dtype=float64)</em><a class="headerlink" href="#photonpacket.region.ellpise.corner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ellpise.frames">
+<code class="descname">frames</code><em class="property"> = []</em><a class="headerlink" href="#photonpacket.region.ellpise.frames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.ellpise.getmask">
+<code class="descname">getmask</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.ellpise.getmask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.ellpise.isinregion">
+<code class="descname">isinregion</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.ellpise.isinregion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.ellpise.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.ellpise.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.ellpise.r2dist">
+<code class="descname">r2dist</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.ellpise.r2dist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ellpise.shape">
+<code class="descname">shape</code><em class="property"> = []</em><a class="headerlink" href="#photonpacket.region.ellpise.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ellpise.x0">
+<code class="descname">x0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ellpise.x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ellpise.y0">
+<code class="descname">y0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ellpise.y0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="photonpacket.region.halfcircle">
+<em class="property">class </em><code class="descclassname">photonpacket.region.</code><code class="descname">halfcircle</code><a class="headerlink" href="#photonpacket.region.halfcircle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#photonpacket.region.region" title="photonpacket.region.region"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.region.region</span></code></a></p>
+<p>Halfcircle region</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">getcounts</span></code>(fs)</td>
+<td>Get total photon number in each frame</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">getframeseries</span></code>(fs[,&nbsp;reshape])</td>
+<td>Select photon in region and obtain frameseries</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.halfcircle.getmask" title="photonpacket.region.halfcircle.getmask"><code class="xref py py-obj docutils literal"><span class="pre">getmask</span></code></a>(frame)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.halfcircle.isinregion" title="photonpacket.region.halfcircle.isinregion"><code class="xref py py-obj docutils literal"><span class="pre">isinregion</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.halfcircle.plot" title="photonpacket.region.halfcircle.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.halfcircle.r2dist" title="photonpacket.region.halfcircle.r2dist"><code class="xref py py-obj docutils literal"><span class="pre">r2dist</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">reshape</span></code>(frame)</td>
+<td>Reshape frane to gave (0,0) bottom-left corener</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="photonpacket.region.halfcircle.angle">
+<code class="descname">angle</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.halfcircle.angle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.halfcircle.corner">
+<code class="descname">corner</code><em class="property"> = array([], dtype=float64)</em><a class="headerlink" href="#photonpacket.region.halfcircle.corner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.halfcircle.frames">
+<code class="descname">frames</code><em class="property"> = []</em><a class="headerlink" href="#photonpacket.region.halfcircle.frames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.halfcircle.getmask">
+<code class="descname">getmask</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.halfcircle.getmask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.halfcircle.isinregion">
+<code class="descname">isinregion</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.halfcircle.isinregion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.halfcircle.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.halfcircle.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.halfcircle.r1">
+<code class="descname">r1</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.halfcircle.r1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.halfcircle.r2dist">
+<code class="descname">r2dist</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.halfcircle.r2dist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.halfcircle.shape">
+<code class="descname">shape</code><em class="property"> = []</em><a class="headerlink" href="#photonpacket.region.halfcircle.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.halfcircle.x0">
+<code class="descname">x0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.halfcircle.x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.halfcircle.y0">
+<code class="descname">y0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.halfcircle.y0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="photonpacket.region.rect">
+<em class="property">class </em><code class="descclassname">photonpacket.region.</code><code class="descname">rect</code><a class="headerlink" href="#photonpacket.region.rect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#photonpacket.region.region" title="photonpacket.region.region"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.region.region</span></code></a></p>
+<p>Rectangle region</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">getcounts</span></code>(fs)</td>
+<td>Get total photon number in each frame</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">getframeseries</span></code>(fs[,&nbsp;reshape])</td>
+<td>Select photon in region and obtain frameseries</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.rect.getmask" title="photonpacket.region.rect.getmask"><code class="xref py py-obj docutils literal"><span class="pre">getmask</span></code></a>(frame)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.rect.isinregion" title="photonpacket.region.rect.isinregion"><code class="xref py py-obj docutils literal"><span class="pre">isinregion</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.rect.plot" title="photonpacket.region.rect.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">reshape</span></code>(frame)</td>
+<td>Reshape frane to gave (0,0) bottom-left corener</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="photonpacket.region.rect.getmask">
+<code class="descname">getmask</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.rect.getmask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.rect.isinregion">
+<code class="descname">isinregion</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.rect.isinregion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.rect.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.rect.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.rect.x0">
+<code class="descname">x0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.rect.x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.rect.x1">
+<code class="descname">x1</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.rect.x1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.rect.y0">
+<code class="descname">y0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.rect.y0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.rect.y1">
+<code class="descname">y1</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.rect.y1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="photonpacket.region.region">
+<em class="property">class </em><code class="descclassname">photonpacket.region.</code><code class="descname">region</code><a class="headerlink" href="#photonpacket.region.region" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.region.getcounts" title="photonpacket.region.region.getcounts"><code class="xref py py-obj docutils literal"><span class="pre">getcounts</span></code></a>(fs)</td>
+<td>Get total photon number in each frame</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.region.getframeseries" title="photonpacket.region.region.getframeseries"><code class="xref py py-obj docutils literal"><span class="pre">getframeseries</span></code></a>(fs[,&nbsp;reshape])</td>
+<td>Select photon in region and obtain frameseries</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.region.isinregion" title="photonpacket.region.region.isinregion"><code class="xref py py-obj docutils literal"><span class="pre">isinregion</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.region.plot" title="photonpacket.region.region.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.region.reshape" title="photonpacket.region.region.reshape"><code class="xref py py-obj docutils literal"><span class="pre">reshape</span></code></a>(frame)</td>
+<td>Reshape frane to gave (0,0) bottom-left corener</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="photonpacket.region.region.getcounts">
+<code class="descname">getcounts</code><span class="sig-paren">(</span><em>fs</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.region.getcounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get total photon number in each frame</p>
+<p>fs : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>counts</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>1D array of counts</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.region.getframeseries">
+<code class="descname">getframeseries</code><span class="sig-paren">(</span><em>fs</em>, <em>reshape=False</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.region.getframeseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select photon in region and obtain frameseries</p>
+<p>fs : <a class="reference internal" href="photonpacket.frameseries.html#module-photonpacket.frameseries" title="photonpacket.frameseries"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.frameseries</span></code></a></p>
+<p>reshape :  bool</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.region.isinregion">
+<code class="descname">isinregion</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.region.isinregion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.region.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.region.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.region.reshape">
+<code class="descname">reshape</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.region.reshape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reshape frane to gave (0,0) bottom-left corener</p>
+<p>frane : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>counts</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>photon frame</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="photonpacket.region.ring">
+<em class="property">class </em><code class="descclassname">photonpacket.region.</code><code class="descname">ring</code><a class="headerlink" href="#photonpacket.region.ring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#photonpacket.region.region" title="photonpacket.region.region"><code class="xref py py-class docutils literal"><span class="pre">photonpacket.region.region</span></code></a></p>
+<p>Ring region</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">getcounts</span></code>(fs)</td>
+<td>Get total photon number in each frame</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">getframeseries</span></code>(fs[,&nbsp;reshape])</td>
+<td>Select photon in region and obtain frameseries</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.ring.getmask" title="photonpacket.region.ring.getmask"><code class="xref py py-obj docutils literal"><span class="pre">getmask</span></code></a>(frame)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.ring.isinregion" title="photonpacket.region.ring.isinregion"><code class="xref py py-obj docutils literal"><span class="pre">isinregion</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#photonpacket.region.ring.plot" title="photonpacket.region.ring.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>([reshaped])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#photonpacket.region.ring.r2dist" title="photonpacket.region.ring.r2dist"><code class="xref py py-obj docutils literal"><span class="pre">r2dist</span></code></a>(R)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">reshape</span></code>(frame)</td>
+<td>Reshape frane to gave (0,0) bottom-left corener</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="photonpacket.region.ring.corner">
+<code class="descname">corner</code><em class="property"> = array([], dtype=float64)</em><a class="headerlink" href="#photonpacket.region.ring.corner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.ring.getmask">
+<code class="descname">getmask</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.ring.getmask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.ring.isinregion">
+<code class="descname">isinregion</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.ring.isinregion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.ring.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>reshaped=False</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.ring.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ring.r1">
+<code class="descname">r1</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ring.r1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ring.r2">
+<code class="descname">r2</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ring.r2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="photonpacket.region.ring.r2dist">
+<code class="descname">r2dist</code><span class="sig-paren">(</span><em>R</em><span class="sig-paren">)</span><a class="headerlink" href="#photonpacket.region.ring.r2dist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ring.shape">
+<code class="descname">shape</code><em class="property"> = []</em><a class="headerlink" href="#photonpacket.region.ring.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ring.x0">
+<code class="descname">x0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ring.x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="photonpacket.region.ring.y0">
+<code class="descname">y0</code><em class="property"> = 0</em><a class="headerlink" href="#photonpacket.region.ring.y0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/photonpacket.region.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">photonpacket 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Quantum Memories Laboratory.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.4.
+    </div>
+  </body>
+</html>

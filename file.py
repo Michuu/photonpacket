@@ -6,6 +6,11 @@ from message import message, progress
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 class file:
+    '''
+    
+    
+    '''
+    
     frames = []
     # sparse_frames = []
     accum = []
@@ -15,15 +20,57 @@ class file:
     path = ''
 
     def __init__(self, path,name):
+        '''
+        Create instance of class including path and name
+        
+        Parameters
+        ----------
+        path : string
+        
+        name : string
+            
+        Returns
+        ----------
+        
+        See Also
+        ----------
+        
+        Notes
+        ----------
+        
+        Examples
+        ----------
+        '''
         self.name = name
         self.frames = []
 
     @staticmethod
     def read(path, **kwargs):
         '''
-        Read file to memory
-        :param name: file name
-        :return: instance of class File
+        Read photon data file
+        
+        Parameters
+        ----------
+        path : string
+            path to file, passed to :func:`open`
+        Nframes : int
+            number of frames to read
+            
+        Returns
+        ----------
+        file : :class:`file`
+            instance of :class:`file` class
+            
+        Notes
+        ----------
+        
+        References
+        ----------
+        
+        Examples
+        ----------
+            
+        
         '''
         # extract name of the file from the path
         name = os.path.split(path)[-1]
@@ -96,10 +143,41 @@ class file:
         return self
 
     def getframeseries(self):
+        '''
+        Get :class:`photonpacket.frameseries` from :class:`file`
+        
+        Parameters
+        ----------
+        
+        Returns
+        ----------
+        fs : :class:`photonpacket.frameseries`
+        
+        '''
         if self.frames:
             return frameseries(self.frames, self.shape)
     
     def getshape(self):
+        '''
+        Get shape of frame
+        
+        Parameters
+        ----------
+            
+        Returns
+        ---------
+        shape : tuple
+            shape of frame
+            
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         # search for shape info in a string
         s = re.search(r"-fs(?P<x>\d+)x(?P<y>\d+)", self.name)
         try:
@@ -114,6 +192,28 @@ class file:
             return False
     
     def getattribute(self, attr):
+        '''
+        Get value for a given attribute in filename
+        
+        Parameters
+        ----------
+        attr : string
+            attribute name
+            
+        Returns
+        ---------
+        val : int or float
+            attribute value
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
         # search for a given attribute 
         # pattern: (attribute_name)[number,dots,+-][optionalsi prefix]
         pattern = r"-" + attr + "(?P<attr>[\d.]+)(?P<si>[yafnumkMGTZ]{,1})"
@@ -132,6 +232,29 @@ class file:
         
     @staticmethod
     def siprefix(prefix):
+        '''
+        Obtain SI prefix factor from string prefix
+        
+        Parameters
+        ----------
+        prefix : string
+            
+        Returns
+        ----------
+        factor : double
+        
+        See Also
+        ----------
+        
+        Notes
+        ----------
+        
+        Examples
+        ----------
+        >>> pp.file.siprefix('n')
+        1e-9
+        
+        '''
         # we will not be using da (deca)
         prefixes = {'y': 1e-24, 'z': 1e-21, 'a': 1e-18, 'f': 1e-15, 'p': 1e-12,
                     'n': 1e-9, 'u': 1e-6, 'm': 1e-3, 'k': 1e3,

@@ -4,6 +4,35 @@ import numpy as np
 def bincountnd(array, shape):
     '''
     Multidimensional histogram
+    
+    Parameters
+    ---------
+    array : :class:`numpy.ndarray`
+            2D array, first dimension being the coordinates, second subsequent counts
+        
+    shape : tuple of ints
+            list of sizes of dimensions    
+        
+    Returns
+    ----------
+    histogram : :class:`numpy.ndarray`
+            histogram of counts
+            
+    See Also
+    ----------
+         
+    Notes
+    ----------
+    This function is a wrapper around :func:`numpy.histogramdd` function, 
+    generating a set o simple unity bins. Thus, the behaviour of this function 
+    mimics :func:`numpy.bincount` in many dimensions.
+    
+    References
+    ----------
+    
+    Examples
+    ----------
+    
     '''
     #if len(shape)==2:
     #    return bincount2d(array,shape)
