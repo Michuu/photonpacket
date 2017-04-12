@@ -49,7 +49,7 @@ class stat2d:
     @staticmethod
     @overload(np.ndarray, np.ndarray)
     def g2(N1,N2):
-        stat2d.checkcount(N1, N2)
+        stat2d.checkcounts(N1, N2)
         avgprod = np.mean(N1*N2)
         avgfs1 = np.mean(N1)
         avgfs2 = np.mean(N2)

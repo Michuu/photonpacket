@@ -14,8 +14,8 @@ fs=f.getframeseries()
 
 #%%
 print 'accumulating'
-c1 = pp.circle(12,(100,155))
-c2 = pp.circle(12,(60,510))
+c1 = pp.circle(15,(70+17,123+12))
+c2 = pp.circle(15,(70-15,530+10))
 d=fs.accumframes()
 plt.clf()
 plt.imshow(d)
@@ -24,32 +24,6 @@ c2.plot()
 plt.show()
 #%%
 fs1 = c1.getframeseries(fs, reshape=True)
-fs2 = c2.getframeseries(fs, reshape=True)
-#%%
-print 'selecting'
-c1 = pp.ring(30,40,(50,135))
-fs1 = c1.getframeseries(fs)
-
-c2 = pp.ring(30,40,(48,484))
-fs2 = c2.getframeseries(fs)
-#%%
-c1.plot()
-c2.plot()
-plt.imshow(d)
-plt.show()
-#%%
-# select with reshaping
-c1 = pp.ring(10,40,(50,135))
-fs1 = c1.getframeseries(fs, reshape=True)
-
-c2 = pp.ring(10,40,(48,484))
-fs2 = c2.getframeseries(fs, reshape=True)
-#%%
-# select with reshaping
-c1 = pp.circle(30,(40,220))
-fs1 = c1.getframeseries(fs, reshape=True)
-
-c2 = pp.circle(30,(60,550))
 fs2 = c2.getframeseries(fs, reshape=True)
 #%%
 print 'calculating statistics'
@@ -87,7 +61,7 @@ plt.show()
 #%%
 d1=fs1.accumframes()
 d2=fs2.accumframes()
-signs=(False,False)
+signs=(False,True)
 d=pp.accum.coinchist(fs1,fs2,signs)
 dac=pp.accum.acchist(d1,d2,signs,Nframes=fs.len())
 #dac=np.array(dac,dtype=np.float64)/float(fs.len())
