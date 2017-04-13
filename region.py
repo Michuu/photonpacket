@@ -38,13 +38,16 @@ class region:
         '''
         frames = []
         for frame in fs.frames:
-            aux_frame = np.array(frame, dtype = np.uint32)
-            mask = self.getmask(aux_frame)
-            if reshape:
-                frame = self.reshape(np.array(frame))
-            frames.append(frame[mask])
+            if len(frame)>0:
+                aux_frame = np.array(frame, dtype = np.uint32)
+                mask = self.getmask(aux_frame)
+                if reshape:
+                    frame = self.reshape(np.array(frame))
+                frames.append(frame[mask])
+            else:
+                frames.append(frame)
         if reshape:
-              return frameseries(frames, self.shape, cut=True)
+              return frameseries(frames, self.shape, cut=False)
         else:
               return frameseries(frames, fs.shape, cut=True)
 

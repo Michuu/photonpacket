@@ -42,24 +42,39 @@ class stat2d:
                 plt.text(i[1]+0.4, i[0]+0.4, "%d"%v)
 
     @staticmethod
-    def g2(s1,s2):
+    def g2(s1,s2,uncert=False):
         '''
         Second order cross-correlation function.
         
         '''
         if s1.__class__ == frameseries and s2.__class__ == frameseries:
             stat2d.checkfs(s1,s2)
-            avgprod = np.mean(s1.N*s2.N)
-            avgfs1 = np.mean(s1.N)
-            avgfs2 = np.mean(s2.N)
+            N1 = s1.N
+            N2 = s2.N
         elif s1.__class__ == np.ndarray and s2.__class__ == np.ndarray:
-            stat2d.checkcounts(s1, s2)
-            avgprod = np.mean(s1*s2)
-            avgfs1 = np.mean(s1)
-            avgfs2 = np.mean(s2)
+            stat2d.checkcounts(s1,s2)
+            N1 = s1
+            N2 = s2
         else:
             raise ValueError
-        return avgprod/(avgfs1*avgfs2)
+        meanprod = np.mean(N1*N2)
+        mean1 = np.mean(N1)
+        mean2 = np.mean(N2)
+        g2 = meanprod/(mean1*mean2)
+        if uncert:
+            Nframes = len(N1)
+            unc_mean1 = np.sqrt(np.sum(N1))/Nframes
+            unc_mean2 = np.sqrt(np.sum(N2))/Nframes
+            # uncertainty of nominator
+            unc_nom = np.sqrt(np.sum(N1*N2))/Nframes
+            # uncertainty of denominator
+            unc_den = mean1*mean2*\
+            np.sqrt((unc_mean1/mean1)**2+(unc_mean2/mean2)**2)
+            # uncertainty of g2
+            unc = g2*np.sqrt((unc_den/(mean1*mean2))**2+(unc_nom/meanprod)**2)
+            return (g2,unc)
+        else:
+            return g2
     
     @staticmethod
     def fanofactor(s1,s2):
@@ -131,14 +146,15 @@ class stat2d:
         return cv[1,1]
     
     @staticmethod
+    def cov(s1,s2):
+        '''
+        Short for :func:`covar`
+        '''
+        return stat2d.covar(s1,s2)
+    
+    @staticmethod
     def corr(s1,s2):
         '''
         Normalized photon-number correlation coefficient
         '''
-        return stat2d.cov(s1,s2)/np.sqrt(stat1d.var(s1)*stat1d.var(s2))
-    
-    
-2
--3
-  
-      
+        return stat2d.covar(s1,s2)/np.sqrt(stat1d.var(s1)*stat1d.var(s2))  
