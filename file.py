@@ -215,7 +215,7 @@ class file:
         ---------
         '''
         # search for a given attribute 
-        # pattern: (attribute_name)[number,dots,+-][optionalsi prefix]
+        # pattern: (attribute_name)[number,dots,+-][optional si prefix]
         pattern = r"-" + attr + "(?P<attr>[\d.]+)(?P<si>[yafnumkMGTZ]{,1})"
         s = re.search(pattern, self.name)
         try:

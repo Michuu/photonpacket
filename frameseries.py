@@ -1,5 +1,6 @@
 import numpy as np
 from bincountnd import bincountnd
+from scipy.spatial import KDTree
 
 class frameseries:
     frames = []
@@ -21,7 +22,7 @@ class frameseries:
             
         Returns
         ---------
-        
+        coa
         See Also
         ---------
         
@@ -34,15 +35,25 @@ class frameseries:
         self.frames = frames
         self.frameN = len(frames)
         self.shape = shape
-        self.N = np.zeros((len(self.frames)))
+        self.N = np.array(map(len, frames))
         # calculate photon numbers
-        for i, frame in enumerate(self.frames):
-            self.N[i] = int(frame.shape[0])
+        # for i, frame in enumerate(self.frames):
+        #    self.N[i] = int(frame.shape[0])
         # cut to rectangular shape if requested
         if cut:
             self.cuttoshape(self.shape)
 
-
+    def __getitem__(self, key):
+        '''
+        '''
+        return self.frames[key]
+    
+    def __setitem__(self, key, frame):
+        '''
+        '''
+        self.frames[key] = frame
+        self.N[key] = len(frame)
+        
     def cuttoshape(self, shape):
         '''
         Cut frames to shape
@@ -63,7 +74,12 @@ class frameseries:
         Examples
         ---------
         '''
-
+        from region import rect
+        
+        self.shape = shape
+        r = rect((0,0),(shape[0],shape[1]))
+        r.getframeseries(self, reshape=False)
+        '''
         self.shape = shape
         j = 0
         aux_frames = self.frames
@@ -77,6 +93,7 @@ class frameseries:
             # calculate total photon number
             self.N[j] = np.sum(mask)
             j += 1
+        '''
 
 
     def accumframes(self):
@@ -106,6 +123,24 @@ class frameseries:
         # count photons in each pixel
         accum = bincountnd(flat_fs, self.shape)
         return accum
+    
+    def delneighbours(self,r=5):
+        '''
+        Find photon pairs that are too close to each other and remove second photon from the frame
+        '''
+        for i, frame in enumerate(self.frames):
+            if len(frame)>=2:
+                kdt=KDTree(np.array(frame))
+                ridx=[]
+                kdtq=kdt.query_pairs(r,p=2)
+                for pidx in kdtq:
+                    if (pidx[1] not in ridx) and (pidx[0] not in ridx):
+                        ridx.append(pidx[1])
+                mask=np.ones(len(frame),dtype=np.bool)
+                for j in ridx:
+                    mask[j]=False
+                self.N[i]=np.sum(mask)
+                self.frames[i]=frame[mask]
 
     def accumautocoinc(self):
         '''

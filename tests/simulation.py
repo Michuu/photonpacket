@@ -5,12 +5,12 @@ import numpy as np
 
 import photonpacket as pp
 #%%
-nph = 200
+nph = 10
 p1 = 0.8
-p2 = 0.8
+p2 = 0.96
 d = 80
 shape = (d,d)
-Nframes = 500000
+Nframes = 10000
 frames1 = []
 frames2 = []
 Nphot = np.random.poisson(lam = nph, size = Nframes)
@@ -34,7 +34,7 @@ plt.show()
 print 'calculating statistics'
 print pp.stat2d.g2(fs1,fs2)
 H=pp.stat2d.joint(fs1,fs2)
-pp.stat2d.plotjoint(H,showvalues=False)
+pp.stat2d.plotjoint(H,showvalues=True)
 print H[0][0,1]
 print H[0][1,0]
 print H[0][1,1]

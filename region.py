@@ -14,7 +14,7 @@ class region:
     def isinregion(self):
         pass
 
-    def getframeseries(self,fs,reshape = False):
+    def getframeseries(self, fs, reshape = False):
         '''
         Select photon in region and obtain frameseries
         
@@ -30,11 +30,12 @@ class region:
         See Also
         ---------
         
-        Notes
+        Notesa
         ---------
         
         Examples
         ---------
+        '''
         '''
         frames = []
         for frame in fs.frames:
@@ -50,6 +51,30 @@ class region:
               return frameseries(frames, self.shape, cut=False)
         else:
               return frameseries(frames, fs.shape, cut=True)
+        '''
+        cc_frames = np.concatenate(fs.frames)
+        cc_frames = np.array(cc_frames, dtype=np.uint32)
+        idxs = np.cumsum(fs.N, dtype=np.uint32)
+        idxs = np.insert(idxs, 0, 0)
+        mask = self.getmask(cc_frames)
+        out_frames = []
+        A = out_frames.append
+        for i, frame in enumerate(fs.frames):
+            #if reshape:
+            #    frame = self.reshape(np.array(frame))
+            lf = len(frame)
+            if lf > 0:
+                A(frame[mask[idxs[i]:idxs[i]+lf]])
+            else:
+                A(frame)
+        if reshape:
+            outN = map(len, out_frames)
+            cc_out_frames = np.concatenate(out_frames)
+            cc_out_frames = self.reshape(cc_out_frames)
+            idxs = np.cumsum(outN, dtype=np.uint32)
+            return frameseries(np.split(cc_out_frames, idxs)[:-1], self.shape, cut=False)
+        else:
+            return frameseries(out_frames, fs.shape, cut=False)
 
     def getcounts(self,fs):
         '''
@@ -73,16 +98,23 @@ class region:
         Examples
         ---------
         '''
+        #csum = np.cumsum(fs.N, dtype=np.uint32)
+        #mask = self.getmask(np.concatenate(fs.frames))
+        #return np.array(map(np.sum, np.split(mask, csum)[:-1]))
+        
         N=np.zeros((len(fs.frames)))
         for i, frame in enumerate(fs.frames):
+            #if len(frame)>0:
+            #    N[i] = np.sum(self.getmask(frame))
             for photon in frame:
                 if self.isinregion((photon[0],photon[1])):
                     N[i] += 1
         return N
+        
     
     def reshape(self, frame):
         '''
-        Reshape frane to gave (0,0) bottom-left corener
+        Reshape frame to have (0,0) bottom-left corener
         
         Parameters
         ---------
@@ -154,12 +186,16 @@ class rect(region):
     y0 = 0
     x1 = 0
     y1 = 0
+    shape = []
+    corner = np.array([])
 
     def __init__(self,(x0,y0),(x1,y1)):
         self.x0 = x0
         self.y0 = y0
         self.x1 = x1
         self.y1 = y1
+        self.shape = [x1-x0, y1-y0]
+        self.corner = np.array([self.x0, self.y0])
 
     def plot(self):
         v1 = np.array([[self.x0,self.x1],[self.y0,self.y0]])
@@ -176,8 +212,8 @@ class rect(region):
         pass
          
     def getmask(self, frame):
-        frame[:,0] = frame[:,0] - self.x0
-        frame[:,1] = frame[:,1] - self.y0
+        # frame[:,0] = frame[:,0] - self.x0
+        # frame[:,1] = frame[:,1] - self.y0
         mask1 = frame[:,0] > self.x0
         mask2 = frame[:,1] > self.y0
         mask3 = frame[:,0] < self.x1

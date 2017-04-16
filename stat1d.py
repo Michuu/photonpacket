@@ -2,32 +2,29 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.special import gamma
+from frameseries import frameseries
+from scipy.stats import moment
+from uncertainties import ufloat
 
 class stat1d:
-    # TODO: let instance of this class be a representation of statistics (histogram)
+        
+    @staticmethod  
+    def centralmoment(s, m, uncert=False):
+        return moment(N, m)
     
     @staticmethod
-    def stat(fs):
-        bins = np.arange(np.max(fs.N)+2)
-        return np.histogram(fs.N, bins=bins)
+    def rawmoment(s, m, uncert=False):
+        return np.mean(N**m)
     
     @staticmethod
-    def plotstat(h, **kwargs):
-        if 'log' in kwargs:
-            log = kwargs['log']
-        else:
-            log = False
-        plt.bar(h[1][:-1], h[0], log=log)
-      
-    @staticmethod
-    def mean(fs):
+    def mean(s):
         '''
         Calculate the mean photon number
         
         Parameters
         ----------
-        fs : frameseries
-            Series of photon frames
+        s : :class:`photonpacket.frameseriesq` or :class:`np.ndarray` 
+            Series of photon frames or photon counts
         
         Returns
         ----------
@@ -52,15 +49,33 @@ class stat1d:
         0.553
     
         '''
-        return np.mean(fs.N)
+        if s.__class__ == frameseries:
+            N = s.N
+        elif s.__class__ == np.ndarray:
+            N = s
+        else:
+            raise ValueError
+        return np.mean(N)
       
     @staticmethod
-    def var(fs):
-        return np.var(fs.N)
+    def var(s):
+        if s.__class__ == frameseries:
+            N = s.N
+        elif s.__class__ == np.ndarray:
+            N = s
+        else:
+            raise ValueError
+        return np.var(N)
       
     @staticmethod
     def std(fs):
-        return np.std(fs.N)
+        if s.__class__ == frameseries:
+            N = s.N
+        elif s.__class__ == np.ndarray:
+            N = s
+        else:
+            raise ValueError
+        return np.std(N)
     
     @staticmethod
     def subbinomal(fs):
@@ -142,6 +157,19 @@ class stat1d:
         return stat1d.mean(fs)**2/(stat1d.var(fs)-stat1d.mean(fs))
     
     @staticmethod
+    def g2(s):
+        '''
+        Second order autocorrelation
+        '''
+        if s.__class__ == frameseries:
+            N = s.N
+        elif s.__class__ == np.ndarray:
+            N = s
+        else:
+            raise ValueError
+        return 1+(stat1d.var(N)-stat1d.mean(N))/(stat1d.mean(N)**2)
+        
+    @staticmethod
     def nmodethermal(n, navg, M):
         pass
     
@@ -149,5 +177,6 @@ class stat1d:
     @staticmethod
     def coherent(n, navg):
         pass
+    
     
     

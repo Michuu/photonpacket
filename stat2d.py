@@ -8,39 +8,7 @@ class stat2d:
     '''
     Class for 2D statistics
     '''
-    # TODO: let instance of this class be a representation of joint statistics
     
-    @staticmethod
-    def joint(s1, s2, normed=False):
-        '''
-        Create joint statistics histogram
-        '''
-        if s1.__class__ == frameseries and s2.__class__ == frameseries:
-            stat2d.checkfs(s1,s2)
-            N1 = s1.N
-            N2 = s2.N
-        elif s1.__class__ == np.ndarray and s2.__class__ == np.ndarray:
-            stat2d.checkcounts(s1,s2)
-            N1 = s1
-            N2 = s2
-        else:
-            raise ValueError
-        maxn = max(np.max(N1)+1,np.max(N2)+1)
-        bins = np.arange(maxn)
-        return np.histogram2d(N1, N2, bins = bins, normed=normed)
-
-    @staticmethod
-    def plotjoint(histogram, showvalues=True, cmap=plt.rcParams['image.cmap']):
-        '''
-        Plot the joint statistics histogram generated with :func:`joint`
-        '''
-        X, Y = np.meshgrid(histogram[1], histogram[2])
-        plt.pcolormesh(X, Y, histogram[0], cmap=cmap)
-        if showvalues:
-            for i, v in np.ndenumerate(histogram[0]):
-                # FIXME: better text positioning
-                plt.text(i[1]+0.4, i[0]+0.4, "%d"%v)
-
     @staticmethod
     def g2(s1,s2,uncert=False):
         '''
@@ -86,6 +54,7 @@ class stat2d:
         return (stat1d.var(s1)+stat1d.var(s2)-2*stat2d.covar(s1,s2))/\
             (stat1d.mean(s1)+stat1d.mean(s2))
     
+    @staticmethod
     def Wfactor(s1,s2):
         '''
         Mean-weighted noise reduction factor. See Notes for details.
@@ -132,7 +101,7 @@ class stat2d:
         '''
         Photon number covariance
         '''
-        if s1.__class__ == frameseries and s2.__class == frameseries:
+        if s1.__class__ == frameseries and s2.__class__ == frameseries:
             stat2d.checkfs(s1,s2)
             N1 = s1.N
             N2 = s2.N
@@ -143,7 +112,7 @@ class stat2d:
         else:
             raise ValueError
         cv = np.cov(N1, N2)
-        return cv[1,1]
+        return cv[0,1]
     
     @staticmethod
     def cov(s1,s2):
@@ -157,4 +126,10 @@ class stat2d:
         '''
         Normalized photon-number correlation coefficient
         '''
-        return stat2d.covar(s1,s2)/np.sqrt(stat1d.var(s1)*stat1d.var(s2))  
+        return stat2d.covar(s1,s2)/np.sqrt(stat1d.var(s1)*stat1d.var(s2)) 
+    
+    def R2(s1,s2):
+        '''
+        R2 factor from the Cauchy-Scharz inequality
+        '''
+        return stat2d.g2(s1,s2)**2/(stat1d.g2(s1)*stat1d.g2(s2))
