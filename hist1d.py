@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+from __future__ import division
 import numpy as np
 from matplotlib import pyplot as plt
 from frameseries import frameseries
-from __future__ import division
+
 
 class hist1d:
     '''
@@ -12,6 +12,7 @@ class hist1d:
     hist = np.array([])
     bins = np.array([])
     N = 0
+    normed = False
     
     @staticmethod
     def fromcounts(N):

@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
+from __future__ import division
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.special import gamma
 from frameseries import frameseries
 from hist1d import hist1d
-from __future__ import division
+
 
 class hist2d:
     bins = np.array([])
@@ -46,34 +46,38 @@ class hist2d:
     def setnorm(self, normed):
         self.normed = normed
         
-    def gethist(self, normed=self.normed):
+    def gethist(self, normed=None):
+        if normed is None:
+            normed = self.normed
         if normed:
             return self.hist/self.N
         else:
             return self.hist
         
-    def plot(self, showvalues=False, cmap='viridis', normed=self.formed):
+    def plot(self, showvalues=False, cmap='viridis', normed=None):
         '''
         Plot the joint statistics histogram generated with :func:`joint`
         '''
+        if normed is None:
+            normed = self.normed
         X, Y = np.meshgrid(self.bins[0], self.bins[1])
         if normed:
             plt.pcolormesh(X, Y, self.hist/self.N, cmap=cmap)
         else:
             plt.pcolormesh(X, Y, self.hist, cmap=cmap)
-        ax=plt.gca()
+        ax = plt.gca()
         ax.set_xticks(self.bins[0][:-1]+0.5)
         ax.set_xticklabels(np.array(self.bins[0][:-1], dtype=np.uint16))
         ax.set_yticks(self.bins[1][:-1]+0.5)
-        ax.set_yticklabels(np.array(self.bins[1][:-1], dtype=np.uint16))       
+        ax.set_yticklabels(np.array(self.bins[1][:-1], dtype=np.uint16))      
         if showvalues:
             for i, v in np.ndenumerate(self.hist):
-                plt.text(i[1]+0.4, i[0]+0.4, "%d"%v)
-    
+                plt.text(i[1]+0.4, i[0]+0.4, "%d" % v)
+
     def rawmoment(self, i, j):
-        return np.average(self.bins[0][:-1]**i, self.bins[0][:-1]**j,
+        return np.average(np.outer(self.bins[0][:-1]**i, self.bins[0][:-1]**j),
                           weights=self.hist)
-        
+
     def mariginal(self, axis):
         return hist1d(np.sum(self.hist, axis=axis), self.bins[axis])
     
@@ -104,7 +108,10 @@ class hist2d:
         pass
     
     def R2(self):
-        pass
+        g2a = self.mariginal(axis=0).g2()
+        g2b = self.mariginal(axis=1).g2()
+        g2ab = self.g2()
+        return g2ab**2/(g2a*g2b)
     
     def p11(self):
         return self.hist[1,1]/self.N
@@ -112,14 +119,17 @@ class hist2d:
     def N11(self):
         return self.hist[1,1]
     
-    def mean(self, axis):
+    def mean(self, axis=None):
         if axis == 0:
             return self.rawmoment(1,0)
         elif axis == 1:
             return self.rawmoment(0,1)
+        elif axis is None:
+            return np.average(np.sum.outer(self.bins[0][:-1], self.bins[1][:-1]),
+                              weights=self.hist)
         else:
             raise ValueError
-            
+         
     def var(self, axis):
         if axis == 0:
             return self.rawmoment(2,0)-self.rawmoment(1,0)**2

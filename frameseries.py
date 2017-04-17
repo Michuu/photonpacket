@@ -78,7 +78,9 @@ class frameseries:
         
         self.shape = shape
         r = rect((0,0),(shape[0],shape[1]))
-        r.getframeseries(self, reshape=False)
+        cfs = r.getframeseries(self, reshape=False)
+        self.frames = cfs.frames
+        self.N = cfs.N
         '''
         self.shape = shape
         j = 0
@@ -121,10 +123,10 @@ class frameseries:
         # concatenate all frames
         flat_fs = np.concatenate(self.frames)
         # count photons in each pixel
-        accum = bincountnd(flat_fs, self.shape)
+        accum = bincountnd(np.array(flat_fs, dtype=np.uint32), self.shape)
         return accum
     
-    def delneighbours(self,r=5):
+    def delneighbours(self, r=5):
         '''
         Find photon pairs that are too close to each other and remove second photon from the frame
         '''

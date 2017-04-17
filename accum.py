@@ -80,7 +80,7 @@ class accum:
                             np.dstack(np.meshgrid(frame[:, 0], frame2[:, 0])).reshape(-1, 2),
                             np.dstack(np.meshgrid(frame[:, 1], frame2[:, 1])).reshape(-1, 2)
                             ))
-                    cframes.append(cframe)
+                    cframes.append(np.array(cframe, dtype=np.uint32))
                 i += 1
             accum = bincountnd(np.concatenate(cframes),(fs1.shape[0],fs2.shape[0],fs1.shape[1],fs2.shape[1]))           
             return accum
@@ -144,7 +144,7 @@ class accum:
                         np.dstack(np.meshgrid(mframe[:,0], mframe2[:,0])).reshape(-1, 2),
                         np.dstack(np.meshgrid(mframe[:,1], mframe2[:,1])).reshape(-1, 2)
                         ))
-                cframes.append(cframe)
+                cframes.append(np.array(cframe, dtype=np.uint32))
             i += 1
         accum = bincountnd(np.concatenate(cframes),(r1.shape[0],r2.shape[0],r1.shape[1],r2.shape[1])) 
         return accum
@@ -196,7 +196,7 @@ class accum:
                         cframe2[:,1] = cfy[0].flatten() + cfy[1].flatten()
                 else:
                         cframe2[:,1] = cfy[0].flatten() - cfy[1].flatten() + fs2.shape[1]
-                cframes.append(cframe2)
+                cframes.append(np.array(cframe2, dtype=np.uint32))
             i += 1
         message("\nCounting coincidences", 1)
         accum = bincountnd(np.concatenate(cframes),(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1))
