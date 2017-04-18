@@ -11,3 +11,6 @@ multimethods.pyc
 .spyproject/workspace.ini
 message.pyc
 settings.pyc
+helpers.pyc
+hist1d.pyc
+hist2d.pyc

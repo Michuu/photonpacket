@@ -37,7 +37,7 @@ def bincountnd(array, shape):
     # sorted mask selector
     sel = np.argsort(shape)[::-1]
     # flatten output histogram
-    flat_array = np.zeros(shape=array.shape[0], dtype=np.uint32)
+    flat_array = np.zeros(shape=array.shape[0], dtype=np.int32)
     # initial exponent
     exp = 1
     # sorted data array
