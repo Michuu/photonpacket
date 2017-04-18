@@ -7,6 +7,7 @@ class frameseries:
     N = np.array([])
     shape = (())
     frameN = 0
+    concat = np.array([])
 
     def __init__(self, frames, shape, cut = True):
         '''
@@ -33,12 +34,11 @@ class frameseries:
         ---------
         '''
         self.frames = frames
+        self.concat = np.concatenate(frames)
         self.frameN = len(frames)
         self.shape = shape
-        self.N = np.array(map(len, frames))
         # calculate photon numbers
-        # for i, frame in enumerate(self.frames):
-        #    self.N[i] = int(frame.shape[0])
+        self.N = np.array(map(len, frames))
         # cut to rectangular shape if requested
         if cut:
             self.cuttoshape(self.shape)
@@ -77,9 +77,11 @@ class frameseries:
         from region import rect
         
         self.shape = shape
+        # prepare a rectangle
         r = rect((0,0),(shape[0],shape[1]))
         cfs = r.getframeseries(self, reshape=False)
         self.frames = cfs.frames
+        self.concat = cfs.concat
         self.N = cfs.N
         '''
         self.shape = shape
@@ -120,10 +122,8 @@ class frameseries:
         Examples
         ---------
         '''
-        # concatenate all frames
-        flat_fs = np.concatenate(self.frames)
         # count photons in each pixel
-        accum = bincountnd(np.array(flat_fs, dtype=np.uint32), self.shape)
+        accum = bincountnd(np.array(self.concat, dtype=np.uint32), self.shape)
         return accum
     
     def delneighbours(self, r=5):
@@ -143,6 +143,7 @@ class frameseries:
                     mask[j]=False
                 self.N[i]=np.sum(mask)
                 self.frames[i]=frame[mask]
+        self.concat = np.concatenate(self.frames)
 
     def accumautocoinc(self):
         '''

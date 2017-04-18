@@ -52,7 +52,7 @@ class region:
         else:
               return frameseries(frames, fs.shape, cut=True)
         '''
-        cc_frames = np.concatenate(fs.frames)
+        cc_frames = fs.concat
         cc_frames = np.array(cc_frames, dtype=np.uint32)
         idxs = np.cumsum(fs.N, dtype=np.uint32)
         idxs = np.insert(idxs, 0, 0)
@@ -98,18 +98,28 @@ class region:
         Examples
         ---------
         '''
-        #csum = np.cumsum(fs.N, dtype=np.uint32)
-        #mask = self.getmask(np.concatenate(fs.frames))
-        #return np.array(map(np.sum, np.split(mask, csum)[:-1]))
         
-        N=np.zeros((len(fs.frames)))
-        for i, frame in enumerate(fs.frames):
-            #if len(frame)>0:
-            #    N[i] = np.sum(self.getmask(frame))
-            for photon in frame:
-                if self.isinregion((photon[0],photon[1])):
-                    N[i] += 1
-        return N
+        cc_frames = np.array(fs.concat, dtype=np.uint32)
+        csum = np.cumsum(fs.N)
+        
+        mask = self.getmask(cc_frames)
+        
+        cmask = np.cumsum(mask)
+        cmask = np.insert(cmask, 0, 0)
+        
+        # cmask length = total number of photons, csum length = total number of frames
+        # last element of csum = total number of photons
+        # last element of cmask = total number of photons in region
+        # we are selecting elements of cmask at points given by csum
+        # from this we obtain a cumsum of photon counts cN inside region
+        cN = cmask[csum]
+        
+        cN = np.insert(cN, 0, 0)
+        
+        # differentiation of cumsum photon photon counts from region
+        # giving counts in this region
+        N = cN - np.roll(cN, 1)
+        return N[1:]
         
     
     def reshape(self, frame):

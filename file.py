@@ -3,6 +3,10 @@ from frameseries import frameseries
 import re
 import os
 from message import message, progress
+import labviewxmlparse as lxp
+import settings
+from helpers import siprefix
+
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 class file:
@@ -18,6 +22,8 @@ class file:
     Nframes = 0
     name = ''
     path = ''
+    nameversion = 0
+    params = {}
 
     def __init__(self, path,name):
         '''
@@ -72,17 +78,42 @@ class file:
             
         
         '''
-        # extract name of the file from the path
-        name = os.path.split(path)[-1]
+        # extract name of file from path
+        (directory, name) = os.path.split(path)
         # remove file extension
         name = os.path.splitext(name)[0]
 
         # create file instance
         self = file(path, name)
-
-        # try to obtain shape from file name
+        
+        # try to read params xml file
         try:
-            shape = self.getshape()
+            self.params = lxp.parse(os.path.join(directory, name + '.' + settings.paramsext))
+            self.nameversion = 2
+            try:
+                Nf = self.params['Nf']
+            except AttributeError:
+                Nf = False
+            try:
+                roi = self.params['ROI']
+                shape = (roi[0], roi[2])
+            except AttributeError:
+                shape = False
+        # if this was not possible get them from filename
+        except IOError:
+            # this means that xml file is not present
+            shape = self.getshapefromname()
+            Nf = self.getattributefromname('Nf')
+            self.nameversion = 1
+        except Exception as e:
+            # this means there was an unexpected error when parsing
+            # we will proceed with automatic shape detection and no frame limit
+            print "Unexpected Exception when parsing xml file; trying automatic shape detection: %s"%e
+            shape = False
+            Nf = False
+            
+        # try to set shape
+        try:
             if isinstance(shape, np.ndarray):
                 shapedetect = False
             else:
@@ -91,18 +122,19 @@ class file:
         except:
             shapedetect = True
             
-        # try to extract number of frames from file
+        # try to extract number of frames from params or filename
         # if number given both in filename and as argument
-        if 'Nframes' in kwargs and self.getattribute('Nf'):
-            maxframes = min(kwargs['Nframes'], int(self.getattribute('Nf')))
+        if 'Nframes' in kwargs and Nf:
+            # select smaller
+            maxframes = min(kwargs['Nframes'], Nf)
             frames_limit = True
         # number given only by argument
         elif 'Nframes' in kwargs:
             maxframes = kwargs['Nframes']
             frames_limit = True
-        # number given only in filename
-        elif self.getattribute('Nf'):
-            maxframes = self.getattribute('Nf')
+        # number given only in params or filename
+        elif Nf:
+            maxframes = Nf
             frames_limit = True
         # number not given, turn off frame number limit
         else:
@@ -116,16 +148,16 @@ class file:
         while(True):
             # read number of photons in a frame
             # nxy = (number of photons, information per photon)
-            nxy = np.fromfile(f,'>i4', 2)
+            nxy = np.fromfile(f, '>i4', 2)
             # break if file ended or acquired enough frames
             if nxy.size == 0 or (nframes >= maxframes and frames_limit):
                 break
             N = np.prod(nxy)
             nframes += 1
             # read frame data
-            img = np.fromfile(f,'>u2',N)
+            img = np.fromfile(f, '>u2', N)
 
-            if N != 0:
+            if N > 0:
                 # dzielenie przez 10, nie wiadomo za bardzo czemu!
                 # TODO: automatic detection of /10 division
                 # TODO: possibility of getting other info about photons
@@ -134,11 +166,13 @@ class file:
             else:
                 frame = np.empty(shape=(0, 2), dtype=np.uint16)
             self.frames.append(frame)
-            # if shapedetect: TODO: implement shape detection
+            progress(nframes)
         # close file access
         f.close()
         self.Nframes = nframes
         message('Read ' + str(nframes) + ' frames', 1)
+        if shapedetect:
+            shape = np.max(np.concatenate(frames), axis=0).tolist()
         self.shape = shape
         return self
 
@@ -156,8 +190,19 @@ class file:
         '''
         if self.frames:
             return frameseries(self.frames, self.shape)
-    
-    def getshape(self):
+        
+    def getattribute(self, attr):
+        if self.nameversion == 1:
+            return self.getattributefromname(attr)
+        elif self.nameversion == 2:
+            try:
+                return self.params[attr]
+            except AttributeError:
+                return False
+        else:
+            return False
+            
+    def getshapefromname(self):
         '''
         Get shape of frame
         
@@ -191,7 +236,7 @@ class file:
         except IndexError:
             return False
     
-    def getattribute(self, attr):
+    def getattributefromname(self, attr):
         '''
         Get value for a given attribute in filename
         
@@ -219,8 +264,8 @@ class file:
         pattern = r"-" + attr + "(?P<attr>[\d.]+)(?P<si>[yafnumkMGTZ]{,1})"
         s = re.search(pattern, self.name)
         try:
-            if s.group('attr') and s.group('si') and file.siprefix(s.group('si')):
-                return float(s.group('attr')) * file.siprefix(s.group('si'))
+            if s.group('attr') and s.group('si') and siprefix(s.group('si')):
+                return float(s.group('attr')) * siprefix(s.group('si'))
             elif s.group('attr'):
                 return float(s.group('attr'))
             else:
@@ -230,86 +275,3 @@ class file:
         except IndexError:
             return False
         
-    @staticmethod
-    def siprefix(prefix):
-        '''
-        Obtain SI prefix factor from string prefix
-        
-        Parameters
-        ----------
-        prefix : string
-            
-        Returns
-        ----------
-        factor : double
-        
-        See Also
-        ----------
-        
-        Notes
-        ----------
-        
-        Examples
-        ----------
-        >>> pp.file.siprefix('n')
-        1e-9
-        
-        '''
-        # we will not be using da (deca)
-        prefixes = {'y': 1e-24, 'z': 1e-21, 'a': 1e-18, 'f': 1e-15, 'p': 1e-12,
-                    'n': 1e-9, 'u': 1e-6, 'm': 1e-3, 'k': 1e3,
-                    'M': 1e6, 'G': 1e9, 'T': 1e12, 'c': 1e-2, 'd': 1e-1,
-                    'P': 1e15, 'E': 1e18, 'Z': 1e21, 'Y': 1e24}
-        if prefix in prefixes:
-            return prefixes[prefix]
-        else:
-            return False
-            
-    '''
-    depreciated
-    
-    @staticmethod
-    def parsename(name):
-        data = name.split('-')
-        seriesname = data[0]
-        data = data[1:]
-        params = {}
-        for i, p in enumerate(data):
-            m = re.match(r"(?P<param>[a-zA-Z]+)(?P<value>.+)$", p)
-            param = m.group('param')
-            value = m.group('value')
-            if param == 'fs':
-                value = map(int,value.split('x'))
-            if param == 'Nf':
-                value = int(value)              
-            params[param] = value
-        return params
-    '''
-    
-    
-    '''
-    algorithms using sparse matrices
-    proved to be quite ineffective due to conversion
-    maybe they can be useful in other cases...
-    
-    def sparse_process(self,shape):
-        i=0
-        for frame in self.frames:
-            N=frame.shape[0]
-            xc=frame[:,0]
-            yc=frame[:,1]
-            data=np.ones(shape=N)
-            csr_frame=csr_matrix(coo_matrix((data,(xc,yc)),shape=shape))
-            self.sparse_frames.append(csr_frame)
-            print i
-            i=i+1
-
-    def sparse_accumframes(self,shape):
-        i=0
-        sparse_accum = csr_matrix(shape,dtype=np.uint16)
-        for sparse_frame in self.sparse_frames:
-            sparse_accum = sparse_accum + sparse_frame
-            print i
-            i=i+1
-        return sparse_accum.toarray()
-    '''
