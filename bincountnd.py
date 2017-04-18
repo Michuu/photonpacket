@@ -44,12 +44,12 @@ def bincountnd(array, shape):
     array = array[:, sel]
     # for each dimension
     for dim, size in enumerate(aux_shape):
-        # fenerate flat data array
+        # generate flat data array
         flat_array += array[:, dim] * exp
         # increase exponent
         exp = exp * size
     # accumulate counts
-    accum = np.bincount(flat_array, minlength = np.prod(aux_shape))
+    accum = np.bincount(flat_array, minlength=np.prod(aux_shape))
     # reshape to size
     accum = np.reshape(accum, shape)
     # resort
@@ -57,9 +57,6 @@ def bincountnd(array, shape):
         j = sel[i]
         accum.swapaxes(i, j)
     return accum
-        
-    
-
 
 def bincount2d(array, shape):
     xe = np.arange(0, shape[0]+1)

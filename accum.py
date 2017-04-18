@@ -13,7 +13,8 @@ class accum:
     @staticmethod
     def accumframes(fs):
         '''
-        Accumulate photon through all frames
+        Accumulate photon through all frames. 
+        Wrapper for :func:`photonpacket.frameseries.accumframes`
         
         Parameters
         ----------
@@ -26,16 +27,7 @@ class accum:
             photon counts histogram
         
         '''
-        # should this function really be here??
-        # also TODO: update to vectorized version
-        i = 0
-        accum = np.empty(shape=fs.shape)
-        for frame in fs.frames:
-            for photon in frame:
-                accum[photon[0], photon[1]] += 1
-            i += 1
-
-        return accum
+        return fs.accumframes()
 
     @staticmethod
     def accumcoinc(fs1, fs2, method='bincount'):
