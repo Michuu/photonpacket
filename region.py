@@ -208,10 +208,10 @@ class rect(region):
         self.corner = np.array([self.x0, self.y0])
 
     def plot(self):
-        v1 = np.array([[self.x0,self.x1],[self.y0,self.y0]])
-        v2 = np.array([[self.x0,self.x0],[self.y0,self.y1]])
-        v3 = np.array([[self.x1,self.x0],[self.y1,self.y1]])
-        v4 = np.array([[self.x1,self.x1],[self.y1,self.y0]])
+        v1 = np.array([[self.y0,self.y1],[self.x0,self.x0]])
+        v2 = np.array([[self.y0,self.y0],[self.x0,self.x1]])
+        v3 = np.array([[self.y1,self.y0],[self.x1,self.x1]])
+        v4 = np.array([[self.y1,self.y1],[self.x1,self.x0]])
         plt.plot(v1[0],v1[1],color='r')
         plt.plot(v2[0],v2[1],color='r')
         plt.plot(v3[0],v3[1],color='r')

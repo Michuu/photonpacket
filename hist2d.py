@@ -4,7 +4,9 @@ from matplotlib import pyplot as plt
 from scipy.special import gamma
 from frameseries import frameseries
 from hist1d import hist1d
-
+import matplotlib.cm as cmx
+import matplotlib as mpl
+from helpers import opcolor
 
 class hist2d:
     bins = np.array([])
@@ -54,7 +56,7 @@ class hist2d:
         else:
             return self.hist
         
-    def plot(self, showvalues=False, cmap='viridis', normed=None):
+    def plot(self, showvalues=False, normed=None, cmap=None):
         '''
         Plot the joint statistics histogram generated with :func:`joint`
         '''
@@ -62,17 +64,22 @@ class hist2d:
             normed = self.normed
         X, Y = np.meshgrid(self.bins[0], self.bins[1])
         if normed:
-            plt.pcolormesh(X, Y, self.hist/self.N, cmap=cmap)
+            cplt = plt.pcolormesh(X, Y, self.hist/self.N, cmap=cmap)
         else:
-            plt.pcolormesh(X, Y, self.hist, cmap=cmap)
+            cplt = plt.pcolormesh(X, Y, self.hist, cmap=cmap)
         ax = plt.gca()
         ax.set_xticks(self.bins[0][:-1]+0.5)
         ax.set_xticklabels(np.array(self.bins[0][:-1], dtype=np.uint16))
         ax.set_yticks(self.bins[1][:-1]+0.5)
-        ax.set_yticklabels(np.array(self.bins[1][:-1], dtype=np.uint16))      
+        ax.set_yticklabels(np.array(self.bins[1][:-1], dtype=np.uint16))
+        vmin, vmax = plt.gci().get_clim()
+        cm = cplt.get_cmap()
+        norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
+        sm = cmx.ScalarMappable(norm=norm, cmap=cm)
         if showvalues:
             for i, v in np.ndenumerate(self.hist):
-                plt.text(i[1]+0.4, i[0]+0.4, "%d" % v)
+                rgba = opcolor(sm.to_rgba(v))
+                plt.text(i[1]+0.4, i[0]+0.4, "%d" % v, color=rgba)
 
     def rawmoment(self, i, j):
         return np.average(np.outer(self.bins[0][:-1]**i, self.bins[0][:-1]**j),

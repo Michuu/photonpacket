@@ -51,11 +51,13 @@ def bincountnd(array, shape):
     # accumulate counts
     accum = np.bincount(flat_array, minlength=np.prod(aux_shape))
     # reshape to size
-    accum = np.reshape(accum, shape)
+    # we are using Fortran style indexing
+    # first index changing fastest
+    accum = np.reshape(accum, aux_shape, 'F')
     # resort
     for i in np.arange(np.max(sel)):
         j = sel[i]
-        accum.swapaxes(i, j)
+        accum = accum.swapaxes(i, j)
     return accum
 
 def bincount2d(array, shape):

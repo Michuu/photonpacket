@@ -159,7 +159,7 @@ class file:
                 # TODO: automatic detection of /10 division
                 # TODO: possibility of getting other info about photons
                 # extract only photon positions
-                frame = np.reshape(img/10,nxy)[:, :2]
+                frame = np.reshape(img/10, nxy)[:, :2]
             else:
                 frame = np.empty(shape=(0, 2), dtype=np.uint16)
             self.frames.append(frame)
@@ -175,7 +175,7 @@ class file:
             try:
                 shape = np.max(np.concatenate(self.frames), axis=0)
             except ValueError:
-                print 'File seems to contain no photons; aborting'
+                print 'You must be joking... file contains 0 photons; aborting'
                 return False
                      
         # set shape
