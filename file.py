@@ -16,9 +16,6 @@ class file:
     '''
     
     frames = []
-    # sparse_frames = []
-    accum = []
-    # sparse_accum = 0
     Nframes = 0
     name = ''
     path = ''
@@ -96,7 +93,7 @@ class file:
                 Nf = False
             try:
                 roi = self.params['ROI']
-                shape = (roi[0], roi[2])
+                shape = np.array([roi[0], roi[2]])
             except AttributeError:
                 shape = False
         # if this was not possible get them from filename
@@ -108,7 +105,7 @@ class file:
         except Exception as e:
             # this means there was an unexpected error when parsing
             # we will proceed with automatic shape detection and no frame limit
-            print "Unexpected Exception when parsing xml file; trying automatic shape detection: %s"%e
+            print "Unexpected Exception when parsing xml file (trying automatic shape detection): %s"%e
             shape = False
             Nf = False
             
@@ -169,11 +166,22 @@ class file:
             progress(nframes)
         # close file access
         f.close()
+        # set actual number of frames
         self.Nframes = nframes
-        message('Read ' + str(nframes) + ' frames', 1)
+        
+        message("Read " + str(nframes) + " frames", 1)
+        
         if shapedetect:
-            shape = np.max(np.concatenate(frames), axis=0).tolist()
+            try:
+                shape = np.max(np.concatenate(self.frames), axis=0)
+            except ValueError:
+                print 'File seems to contain no photons; aborting'
+                return False
+                     
+        # set shape
         self.shape = shape
+        
+        # return file object
         return self
 
     def getframeseries(self):

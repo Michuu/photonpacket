@@ -46,4 +46,5 @@ def parse(xmlfile):
         except AttributeError:
             i+=1
             continue
+        params[key] = val
     return params
