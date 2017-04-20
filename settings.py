@@ -23,6 +23,8 @@ mpl.rcParams["mathtext.fontset"] = "stixsans"
 mpl.rcParams['axes.linewidth'] = 0.5
 
 '''
-Extension for params file
+Params file
 '''
 paramsext = 'xml'
+import labviewxmlparse as lxp
+paramsparser = lxp.parse

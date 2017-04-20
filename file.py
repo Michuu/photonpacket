@@ -3,7 +3,6 @@ from frameseries import frameseries
 import re
 import os
 from message import message, progress
-import labviewxmlparse as lxp
 import settings
 from helpers import siprefix
 
@@ -85,7 +84,8 @@ class file:
         
         # try to read params xml file
         try:
-            self.params = lxp.parse(os.path.join(directory, name + '.' + settings.paramsext))
+            parse = settings.paramsparser
+            self.params = parse(os.path.join(directory, name + '.' + settings.paramsext))
             self.nameversion = 2
             try:
                 Nf = self.params['Nf']
@@ -98,7 +98,13 @@ class file:
                 shape = False
         # if this was not possible get them from filename
         except IOError:
-            # this means that xml file is not present
+            # this means that params file is not present
+            shape = self.getshapefromname()
+            Nf = self.getattributefromname('Nf')
+            self.nameversion = 1
+        except NameError:
+            # this means that parser is not defined
+            print "Error: File present, but params parser not defined!"
             shape = self.getshapefromname()
             Nf = self.getattributefromname('Nf')
             self.nameversion = 1
