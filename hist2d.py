@@ -56,7 +56,7 @@ class hist2d:
         else:
             return self.hist
         
-    def plot(self, showvalues=False, normed=None, cmap=None):
+    def plot(self, showvalues=False, normed=None, cmap=None, log=None):
         '''
         Plot the joint statistics histogram generated with :func:`joint`
         '''
@@ -64,9 +64,15 @@ class hist2d:
             normed = self.normed
         X, Y = np.meshgrid(self.bins[0], self.bins[1])
         if normed:
-            cplt = plt.pcolormesh(X, Y, self.hist/self.N, cmap=cmap)
+            data = self.hist/self.N  
         else:
-            cplt = plt.pcolormesh(X, Y, self.hist, cmap=cmap)
+            data = self.hist
+        if log is None or log == False:
+            norm = mpl.colors.Normalize(vmin=data.min(), vmax=data.max())
+        else:
+            vmin = np.min(data[np.nonzero(data)])
+            norm = mpl.colors.LogNorm(vmin=vmin, vmax=data.max())
+        cplt = plt.pcolormesh(X, Y, data, cmap=cmap, norm=norm)
         ax = plt.gca()
         ax.set_xticks(self.bins[0][:-1]+0.5)
         ax.set_xticklabels(np.array(self.bins[0][:-1], dtype=np.uint16))
@@ -74,21 +80,31 @@ class hist2d:
         ax.set_yticklabels(np.array(self.bins[1][:-1], dtype=np.uint16))
         vmin, vmax = plt.gci().get_clim()
         cm = cplt.get_cmap()
-        norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
         sm = cmx.ScalarMappable(norm=norm, cmap=cm)
+        plt.xlabel('Region 1')
+        plt.ylabel('Region 2')
         if showvalues:
-            for i, v in np.ndenumerate(self.hist):
+            for i, v in np.ndenumerate(data):
                 rgba = opcolor(sm.to_rgba(v))
-                plt.text(i[1]+0.4, i[0]+0.4, "%d" % v, color=rgba)
+                if normed:
+                    plt.text(i[1]+0.4, i[0]+0.4, "%.3e" % v, color=rgba)
+                else:
+                    plt.text(i[1]+0.4, i[0]+0.4, "%d" % v, color=rgba)
 
     def rawmoment(self, i, j):
+        '''
+        '''
         return np.average(np.outer(self.bins[0][:-1]**i, self.bins[0][:-1]**j),
                           weights=self.hist)
 
     def mariginal(self, axis):
+        '''
+        '''
         return hist1d(np.sum(self.hist, axis=axis), self.bins[axis])
     
     def csec(self, i, axis):
+        '''
+        '''
         if axis == 0:
             return hist1d(self.hist[:, i], self.bins[axis])
         elif axis == 1:
@@ -115,18 +131,26 @@ class hist2d:
         pass
     
     def R2(self):
+        '''
+        '''
         g2a = self.mariginal(axis=0).g2()
         g2b = self.mariginal(axis=1).g2()
         g2ab = self.g2()
         return g2ab**2/(g2a*g2b)
     
     def p11(self):
+        '''
+        '''
         return self.hist[1,1]/self.N
     
     def N11(self):
+        '''
+        '''
         return self.hist[1,1]
     
     def mean(self, axis=None):
+        '''
+        '''
         if axis == 0:
             return self.rawmoment(1,0)
         elif axis == 1:
@@ -138,6 +162,8 @@ class hist2d:
             raise ValueError
          
     def var(self, axis):
+        '''
+        '''
         if axis == 0:
             return self.rawmoment(2,0)-self.rawmoment(1,0)**2
         elif axis == 1:

@@ -169,7 +169,7 @@ class file:
         # set actual number of frames
         self.Nframes = nframes
         
-        message("Read " + str(nframes) + " frames", 1)
+        message("\nRead " + str(nframes) + " frames", 1)
         
         if shapedetect:
             try:
