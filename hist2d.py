@@ -18,6 +18,7 @@ class hist2d:
     def fromfs(fs1, fs2):
         '''
         Create joint statistics histogram
+        
         '''
         maxn = max(np.max(fs1.N)+2, np.max(fs2.N)+2)
         bins = np.arange(maxn)

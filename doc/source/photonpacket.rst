@@ -11,6 +11,10 @@ Submodules
    photonpacket.exceptions
    photonpacket.file
    photonpacket.frameseries
+   photonpacket.helpers
+   photonpacket.hist1d
+   photonpacket.hist2d
+   photonpacket.labviewxmlparse
    photonpacket.message
    photonpacket.multimethods
    photonpacket.region

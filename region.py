@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from frameseries import frameseries
+from arraysplit import array_split
 
 
 class region:
@@ -52,29 +53,18 @@ class region:
         else:
               return frameseries(frames, fs.shape, cut=True)
         '''
-        cc_frames = fs.concat
-        cc_frames = np.array(cc_frames, dtype=np.uint32)
-        idxs = np.cumsum(fs.N, dtype=np.uint32)
-        idxs = np.insert(idxs, 0, 0)
+        cc_frames = np.array(fs.concat, dtype=np.uint32)
+        csum = np.cumsum(fs.N, dtype=np.uint32)
         mask = self.getmask(cc_frames)
-        out_frames = []
-        A = out_frames.append
-        for i, frame in enumerate(fs.frames):
-            #if reshape:
-            #    frame = self.reshape(np.array(frame))
-            lf = len(frame)
-            if lf > 0:
-                A(frame[mask[idxs[i]:idxs[i]+lf]])
-            else:
-                A(frame)
+        cmask = np.cumsum(mask)
+        cmask = np.insert(cmask, 0, 0)
+        cN = cmask[csum]
+        cN = np.insert(cN, 0, 0)
         if reshape:
-            outN = map(len, out_frames)
-            cc_out_frames = np.concatenate(out_frames)
-            cc_out_frames = self.reshape(cc_out_frames)
-            idxs = np.cumsum(outN, dtype=np.uint32)
-            return frameseries(np.split(cc_out_frames, idxs)[:-1], self.shape, cut=False)
+            cc_frames = self.reshape(cc_frames)
+            return frameseries(array_split(cc_frames[mask], cN), self.shape, cut=False)
         else:
-            return frameseries(out_frames, fs.shape, cut=False)
+            return frameseries(array_split(cc_frames[mask], cN), fs.shape, cut=False)
 
     def getcounts(self,fs):
         '''
