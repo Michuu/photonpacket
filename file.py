@@ -148,6 +148,7 @@ class file:
         # open file for binary reading
         f = open(path,'rb')
 
+        empty_frame = np.empty(shape=(0, 2), dtype=np.uint16)
         while(True):
             # read number of photons in a frame
             # nxy = (number of photons, information per photon)
@@ -155,19 +156,19 @@ class file:
             # break if file ended or acquired enough frames
             if nxy.size == 0 or (nframes >= maxframes and frames_limit):
                 break
-            N = np.prod(nxy)
+            N = nxy[0] * nxy[1]
             nframes += 1
             # read frame data
-            img = np.fromfile(f, '>u2', N)
 
             if N > 0:
                 # dzielenie przez 10, nie wiadomo za bardzo czemu!
                 # TODO: automatic detection of /10 division
                 # TODO: possibility of getting other info about photons
                 # extract only photon positions
+                img = np.fromfile(f, '>u2', N)
                 frame = np.reshape(img/10, nxy)[:, :2]
             else:
-                frame = np.empty(shape=(0, 2), dtype=np.uint16)
+                frame = empty_frame
             self.frames.append(frame)
             progress(nframes)
         # close file access

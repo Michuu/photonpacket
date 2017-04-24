@@ -7,6 +7,7 @@ from hist1d import hist1d
 import matplotlib.cm as cmx
 import matplotlib as mpl
 from helpers import opcolor
+from mpl_toolkits.mplot3d import Axes3D
 
 class hist2d:
     bins = np.array([])
@@ -36,20 +37,28 @@ class hist2d:
         return hist2d(hist[0], (hist[1], hist[2]))
     
     def __init__(self, hist, bins):
+        '''
+        '''
         self.hist = hist
         self.bins = bins
         self.N = np.sum(hist)
     
     def __getitem__(self, i):
+        '''
+        '''
         if self.normed:
             return self.hist[i]/self.N
         else:
             return self.hist[i]
     
     def setnorm(self, normed):
+        '''
+        '''
         self.normed = normed
         
     def gethist(self, normed=None):
+        '''
+        '''
         if normed is None:
             normed = self.normed
         if normed:
@@ -91,6 +100,36 @@ class hist2d:
                     plt.text(i[1]+0.4, i[0]+0.4, "%.3e" % v, color=rgba)
                 else:
                     plt.text(i[1]+0.4, i[0]+0.4, "%d" % v, color=rgba)
+                    
+    def plot3d(self, normed=False, cmap=None, fill=0.7, alpha=0.95, log=False):
+        '''
+        Plot the histogram as 3D bar plot
+        '''
+        if normed:
+            data = self.hist/self.N  
+        else:
+            data = self.hist
+        X, Y = np.meshgrid(self.bins[0][:-1], self.bins[1][:-1])
+        xpos, ypos = X, Y
+        xpos = xpos.flatten('F')
+        ypos = ypos.flatten('F')
+        zpos = np.zeros_like(xpos)
+        if log is None or log == False:
+            v = data
+        else:
+            v = np.log10(data+1.0)
+        ma = v.max()
+        mi = v.min()
+        dv = ma - mi
+        values = (v.flatten()-mi)/(dv)
+        cmap = cmx.get_cmap(cmap)
+        colors = cmap(values)
+    
+        dx = fill * np.ones_like(zpos)
+        dy = dx.copy()
+        dz = v.flatten()
+        ax=plt.gca(projection='3d')
+        ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color=colors, zsort='average',alpha=alpha)
 
     def rawmoment(self, i, j):
         '''

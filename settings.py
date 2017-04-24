@@ -16,7 +16,7 @@ import matplotlib as mpl
 # map origin
 mpl.rc('image', interpolation='none', origin='lower')
 # colormap
-mpl.rcParams['image.cmap'] = 'coolwarm'
+mpl.rcParams['image.cmap'] = 'RdBu_r'
 # fonts
 mpl.rcParams["font.family"] = "STIXGeneral"
 mpl.rcParams["mathtext.fontset"] = "stixsans"

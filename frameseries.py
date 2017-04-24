@@ -1,6 +1,7 @@
 import numpy as np
 from bincountnd import bincountnd
 from scipy.spatial import KDTree
+from arraysplit import array_split
 
 class frameseries:
     frames = []
@@ -181,7 +182,7 @@ class frameseries:
 
         return accum
   
-    def rotate(self, angle, **kwargs):
+    def rotate(self, angle, centerpoint):
         '''
         Rotate coordinate system
         
@@ -201,8 +202,15 @@ class frameseries:
         Examples
         ---------
         '''
-        # TODO: implement rotation
-        pass
+        cc_frames = np.array(self.concat, dtype=np.float) - centerpoint
+        rcc_frames = np.zeros(shape=cc_frames.shape, dtype=cc_frames.dtype)
+        rcc_frames[:,0] = cc_frames[:,0]*np.cos(angle) + cc_frames[:,1]*np.sin(angle)
+        rcc_frames[:,1] = cc_frames[:,1]*np.cos(angle) - cc_frames[:,0]*np.sin(angle)
+        rcc_frames += centerpoint
+        self.concat = np.array(rcc_frames, dtype=np.uint32)
+        self.frames = array_split(self.concat, self.N)[1:-1]
+        self.cuttoshape(self.shape)
+        
     
     def rescale(self, factor, axis, **kwargs):
         '''

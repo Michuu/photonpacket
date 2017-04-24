@@ -55,16 +55,16 @@ class region:
         '''
         cc_frames = np.array(fs.concat, dtype=np.uint32)
         csum = np.cumsum(fs.N, dtype=np.uint32)
-        mask = self.getmask(cc_frames)
+        mask = self.getmask(cc_frames.copy())
         cmask = np.cumsum(mask)
         cmask = np.insert(cmask, 0, 0)
         cN = cmask[csum]
         cN = np.insert(cN, 0, 0)
         if reshape:
             cc_frames = self.reshape(cc_frames)
-            return frameseries(array_split(cc_frames[mask], cN), self.shape, cut=False)
+            return frameseries(array_split(cc_frames[mask], cN)[1:-1], self.shape, cut=False)
         else:
-            return frameseries(array_split(cc_frames[mask], cN), fs.shape, cut=False)
+            return frameseries(array_split(cc_frames[mask], cN)[1:-1], fs.shape, cut=False)
 
     def getcounts(self,fs):
         '''
