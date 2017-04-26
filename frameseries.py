@@ -1,7 +1,12 @@
 import numpy as np
 from bincountnd import bincountnd
 from scipy.spatial import KDTree
+from scipy.signal import resample
 from arraysplit import array_split
+from matplotlib import pyplot as plt
+from copy import deepcopy
+
+# main frameseries class
 
 class frameseries:
     frames = []
@@ -259,7 +264,7 @@ class frameseries:
         '''
         return self.frameN
     
-    def shift(self, n):
+    def roll(self, n):
         '''
         Shift frames
         
@@ -279,5 +284,54 @@ class frameseries:
         Examples
         ---------
         '''
-        # TODO: implement shifting of frames
-        pass
+        self.frames = self.frames[n:] + self.frames[:n]
+        self.N = np.roll(self.N, n)
+        self.concat = np.concatenate(self.frames)
+        
+    
+    def append(self, fs):
+        '''
+        Append antoher frameseries to current frameseries
+        '''
+        self.frames = np.concatenate((self.frames, fs.frames))
+        self.N = np.array(map(len, self.frames))
+        self.concat = np.concatenate(self.frames)
+        self.frameN = self.frameN + fs.frameN
+    
+    def timeseries(self, samples=1000):
+        '''
+        Get photon numbers as resampled time series
+        '''
+        return resample(self.N, samples)
+        
+    def plot(self, samples=1000):
+        '''
+        Plot the series as a time series of photon number after resampling
+        '''
+        plt.plot(self.timeseries(samples))
+        
+    def copy(self):
+        '''
+        Copies the frameseries in memory and returns new object
+        '''
+        return deepcopy(self)
+        
+
+# functions
+
+def fsconcat(fslist):
+    '''
+    Concatenate frameseries
+    '''
+    frames = np.concatenate(map(lambda fs: fs.frames, fslist))
+    return frameseries(frames, shape = fslist[0].shape, cut=False)
+
+def fsplot(fslist, samples=1000):
+    '''
+    Plot mutltiple frameseries as photon number time series
+    '''
+    for fs in fslist:
+        fs.plot(samples)
+        
+        
+    

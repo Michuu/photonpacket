@@ -2,7 +2,7 @@ import numpy as np
 from scipy.signal import convolve2d
 from bincountnd import bincountnd
 from message import message, progress
-
+from collections import deque
 
 class accum:
     '''
@@ -63,7 +63,7 @@ class accum:
         '''
         if method == 'bincount':
             i = 0
-            cframes = []
+            cframes = deque([])
             for frame in fs1.frames:
                 progress(i)
                 frame2 = fs2.frames[i]

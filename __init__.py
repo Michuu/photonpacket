@@ -2,7 +2,7 @@ from file import file
 from helpers import nom, std
 from region import circle, rect, ring, ellpise, halfcircle
 from accum import accum
-from frameseries import frameseries
+from frameseries import frameseries, fsconcat
 import stat1d
 import stat2d
 from hist1d import hist1d
