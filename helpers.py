@@ -46,10 +46,3 @@ def opcolor(rgba):
         return (0,0,0,1)
     else:
         return (1,1,1,1)
-    #rgba = np.array(rgba)
-    #rgb = rgba[:3]
-    #hsv = mpl.colors.rgb_to_hsv(rgb)
-    #newhsv = np.array([(hsv[0]+0.5)%1,1-hsv[1],1-hsv[2]])
-    #newrgb = mpl.colors.hsv_to_rgb(newhsv)
-    #newrgba = np.append(newrgb, rgba[3])
-    #rgba[:-1] = 1 - rgba[:-1]

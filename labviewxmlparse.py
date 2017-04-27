@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as et
+from distutils.util import strtobool
 
 singledimdtypes = ('U32', 'I32', 'U16', 'I16', 'U8', 'I8', 'DBL', 'Boolean', 'String')
 
@@ -10,7 +11,7 @@ def dtcast(val, dtype):
     elif dtype in ('DBL'):
         val = float(val)
     elif dtype in ('Boolean'):
-        val = bool(val)
+        val = strtobool(val)
     else:
         pass
     return val
