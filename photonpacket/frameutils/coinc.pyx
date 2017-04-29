@@ -98,13 +98,13 @@ def autocoinc(np.ndarray[DTYPE_t, ndim=2] frame):
     Generate autocoincidences inside a single frame
     
     '''
-    cdef int f1l = frame1.shape[0]
+    cdef int f1l = frame.shape[0]
     cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1), 4], dtype=DTYPE)
     cdef int i = 0
     cdef int j = 0
     cdef int k = 0
     for i in range(f1l):
-        for j in range(f2l):
+        for j in range(f1l):
             if i != j:
                 cframe[i+f1l*k,0] =  frame1[i,0]
                 cframe[i+f1l*k,1] =  frame1[k,0]

@@ -13,6 +13,12 @@ def arraysplit(np.ndarray[DTYPE_t, ndim=2] ary, np.ndarray[cNDTYPE_t, ndim=1] in
     '''
     Faster version of :func:`numpy.array_split`
     
+    Parameters
+    
+    
+    Returns
+    
+    
     
     '''
     cdef int Ntotal = ary.shape[0]
