@@ -106,9 +106,9 @@ def autocoinc(np.ndarray[DTYPE_t, ndim=2] frame):
     for i in range(f1l):
         for j in range(f1l):
             if i != j:
-                cframe[i+f1l*k,0] =  frame1[i,0]
-                cframe[i+f1l*k,1] =  frame1[k,0]
-                cframe[i+f1l*k,2] =  frame1[i,1]
-                cframe[i+f1l*k,3] =  frame1[k,1]
+                cframe[i+f1l*k,0] =  frame[i,0]
+                cframe[i+f1l*k,1] =  frame[k,0]
+                cframe[i+f1l*k,2] =  frame[i,1]
+                cframe[i+f1l*k,3] =  frame[k,1]
                 k += 1
     return cframe
