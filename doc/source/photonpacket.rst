@@ -1,12 +1,20 @@
 photonpacket package
 ====================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    photonpacket.frameutils
+
 Submodules
 ----------
 
 .. toctree::
 
    photonpacket.accum
+   photonpacket.arraysplit
    photonpacket.bincountnd
    photonpacket.exceptions
    photonpacket.file
@@ -16,7 +24,6 @@ Submodules
    photonpacket.hist2d
    photonpacket.labviewxmlparse
    photonpacket.message
-   photonpacket.multimethods
    photonpacket.region
    photonpacket.settings
    photonpacket.stat1d

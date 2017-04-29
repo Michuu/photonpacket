@@ -140,7 +140,7 @@ class frameseries:
             if len(frame)>=2:
                 kdt=KDTree(np.array(frame))
                 ridx=[]
-                kdtq=kdt.query_pairs(r,p=2)
+                kdtq=kdt.query_pairs(r,p=2.0)
                 for pidx in kdtq:
                     if (pidx[1] not in ridx) and (pidx[0] not in ridx):
                         ridx.append(pidx[1])
@@ -217,7 +217,7 @@ class frameseries:
         self.cuttoshape(self.shape)
         
     
-    def rescale(self, factor, axis, **kwargs):
+    def rescale(self, scale, centerpoint):
         '''
         Rescale coordinate system
         
@@ -264,7 +264,7 @@ class frameseries:
         '''
         return self.frameN
     
-    def roll(self, n):
+    def shift(self, n):
         '''
         Shift frames
         

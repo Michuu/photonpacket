@@ -1,16 +1,44 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from frameseries import frameseries
-from arraysplit import array_split
+from frameutils.arraysplit import arraysplit
 
+class region(object):
+    component_regions = ()
+    logic = None
 
-class region:
-
-    def __init__(self):
-        pass
-
+    def __init__(self, components_regions, logic):
+        self.component_regions = components_regions
+        self.logic = logic
+    
+    def __and__(self, other):
+        return region((self, other), 'and')
+    
+    def __or__(self, other):
+        return region((self, other), 'or')
+    
+    def __xor__(self, other):
+        return region((self, other), 'xor')
+    
+    def __invert__(self):
+        return region((self), 'not')
+    
+    def getmask(self, frame):
+        if self.logic == 'and':
+            return self.component_regions[0].getmask(frame.copy()) & self.component_regions[1].getmask(frame.copy())
+        elif self.logic == 'or':
+            return self.component_regions[0].getmask(frame.copy()) | self.component_regions[1].getmask(frame.copy())
+        elif self.logic == 'xor':
+            return self.component_regions[0].getmask(frame.copy()) ^ self.component_regions[1].getmask(frame.copy())
+        elif self.logic == 'not':
+            return np.logical_not(self.component_regions.getmask(frame.copy()))
+        
     def plot(self):
-        pass
+        if self.component_regions.__class__ == tuple:
+            for reg in self.component_regions:
+                reg.plot()
+        else:
+            self.component_regions.plot()
 
     def isinregion(self):
         pass
@@ -62,9 +90,9 @@ class region:
         cN = np.insert(cN, 0, 0)
         if reshape:
             cc_frames = self.reshape(cc_frames)
-            return frameseries(array_split(cc_frames[mask], cN)[1:-1], self.shape, cut=False)
+            return frameseries(arraysplit(cc_frames[mask], cN)[1:-1], self.shape, cut=False)
         else:
-            return frameseries(array_split(cc_frames[mask], cN)[1:-1], fs.shape, cut=False)
+            return frameseries(arraysplit(cc_frames[mask], cN)[1:-1], fs.shape, cut=False)
 
     def getcounts(self,fs):
         '''
@@ -137,6 +165,7 @@ class region:
         frame[:,0] -= self.corner[0]
         frame[:,1] -= self.corner[1]
         return frame
+        
      
 
 class circle(region):
@@ -220,6 +249,29 @@ class rect(region):
         mask4 = frame[:,1] < self.y1
         return mask1 * mask2 * mask3 * mask4
 
+class rect2(rect):
+    '''
+    Rectangle defined by center
+    '''
+    
+    def __init__(self, (xc, yc), (a, b)):
+        x0 = xc - a
+        y0 = yc - b
+        x1 = xc + a
+        y1 = yc + b
+        super(rect2, self).__init__((x0, y0), (x1, y1))
+        
+class square(rect):
+    '''
+    Square region
+    '''
+    def __init__(self, (xc, yc), a):
+        x0 = xc - a
+        y0 = yc - a
+        x1 = xc + a
+        y1 = yc + a
+        super(square, self).__init__((x0, y0), (x1, y1))
+        
 class ring(region):
     '''
     Ring region

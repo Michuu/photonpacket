@@ -12,17 +12,20 @@ Submodules
 ==========
 .. toctree::
 
-   photonpacket.accum
-   photonpacket.bincountnd
-   photonpacket.exceptions
-   photonpacket.file
-   photonpacket.frameseries
-   photonpacket.message
-   photonpacket.multimethods
-   photonpacket.region
-   photonpacket.settings
-   photonpacket.stat1d
-   photonpacket.stat2d
+    photonpacket.accum	
+    photonpacket.bincountnd	
+    photonpacket.exceptions	
+    photonpacket.file	
+    photonpacket.frameseries	
+    photonpacket.helpers	
+    photonpacket.hist1d	
+    photonpacket.hist2d	
+    photonpacket.labviewxmlparse	
+    photonpacket.message	
+    photonpacket.region	
+    photonpacket.settings	
+    photonpacket.stat1d	
+    photonpacket.stat2d
 
 Indices and tables
 ==================

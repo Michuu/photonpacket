@@ -1,1 +1,1 @@
-sphinx-apidoc -feT ../../photonpacket/ -o ./source/ -d 8
+sphinx-apidoc -feT ../photonpacket/ -o ./source/ -d 8

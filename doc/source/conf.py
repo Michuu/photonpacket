@@ -18,8 +18,8 @@
 #
 import os
 import sys
-sys.path.insert(0, '/Users/michal/Repozytoria/')
-sys.path.append('Users/michal/Repozytoria/photonpacket/')
+sys.path.insert(0, '/Users/michal/Repozytoria/photonpacket/')
+#sys.path.append('/Users/michal/Repozytoria/photonpacket/')
 
 # -- General configuration ------------------------------------------------
 
