@@ -3,5 +3,12 @@
 *.c
 *.so
 *.dll
+*.exp
+*.lib
+*.obj
+*.pyd.manifest
+*.manifest
+*.html
+*.pyd
 .spyproject/workspace.ini
 doc/build/
