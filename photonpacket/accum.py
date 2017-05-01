@@ -3,7 +3,7 @@ from scipy.signal import convolve2d
 from bincountnd import bincountnd
 from message import message, progress
 from collections import deque
-from frameutils.coinc import bincoinc, bincoinc2d
+from frameutils.coinc import bincoinc, bincoincsd, bincount2d, coinc
 
 accumtype = np.uint32
 
@@ -27,7 +27,7 @@ def accumframes(fs):
 
 def accumcoinc(fs1, fs2):
     '''
-    Accumulate coincidences
+    Accumulate coincidences into 4D matrix
     
     Parameters
     ----------
@@ -56,10 +56,9 @@ def accumcoinc(fs1, fs2):
     Examples
     ----------
     '''
-
     i = 0
-    accum = np.zeros(shape=(fs1.shape[0],fs1.shape[0],
-                          fs1.shape[1],fs1.shape[1]), dtype=accumtype)
+    accum = np.zeros(shape=(fs1.shape[0],fs2.shape[0],
+                          fs1.shape[1],fs2.shape[1]), dtype=accumtype)
     for frame1, frame2 in zip(fs1.frames, fs2.frames):
         progress(i)
         if frame1.shape[0] != 0 and frame2.shape[1] != 0:
@@ -67,9 +66,29 @@ def accumcoinc(fs1, fs2):
         i += 1
     return accum  
 
+def accumcoinc2d(fs1, fs2, axis=0, constr=None):
+    '''
+    Coincidences map for one of the dimensions
+    '''
+    i = 0
+    accum = np.zeros(shape=(fs1.shape[axis],fs2.shape[axis]), dtype=accumtype)
+    cframes = []
+    A = cframes.append
+    for frame1, frame2 in zip(fs1.frames, fs2.frames):
+        if frame1.shape[0] != 0 and frame2.shape[1] != 0:
+            A(coinc(frame1, frame2))
+        i += 1
+    cframes = np.concatenate(cframes)
+    if constr is not None:
+        mask = constr(cframes.copy())
+        bincount2d(cframes.take([2*axis, 2*axis+1], axis=1)[mask], accum)
+    else:
+        bincount2d(cframes.take([2*axis, 2*axis+1], axis=1), accum)
+    return accum
+
 def coinchist(fs1, fs2, signs):
     '''
-    Obtain coincidence histogram
+    Coincidence histogram in terms of sum/differnce variables
     
     Parameters
     ----------
@@ -92,19 +111,19 @@ def coinchist(fs1, fs2, signs):
     ----------
     '''
     i = 0
-    shape = (fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1)
+    shape = (fs1.shape[0]+fs2.shape[0]-1, fs1.shape[1]+fs2.shape[1]-1)
     accum = np.zeros(shape, dtype=accumtype)
     for frame1, frame2 in zip(fs1.frames, fs2.frames):
         progress(i)
         if frame1.shape[0] != 0 and frame2.shape[0] != 0:
-            bincoinc2d(frame1, frame2, accum, signs, fs2.shape)
+            bincoincsd(frame1, frame2, accum, signs, fs2.shape)
         i += 1
     return accum
-    
 
-def acchist(h1,h2,signs,**kwargs):
+
+def acchist(h1, h2, signs, **kwargs):
     '''
-    Obtain accidential coincidences histogram
+    Accidential coincidences histogram in terms of sum/differnce variables
     
     Parameters
     ----------
@@ -136,8 +155,25 @@ def acchist(h1,h2,signs,**kwargs):
     else:
         div = 1.0
     if signs[0] == -1:
-          h2=np.flip(h2,axis=0)
+        h2 = np.flip(h2, axis=0)
     if signs[1] == -1:
-          h2=np.flip(h2,axis=1)
-    return convolve2d(h1,h2)/div
+        h2 = np.flip(h2, axis=1)
+    return convolve2d(h1, h2)/div
+
+
+def acccoinc(h1, h2, axis=0, constr=None):
+    '''
+    Accidental coincidences map for one of the dimensions
+    '''
+    acc = np.zeros((h1.shape[axis], h2.shape[axis]))
+    for v1 in range(h1.shape[axis]):
+        for v2 in range(h2.shape[axis]):
+            if constr is not None:
+                pass
+            else:
+                if axis == 1:
+                    acc += np.outer(h1[v1, :], h2[v2, :])
+                else:
+                    acc += np.outer(h1[:, v1], h2[:, v2])
+    return acc
     

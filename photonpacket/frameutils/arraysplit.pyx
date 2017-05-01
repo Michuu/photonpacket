@@ -7,6 +7,8 @@ ctypedef np.int_t cNDTYPE_t
 
 cimport cython
 
+__all__ = ['arraysplit']
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def arraysplit(np.ndarray[DTYPE_t, ndim=2] ary, np.ndarray[cNDTYPE_t, ndim=1] indices_or_sections):

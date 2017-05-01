@@ -44,7 +44,7 @@ def bincoinc(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] fra
   
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def coinc2d(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2, 
+def coincsd(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2, 
             signs, shape):
     '''
     Generete coincidences between two frames in sum/difference variables
@@ -70,7 +70,7 @@ def coinc2d(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] fram
           
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-def bincoinc2d(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2,
+def bincoincsd(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2,
              np.ndarray[DTYPE_t, ndim=2] hist, signs, shape):
     '''
     Bin coincidences in sum/difference variables, adding them to hist
@@ -99,16 +99,45 @@ def autocoinc(np.ndarray[DTYPE_t, ndim=2] frame):
     
     '''
     cdef int f1l = frame.shape[0]
-    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1), 4], dtype=DTYPE)
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1)/2, 4], dtype=DTYPE)
     cdef int i = 0
     cdef int j = 0
     cdef int k = 0
     for i in range(f1l):
         for j in range(f1l):
-            if i != j:
-                cframe[i+f1l*k,0] =  frame[i,0]
-                cframe[i+f1l*k,1] =  frame[k,0]
-                cframe[i+f1l*k,2] =  frame[i,1]
-                cframe[i+f1l*k,3] =  frame[k,1]
+            if i > j:
+                cframe[k,0] =  frame[i,0]
+                cframe[k,1] =  frame[j,0]
+                cframe[k,2] =  frame[i,1]
+                cframe[k,3] =  frame[j,1]
                 k += 1
     return cframe
+
+@cython.boundscheck(False)
+@cython.wraparound(False)  
+def binautocoinc(np.ndarray[DTYPE_t, ndim=2] frame, 
+             np.ndarray[DTYPE_t, ndim=4] hist):
+    '''
+    Bin autocoincidences inside a single frame, adding them to hist
+    
+    '''
+    cdef int f1l = frame.shape[0]
+    cdef int i = 0
+    cdef int j = 0
+    for i in range(f1l):
+        for j in range(f1l):
+            if i > j:
+                hist[frame[i,0], frame[j,0], frame[i,1], frame[j,1]] += 1
+                
+@cython.boundscheck(False)
+@cython.wraparound(False)  
+def bincount2d(np.ndarray[DTYPE_t, ndim=2] cframe,
+             np.ndarray[DTYPE_t, ndim=2] hist):
+    '''
+    Bin counts with two cooridinates
+    
+    '''
+    cdef int cfl = cframe.shape[0]
+    cdef int i = 0
+    for i in range(cfl):
+            hist[cframe[i,0], cframe[i,1]] += 1
