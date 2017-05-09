@@ -165,9 +165,10 @@ def acccoinc(h1, h2, axis=0, constr=None):
     '''
     Accidental coincidences map for one of the dimensions
     '''
-    acc = np.zeros((h1.shape[axis], h2.shape[axis]))
-    for v1 in range(h1.shape[axis]):
-        for v2 in range(h2.shape[axis]):
+    iaxis = int(not axis)
+    acc = np.zeros((h1.shape[iaxis], h2.shape[iaxis]))
+    for v1 in range(h1.shape[iaxis]):
+        for v2 in range(h2.shape[iaxis]):
             if constr is not None:
                 pass
             else:

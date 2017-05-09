@@ -105,7 +105,7 @@ def autocoinc(np.ndarray[DTYPE_t, ndim=2] frame):
     cdef int k = 0
     for i in range(f1l):
         for j in range(f1l):
-            if i > j:
+            if i != j:
                 cframe[k,0] =  frame[i,0]
                 cframe[k,1] =  frame[j,0]
                 cframe[k,2] =  frame[i,1]
@@ -126,7 +126,7 @@ def binautocoinc(np.ndarray[DTYPE_t, ndim=2] frame,
     cdef int j = 0
     for i in range(f1l):
         for j in range(f1l):
-            if i > j:
+            if i != j:
                 hist[frame[i,0], frame[j,0], frame[i,1], frame[j,1]] += 1
                 
 @cython.boundscheck(False)

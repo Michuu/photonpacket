@@ -265,7 +265,7 @@ class square(rect):
     '''
     Square region
     '''
-    def __init__(self, (xc, yc), a):
+    def __init__(self, a, (xc, yc)):
         x0 = xc - a
         y0 = yc - a
         x1 = xc + a

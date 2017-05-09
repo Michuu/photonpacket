@@ -91,21 +91,6 @@ class frameseries:
         self.frames = cfs.frames
         self.concat = cfs.concat
         self.N = cfs.N
-        '''
-        self.shape = shape
-        j = 0
-        aux_frames = self.frames
-        for frame in aux_frames:
-            # prepare mask to cut out photons outside rectangular shape
-            mask0 = frame[:, 0] < shape[0]
-            mask1 = frame[:, 1] < shape[1]
-            mask = mask0 * mask1
-            # apply mask
-            self.frames[j] = frame[mask]
-            # calculate total photon number
-            self.N[j] = np.sum(mask)
-            j += 1
-        '''
 
 
     def accumframes(self):
@@ -174,8 +159,8 @@ class frameseries:
         '''
         i=0
         accum=np.zeros(
-                shape=(self.shape[0],self.shape[0],self.shape[1],self.shape[1])
-                )
+                shape=(self.shape[0],self.shape[0],self.shape[1],self.shape[1]),
+                dtype=np.uint32)
         for frame in self.frames:
             if frame.shape[0] > 0:
                 binautocoinc(frame, accum)
@@ -282,6 +267,8 @@ class frameseries:
         self.N = np.roll(self.N, n)
         self.concat = np.concatenate(self.frames)
         
+    def transform(self, transform):
+        pass
     
     def append(self, fs):
         '''
@@ -309,6 +296,36 @@ class frameseries:
         Copies the frameseries in memory and returns new object
         '''
         return deepcopy(self)
+    
+    def mean(self, uncert=False):
+        '''
+        '''
+        from stat1d import mean
+        return mean(self, uncert)
+    
+    def g2(self, uncert=False):
+        '''
+        '''
+        from stat1d import g2
+        return g2(self, uncert)
+    
+    def std(self, uncert=False):
+        '''
+        '''
+        from stat1d import std
+        return std(self, uncert)
+    
+    def thmodes(self, uncert=False):
+        '''
+        '''
+        from stat1d import thmodes
+        return thmodes(self, uncert)
+    
+    def var(self, uncert=False):
+        '''
+        '''
+        from stat1d import var
+        return var(self, uncert)
         
 
 # functions

@@ -15,7 +15,6 @@ def centralmoment(s, m):
     else:
         raise ValueError
     return moment(N, m)
-    
 
 def rawmoment(s, m, uncert=False):
     if s.__class__ == frameseries:
