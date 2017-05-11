@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from copy import deepcopy
 
 from frameutils.coinc import binautocoinc
+from frameutils.arraysplit import arraysplit
 
 # main frameseries class
 
@@ -14,7 +15,7 @@ class frameseries:
     frames = []
     N = np.array([])
     shape = (())
-    frameN = 0
+    Nframes = 0
     concat = np.array([])
 
     def __init__(self, frames, shape, cut = True):
@@ -43,10 +44,10 @@ class frameseries:
         '''
         self.frames = frames
         self.concat = np.concatenate(frames)
-        self.frameN = len(frames)
+        self.Nframes = len(frames)
         self.shape = shape
         # calculate photon numbers
-        self.N = np.array(map(len, frames))
+        self.N = np.array([frame.shape[0] for frame in self.frames])
         # cut to rectangular shape if requested
         if cut:
             self.cuttoshape(self.shape)
@@ -54,13 +55,21 @@ class frameseries:
     def __getitem__(self, key):
         '''
         '''
-        return self.frames[key]
+        if isinstance(key, slice) or isinstance(key, list) or isinstance(key, np.ndarray):
+            return frameseries(self.frames[key], self.shape, cut=False)
+        elif isinstance(key, int):
+            return singleframe([self.frames[key]], self.shape)
+        else:
+            raise TypeError
     
     def __setitem__(self, key, frame):
         '''
         '''
-        self.frames[key] = frame
-        self.N[key] = len(frame)
+        if isinstance(frame, np.ndarray):
+            self.frames[key] = frame
+            self.N[key] = len(frame)
+        else:
+            raise TypeError
         
     def cuttoshape(self, shape):
         '''
@@ -223,7 +232,7 @@ class frameseries:
     
     def len(self):
         '''
-        Get total length fo series of frames `frameN`
+        Get total length fo series of frames `Nframes`
         
         Parameters
         ---------
@@ -241,7 +250,7 @@ class frameseries:
         Examples
         ---------
         '''
-        return self.frameN
+        return self.Nframes
     
     def shift(self, n):
         '''
@@ -277,7 +286,7 @@ class frameseries:
         self.frames = np.concatenate((self.frames, fs.frames))
         self.N = np.array(map(len, self.frames))
         self.concat = np.concatenate(self.frames)
-        self.frameN = self.frameN + fs.frameN
+        self.Nframes = self.Nframes + fs.Nframes
     
     def timeseries(self, samples=1000):
         '''
@@ -326,6 +335,27 @@ class frameseries:
         '''
         from stat1d import var
         return var(self, uncert)
+    
+    def imshow(self):
+        '''
+        '''
+        plt.imshow(self.accumframes())
+        
+    def delframes(self, max_photons=20):
+        '''
+        '''
+        self.frames=[frame for frame in self.frames if frame.shape[0] <= max_photons]
+        self.concat = np.concatenate(self.frames)
+        self.N = [frame.shape[0] for frame in self.frames]
+        self.Nframes = len(self.frames)
+        
+
+class singleframe(frameseries):
+    '''
+    '''
+    
+    def scatter(self):
+        plt.scatter(self.frames[0][:,0], self.frames[0][:,1])
         
 
 # functions
@@ -343,6 +373,11 @@ def fsplot(fslist, samples=1000):
     '''
     for fs in fslist:
         fs.plot(samples)
+        
+def emptyframe(shape):
+    return singleframe(np.empty(shape=(0, 2), dtype=np.uint32),
+                       shape, cut=False)
+    
         
         
     

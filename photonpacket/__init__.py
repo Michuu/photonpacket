@@ -1,7 +1,7 @@
 from file import file
 from helpers import nom, std
 from region import circle, rect, rect2, ring, ellpise, halfcircle, square
-from frameseries import frameseries, fsconcat
+from frameseries import frameseries, fsconcat, emptyframe, singleframe, fsplot
 import stat1d
 import stat2d
 import accum
