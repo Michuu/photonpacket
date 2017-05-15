@@ -200,7 +200,7 @@ class frameseries:
         rcc_frames[:,0] = cc_frames[:,0]*np.cos(angle) + cc_frames[:,1]*np.sin(angle)
         rcc_frames[:,1] = cc_frames[:,1]*np.cos(angle) - cc_frames[:,0]*np.sin(angle)
         rcc_frames += centerpoint
-        self.concat = np.array(rcc_frames, dtype=np.uint32)
+        self.concat = np.array(np.around(rcc_frames), dtype=np.uint32)
         self.frames = array_split(self.concat, self.N)[1:-1]
         self.cuttoshape(self.shape)
         
@@ -277,7 +277,23 @@ class frameseries:
         self.concat = np.concatenate(self.frames)
         
     def transform(self, transform):
-        pass
+        '''
+        Affine tranformation of photons.
+        
+        Parameters
+        ---------
+        transform : tuple
+            (a,b,c,d,e,f), where ((a,b), (c,d)) is transofmration matrix 
+            and (e,f) is the added vector
+        '''
+        a, b, c, d, e, f=transform
+        cc_frames = np.array(self.concat, dtype=np.float)
+        rcc_frames = np.zeros(shape=cc_frames.shape, dtype=cc_frames.dtype)
+        rcc_frames[:,0] = cc_frames[:,0]*a + cc_frames[:,1]*b + e
+        rcc_frames[:,1] = cc_frames[:,1]*d + cc_frames[:,0]*c + f
+        self.concat = np.array(np.around(rcc_frames), dtype=np.uint32)
+        self.frames = array_split(self.concat, self.N)[1:-1]
+        self.cuttoshape(self.shape)
     
     def append(self, fs):
         '''
@@ -355,7 +371,7 @@ class singleframe(frameseries):
     '''
     
     def scatter(self):
-        plt.scatter(self.frames[0][:,0], self.frames[0][:,1])
+        plt.scatter(self.frames[0][:,1], self.frames[0][:,0])
         
 
 # functions
