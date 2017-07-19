@@ -65,22 +65,6 @@ class region(object):
         Examples
         ---------
         '''
-        '''
-        frames = []
-        for frame in fs.frames:
-            if len(frame)>0:
-                aux_frame = np.array(frame, dtype = np.uint32)
-                mask = self.getmask(aux_frame)
-                if reshape:
-                    frame = self.reshape(np.array(frame))
-                frames.append(frame[mask])
-            else:
-                frames.append(frame)
-        if reshape:
-              return frameseries(frames, self.shape, cut=False)
-        else:
-              return frameseries(frames, fs.shape, cut=True)
-        '''
         cc_frames = np.array(fs.concat, dtype=np.uint32)
         csum = np.cumsum(fs.N, dtype=np.uint32)
         mask = self.getmask(cc_frames.copy())
@@ -363,7 +347,6 @@ class halfcircle(region):
     Halfcircle region
     '''
     r1 = 0
-    angle = 0
     x0 = 0
     y0 = 0
     frames = []

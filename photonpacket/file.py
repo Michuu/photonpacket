@@ -143,7 +143,12 @@ class file:
         else:
             maxframes = 0
             frames_limit = False
-
+        
+        if 'div' in kwargs:
+            div = kwargs['div']
+        else:
+            div = 10
+            
         nframes = 0
         # open file for binary reading
         f = open(path,'rb')
@@ -161,12 +166,10 @@ class file:
             # read frame data
 
             if N > 0:
-                # dzielenie przez 10, nie wiadomo za bardzo czemu!
-                # TODO: automatic detection of /10 division
                 # TODO: possibility of getting other info about photons
                 # extract only photon positions
                 img = np.fromfile(f, '>u2', N)
-                frame = np.reshape(img/10, nxy)[:, :2]
+                frame = np.reshape(img/div, nxy)[:, :2]
             else:
                 frame = empty_frame
             self.frames.append(frame)
@@ -186,7 +189,7 @@ class file:
                 return False
                      
         # set shape
-        self.shape = shape
+        self.shape = shape*div
         
         # return file object
         return self
