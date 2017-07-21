@@ -189,7 +189,7 @@ class file:
                 return False
                      
         # set shape
-        self.shape = shape*div
+        self.shape = shape*10/div
         
         # return file object
         return self
