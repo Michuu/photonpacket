@@ -32,7 +32,7 @@ class frameseries:
             
         Returns
         ---------
-        coa
+        
         See Also
         ---------
         
@@ -252,6 +252,28 @@ class frameseries:
         '''
         return self.Nframes
     
+    def __len__(self):
+        '''
+        Get total length fo series of frames `Nframes`
+        
+        Parameters
+        ---------
+
+            
+        Returns
+        ---------
+        
+        See Also
+        ---------
+        
+        Notes
+        ---------
+        
+        Examples
+        ---------
+        '''
+        return self.Nframes
+    
     def shift(self, n):
         '''
         Shift frames
@@ -308,7 +330,9 @@ class frameseries:
         '''
         Get photon numbers as resampled time series
         '''
-        return resample(self.N, samples)
+        tmp = np.cumsum(fs.N)[samples:]
+        tmp2 = np.cumsum(fs.N)[:-samples]
+        return (tmp - tmp2) / float(samples)
         
     def plot(self, samples=1000):
         '''
@@ -364,7 +388,7 @@ class frameseries:
         self.concat = np.concatenate(self.frames)
         self.N = [frame.shape[0] for frame in self.frames]
         self.Nframes = len(self.frames)
-        
+                
 
 class singleframe(frameseries):
     '''
