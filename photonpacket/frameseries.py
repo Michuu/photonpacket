@@ -12,7 +12,7 @@ from frameutils.arraysplit import arraysplit
 # main frameseries class
 
 class frameseries:
-    frames = []
+    frames = np.array([], dtype=np.object)
     N = np.array([])
     shape = (())
     Nframes = 0
@@ -42,7 +42,7 @@ class frameseries:
         Examples
         ---------
         '''
-        self.frames = frames
+        self.frames = np.array(frames, dtype=np.object)
         self.concat = np.concatenate(frames)
         self.Nframes = len(frames)
         self.shape = shape
@@ -330,8 +330,8 @@ class frameseries:
         '''
         Get photon numbers as resampled time series
         '''
-        tmp = np.cumsum(fs.N)[samples:]
-        tmp2 = np.cumsum(fs.N)[:-samples]
+        tmp = np.cumsum(self.N)[samples:]
+        tmp2 = np.cumsum(self.N)[:-samples]
         return (tmp - tmp2) / float(samples)
         
     def plot(self, samples=1000):
