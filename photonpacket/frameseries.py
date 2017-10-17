@@ -70,7 +70,10 @@ class frameseries:
             self.N[key] = len(frame)
         else:
             raise TypeError
-        
+    
+    def store(self, fname):
+        pass
+    
     def cuttoshape(self, shape):
         '''
         Cut frames to shape
@@ -384,11 +387,34 @@ class frameseries:
     def delframes(self, max_photons=20):
         '''
         '''
-        self.frames=[frame for frame in self.frames if frame.shape[0] <= max_photons]
+        self.frames=np.array([frame for frame in self.frames if frame.shape[0] <= max_photons], dtype=np.object)
         self.concat = np.concatenate(self.frames)
         self.N = [frame.shape[0] for frame in self.frames]
         self.Nframes = len(self.frames)
-                
+    
+    def delsubsequent(self,Nf=10):
+        '''
+        Delete Nf frames after photon is detected in one
+        '''
+        tmp = np.cumsum(self.N)[Nf:]
+        tmp2 = np.cumsum(self.N)[:-Nf]
+        running_sum = (tmp - tmp2)
+        mask=np.concatenate([np.zeros(Nf+1,dtype=np.bool),running_sum[:-1]==0])
+        self.frames=self.frames[mask]
+        self.concat = np.concatenate(self.frames)
+        self.N = [frame.shape[0] for frame in self.frames]
+        self.Nframes = len(self.frames)
+        
+    def delsubsmask(self,Nf=10):
+        '''
+        Get the mask corresponding to delsubsequent function; does not alter the object
+        '''
+        tmp = np.cumsum(self.N)[Nf:]
+        tmp2 = np.cumsum(self.N)[:-Nf]
+        running_sum = (tmp - tmp2)
+        mask=np.concatenate([np.zeros(Nf+1,dtype=np.bool),running_sum[:-1]==0])
+        return mask
+        
 
 class singleframe(frameseries):
     '''
@@ -418,6 +444,10 @@ def emptyframe(shape):
     return singleframe(np.empty(shape=(0, 2), dtype=np.uint32),
                        shape, cut=False)
     
-        
+def loadfs(fname):
+    '''
+    Load frameseries from file
+    '''
+    pass    
         
     
