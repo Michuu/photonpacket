@@ -9,6 +9,11 @@ from copy import deepcopy
 from frameutils.coinc import binautocoinc
 from frameutils.arraysplit import arraysplit
 
+try:
+    import cPickle as pickle
+except:
+    import pickle
+    
 # main frameseries class
 
 class frameseries:
@@ -72,7 +77,16 @@ class frameseries:
             raise TypeError
     
     def store(self, fname):
-        pass
+        '''
+        Store pickled frameseries
+        
+        Parameters
+        ---------
+        fname : string
+            file name
+            
+        '''
+        pickle.dumps(self, open(fname, 'wb'))
     
     def cuttoshape(self, shape):
         '''
@@ -80,7 +94,7 @@ class frameseries:
         
         Parameters
         ---------
-        shape :            
+        shape :     
             
         Returns
         ---------
@@ -111,7 +125,6 @@ class frameseries:
         
         Parameters
         ---------
-        fs1 : 
             
             
         Returns
@@ -169,8 +182,7 @@ class frameseries:
         Examples
         ---------
         '''
-        i=0
-        accum=np.zeros(
+        accum = np.zeros(
                 shape=(self.shape[0],self.shape[0],self.shape[1],self.shape[1]),
                 dtype=np.uint32)
         for frame in self.frames:
@@ -448,6 +460,10 @@ def loadfs(fname):
     '''
     Load frameseries from file
     '''
-    pass    
+    fs = pickle.load(open(fname, 'rb'))
+    if fs.__class__ == frameseries:
+        return fs
+    else:
+        print 'Error: pickled object not of class frameseries.'
         
     
