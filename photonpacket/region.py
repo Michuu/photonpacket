@@ -160,7 +160,7 @@ class region(object):
 
 class circle(region):
     '''
-    Circle region
+    Circle region   
     '''
     r = 0
     x0 = 0
@@ -169,6 +169,16 @@ class circle(region):
     corner = np.array([])
 
     def __init__(self, r, (x0, y0)):
+        '''
+            
+        Paramterers
+        ---------
+        r : int
+            radius
+        (x0, y0) : (int, int)
+            position of center
+        
+        '''
         self.r = r
         self.x0 = x0
         self.y0 = y0
@@ -209,6 +219,16 @@ class rect(region):
     corner = np.array([])
 
     def __init__(self, (x0,y0), (x1,y1)):
+        '''     
+        
+        Paramterers
+        ---------
+        (x0, y0) : (int, int)
+            bottom left corner
+        (x1, y1) : (int, int)
+            top right corner
+        
+        '''
         self.x0 = x0
         self.y0 = y0
         self.x1 = x1
@@ -245,6 +265,16 @@ class rect2(rect):
     '''
     
     def __init__(self, (xc, yc), (a, b)):
+        '''
+        
+        Paramterers
+        ---------
+        (xc, yc) : (int, int)
+            position of center
+        (a, b) : (int, int)
+            horizontal and vertical extent
+        
+        '''
         x0 = xc - a
         y0 = yc - b
         x1 = xc + a
@@ -256,6 +286,16 @@ class square(rect):
     Square region
     '''
     def __init__(self, a, (xc, yc)):
+        '''
+        
+        Paramterers
+        ---------
+        a : int
+            extent
+        (xc, yc) : (int, int)
+            position of center
+        
+        '''
         x0 = xc - a
         y0 = yc - a
         x1 = xc + a
@@ -275,6 +315,18 @@ class ring(region):
     
 
     def __init__(self,r1,r2,(x0,y0)):
+        '''
+        
+        Paramterers
+        ---------
+        r1 : int
+            inner radius
+        r2 : int
+            outer radius
+        (x0, y0) : (int, int)
+            position of center
+        
+        '''
         self.r1 = r1
         self.r2 = r2
         self.x0 = x0
@@ -322,6 +374,20 @@ class ellpise(region):
     
 
     def __init__(self,a,b,(x0,y0),angle):
+        '''
+        
+        Paramterers
+        ---------
+        a : int
+            semi-major axis
+        b : int
+            semi-minor axis
+        (x0,y0) : (int, int)
+            position of center
+        angle : float
+            rotation angle (in radians); not implemented
+        
+        '''
         self.a = b
         self.a = b
         self.x0 = x0
@@ -351,6 +417,7 @@ class ellpise(region):
 class halfcircle(region):
     '''
     Halfcircle region
+    Not implemented
     '''
     r1 = 0
     x0 = 0
@@ -361,6 +428,18 @@ class halfcircle(region):
     
 
     def __init__(self,r,angle,(x0,y0)):
+        '''
+        
+        Paramterers
+        ---------
+        r : int
+            radius
+        angle : float
+            rotation angle (in radians)
+        (x0, y0) : (int, int)
+            position of center
+        
+        '''
         self.r=r
         self.angle=angle
         self.x0=x0
