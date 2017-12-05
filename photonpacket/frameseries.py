@@ -86,7 +86,7 @@ class frameseries:
             file name
             
         '''
-        pickle.dumps(self, open(fname, 'wb'))
+        pickle.dumps(self, open(fname, 'w'))
     
     def cuttoshape(self, shape):
         '''
@@ -460,7 +460,7 @@ def loadfs(fname):
     '''
     Load frameseries from file
     '''
-    fs = pickle.load(open(fname, 'rb'))
+    fs = pickle.load(open(fname, 'r'))
     if fs.__class__ == frameseries:
         return fs
     else:
