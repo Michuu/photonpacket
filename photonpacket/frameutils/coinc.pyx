@@ -71,7 +71,7 @@ def coinc4(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame
         for j in range(f2l):
             for k in range(f3l):
                 for l in range(f4l):
-                    idx = i+f1l*j+f1l*f2l*k+f1l*f2l*f3l*k
+                    idx = i+f1l*j+f1l*f2l*k+f1l*f2l*f3l*l
                     cframe[idx,0] =  frame1[i,0]
                     cframe[idx,1] =  frame2[j,0]
                     cframe[idx,2] =  frame3[k,0]
@@ -79,7 +79,7 @@ def coinc4(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame
                     cframe[idx,4] =  frame1[i,1]
                     cframe[idx,5] =  frame2[j,1]
                     cframe[idx,6] =  frame3[k,1]
-                    cframe[idx,7] =  frame4[l,2]
+                    cframe[idx,7] =  frame4[l,1]
     return cframe
 
 @cython.boundscheck(False)
