@@ -20,10 +20,66 @@ def coinc(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2
     cdef int j = 0
     for i in range(f1l):
         for j in range(f2l):
-            cframe[i+f1l*j,0] =  frame1[i,0]
-            cframe[i+f1l*j,1] =  frame2[j,0]
-            cframe[i+f1l*j,2] =  frame1[i,1]
-            cframe[i+f1l*j,3] =  frame2[j,1]
+            idx = i+f1l*j
+            cframe[idx,0] =  frame1[i,0]
+            cframe[idx,1] =  frame2[j,0]
+            cframe[idx,2] =  frame1[i,1]
+            cframe[idx,3] =  frame2[j,1]
+    return cframe
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def coinc3(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2, np.ndarray[DTYPE_t, ndim=2] frame3):
+    '''
+    Generate triple coincidences between three frames
+    '''
+    cdef int f1l = frame1.shape[0]
+    cdef int f2l = frame2.shape[0]
+    cdef int f3l = frame3.shape[0]
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*f2l*f3l, 6], dtype=DTYPE)
+    cdef int i = 0
+    cdef int j = 0
+    cdef int k = 0
+    for i in range(f1l):
+        for j in range(f2l):
+            for k in range(f3l):
+                idx = i+f1l*j+f1l*f2l*k
+                cframe[idx,0] =  frame1[i,0]
+                cframe[idx,1] =  frame2[j,0]
+                cframe[idx,2] =  frame3[k,0]
+                cframe[idx,3] =  frame1[i,1]
+                cframe[idx,4] =  frame2[j,1]
+                cframe[idx,5] =  frame3[k,1]
+    return cframe
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def coinc4(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2, np.ndarray[DTYPE_t, ndim=2] frame3, np.ndarray[DTYPE_t, ndim=2] frame4):
+    '''
+    Generate quadrupole coincidences between four frames
+    '''
+    cdef int f1l = frame1.shape[0]
+    cdef int f2l = frame2.shape[0]
+    cdef int f3l = frame3.shape[0]
+    cdef int f4l = frame4.shape[0]
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*f2l*f3l*f4l, 8], dtype=DTYPE)
+    cdef int i = 0
+    cdef int j = 0
+    cdef int k = 0
+    cdef int l = 0
+    for i in range(f1l):
+        for j in range(f2l):
+            for k in range(f3l):
+                for l in range(f4l):
+                    idx = i+f1l*j+f1l*f2l*k+f1l*f2l*f3l*l
+                    cframe[idx,0] =  frame1[i,0]
+                    cframe[idx,1] =  frame2[j,0]
+                    cframe[idx,2] =  frame3[k,0]
+                    cframe[idx,3] =  frame4[l,0]
+                    cframe[idx,4] =  frame1[i,1]
+                    cframe[idx,5] =  frame2[j,1]
+                    cframe[idx,6] =  frame3[k,1]
+                    cframe[idx,7] =  frame4[l,1]
     return cframe
 
 @cython.boundscheck(False)

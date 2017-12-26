@@ -17,6 +17,12 @@ class hist1d:
     @staticmethod
     def fromcounts(N):
         '''
+            
+        Paramterers
+        ---------
+        N: np.array
+            array of counts
+
         '''
         bins = np.arange(np.max(N)+2)
         h = np.histogram(N, bins=bins)
@@ -25,6 +31,12 @@ class hist1d:
     @staticmethod
     def fromfs(fs):
         '''
+        
+        Parameters
+        --------
+        fs: frameseries
+            frameseries object
+            
         '''
         bins = np.arange(np.max(fs.N)+2)
         h = np.histogram(fs.N, bins=bins)
@@ -32,6 +44,7 @@ class hist1d:
         
     def __init__(self, hist, bins):
         '''
+        
         '''
         self.hist = hist
         self.bins = bins

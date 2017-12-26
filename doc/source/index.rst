@@ -6,7 +6,9 @@
 Welcome to photonpacket's documentation!
 ========================================
 
-Photonpacket allows you to analyze photons.
+Photonpacket is a tool to analyze spatially resolved single photon counts obtained using a single-photon sensitive camera. 
+
+See https://github.com/Michuu/photonpacket for source code.
 
 Submodules
 ==========

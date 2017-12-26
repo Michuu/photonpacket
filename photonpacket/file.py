@@ -191,7 +191,9 @@ class file:
         # set shape
         self.shape = shape*10/div
         
+        # build numpy array of frames
         # return file object
+        self.frames = np.array(self.frames)
         return self
 
     def getframeseries(self):
@@ -206,8 +208,7 @@ class file:
         fs : :class:`photonpacket.frameseries`
         
         '''
-        if self.frames:
-            return frameseries(self.frames, self.shape)
+        return frameseries(self.frames, self.shape)
         
     def getattribute(self, attr):
         if self.nameversion == 1:
