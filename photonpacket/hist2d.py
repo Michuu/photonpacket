@@ -66,7 +66,7 @@ class hist2d:
         else:
             return self.hist
         
-    def plot(self, showvalues=False, normed=None, cmap=None, log=None):
+    def plot(self, showvalues=False, normed=None, cmap=None, log=None, cutted=None):
         '''
         Plot the joint statistics histogram generated with :func:`joint`
         '''
@@ -76,7 +76,13 @@ class hist2d:
         if normed:
             data = self.hist/self.N  
         else:
-            data = self.hist
+			data = self.hist			
+        q=-1
+        if cutted:
+			data=data[:3,:3]
+			X=X[:3,:3]
+			Y=Y[:3,:3]
+			q=2
         if log is None or log == False:
             norm = mpl.colors.Normalize(vmin=data.min(), vmax=data.max())
         else:
@@ -84,10 +90,10 @@ class hist2d:
             norm = mpl.colors.LogNorm(vmin=vmin, vmax=data.max())
         cplt = plt.pcolormesh(X, Y, data, cmap=cmap, norm=norm)
         ax = plt.gca()
-        ax.set_xticks(self.bins[0][:-1]+0.5)
-        ax.set_xticklabels(np.array(self.bins[0][:-1], dtype=np.uint16))
-        ax.set_yticks(self.bins[1][:-1]+0.5)
-        ax.set_yticklabels(np.array(self.bins[1][:-1], dtype=np.uint16))
+        ax.set_xticks(self.bins[0][:q]+0.5)
+        ax.set_xticklabels(np.array(self.bins[0][:q], dtype=np.uint16))
+        ax.set_yticks(self.bins[1][:q]+0.5)
+        ax.set_yticklabels(np.array(self.bins[1][:q], dtype=np.uint16))
         vmin, vmax = plt.gci().get_clim()
         cm = cplt.get_cmap()
         sm = cmx.ScalarMappable(norm=norm, cmap=cm)
