@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from frameseries import frameseries
-from frameutils.arraysplit import arraysplit
+from frameutils.arraysplit2 import arraysplit
 
 class region(object):
     component_regions = ()
@@ -12,23 +12,23 @@ class region(object):
         self.component_regions = components_regions
         self.logic = logic
         if component_regions.__class__ == tuple:
-            self.corner[0] = min(component_regions[0].corner[0], component_regions[1].corner[0]) 
+            self.corner[0] = min(component_regions[0].corner[0], component_regions[1].corner[0])
             self.corner[1] = min(component_regions[0].corner[1], component_regions[1].corner[1])
         else:
             self.corner = component_regions.corner
-    
+
     def __and__(self, other):
         return region((self, other), 'and')
-    
+
     def __or__(self, other):
         return region((self, other), 'or')
-    
+
     def __xor__(self, other):
         return region((self, other), 'xor')
-    
+
     def __invert__(self):
         return region((self), 'not')
-    
+
     def getmask(self, frame):
         if self.logic == 'and':
             return self.component_regions[0].getmask(frame.copy()) & self.component_regions[1].getmask(frame.copy())
@@ -38,7 +38,7 @@ class region(object):
             return self.component_regions[0].getmask(frame.copy()) ^ self.component_regions[1].getmask(frame.copy())
         elif self.logic == 'not':
             return np.logical_not(self.component_regions.getmask(frame.copy()))
-        
+
     def plot(self):
         if self.component_regions.__class__ == tuple:
             for reg in self.component_regions:
@@ -52,26 +52,26 @@ class region(object):
     def getframeseries(self, fs, reshape = False):
         '''
         Select photon in region and obtain frameseries
-        
+
         Parameters
         ---------
         fs : :class:`photonpacket.frameseries`
-        
+
         reshape :  bool
-            
+
         Returns
         ---------
-        
+
         See Also
         ---------
-        
+
         Notesa
         ---------
-        
+
         Examples
         ---------
         '''
-        cc_frames = np.array(fs.concat, dtype=np.uint32)
+        cc_frames = np.array(fs.concat, dtype=fs.dtype)
         csum = np.cumsum(fs.N, dtype=np.uint32)
         mask = self.getmask(cc_frames.copy())
         cmask = np.cumsum(mask)
@@ -87,80 +87,80 @@ class region(object):
     def getcounts(self,fs):
         '''
         Get total photon number in each frame
-        
+
         Parameters
         ---------
         fs : :class:`photonpacket.frameseries`
-            
+
         Returns
         ---------
         counts : :class:`numpy.ndarray`
             1D array of counts
-        
+
         See Also
         ---------
-        
+
         Notes
         ---------
-        
+
         Examples
         ---------
         '''
-        
+
         cc_frames = np.array(fs.concat, dtype=np.uint32)
         csum = np.cumsum(fs.N)
-        
+
         mask = self.getmask(cc_frames)
-        
+
         cmask = np.cumsum(mask)
         cmask = np.insert(cmask, 0, 0)
-        
+
         # cmask length = total number of photons, csum length = total number of frames
         # last element of csum = total number of photons
         # last element of cmask = total number of photons in region
         # we are selecting elements of cmask at points given by csum
         # from this we obtain a cumsum of photon counts cN inside region
         cN = cmask[csum]
-        
+
         cN = np.insert(cN, 0, 0)
-        
+
         # differentiation of cumsum photon photon counts from region
         # giving counts in this region
         N = cN - np.roll(cN, 1)
         return N[1:]
-        
-    
+
+
     def reshape(self, frame):
         '''
-        Reshape frame to have (0,0) bottom-left corener
-        
+        Reshape frame to have (0,0) bottom-left corner
+
         Parameters
         ---------
         frane : :class:`numpy.ndarray`
-            
+
         Returns
         ---------
         counts : :class:`numpy.ndarray`
             photon frame
-        
+
         See Also
         ---------
-        
+
         Notes
         ---------
-        
+
         Examples
         ---------
         '''
         frame[:,0] -= self.corner[0]
         frame[:,1] -= self.corner[1]
         return frame
-        
-     
+
+
 
 class circle(region):
     '''
-    Circle region   
+    Circle region
     '''
     r = 0
     x0 = 0
@@ -170,14 +170,14 @@ class circle(region):
 
     def __init__(self, r, (x0, y0)):
         '''
-            
+
         Paramterers
         ---------
         r : int
             radius
         (x0, y0) : (int, int)
             position of center
-        
+
         '''
         self.r = r
         self.x0 = x0
@@ -188,7 +188,7 @@ class circle(region):
     def plot(self,reshaped = False):
         ax=plt.gca()
         if reshaped:
-            c1=plt.Circle((self.y0-self.corner[1],self.x0-self.corner[0]),self.r,fill=False,color='r') 
+            c1=plt.Circle((self.y0-self.corner[1],self.x0-self.corner[0]),self.r,fill=False,color='r')
         else:
             c1=plt.Circle((self.y0,self.x0),self.r,fill=False,color='r')
         ax.add_artist(c1)
@@ -198,13 +198,13 @@ class circle(region):
 
     def isinregion(self,R):
         return (self.r2dist(R) < self.r**2)
-                     
+
     def getmask(self, frame):
         frame[:, 0] -= self.x0
         frame[:, 1] -= self.y0
         mask = np.sum(frame**2,axis=1) < self.r**2
         return mask
-        
+
 
 class rect(region):
     '''
@@ -219,15 +219,15 @@ class rect(region):
     corner = np.array([])
 
     def __init__(self, (x0,y0), (x1,y1)):
-        '''     
-        
+        '''
+
         Paramterers
         ---------
         (x0, y0) : (int, int)
             bottom left corner
         (x1, y1) : (int, int)
             top right corner
-        
+
         '''
         self.x0 = x0
         self.y0 = y0
@@ -249,7 +249,7 @@ class rect(region):
     def isinregion(self,R):
         # TODO: implement
         pass
-         
+
     def getmask(self, frame):
         # frame[:,0] = frame[:,0] - self.x0
         # frame[:,1] = frame[:,1] - self.y0
@@ -263,45 +263,45 @@ class rect2(rect):
     '''
     Rectangle defined by center
     '''
-    
+
     def __init__(self, (xc, yc), (a, b)):
         '''
-        
+
         Paramterers
         ---------
         (xc, yc) : (int, int)
             position of center
         (a, b) : (int, int)
             horizontal and vertical extent
-        
+
         '''
         x0 = xc - a
         y0 = yc - b
         x1 = xc + a
         y1 = yc + b
         super(rect2, self).__init__((x0, y0), (x1, y1))
-        
+
 class square(rect):
     '''
     Square region
     '''
     def __init__(self, a, (xc, yc)):
         '''
-        
+
         Paramterers
         ---------
         a : int
             extent
         (xc, yc) : (int, int)
             position of center
-        
+
         '''
         x0 = xc - a
         y0 = yc - a
         x1 = xc + a
         y1 = yc + a
         super(square, self).__init__((x0, y0), (x1, y1))
-        
+
 class ring(region):
     '''
     Ring region
@@ -312,11 +312,11 @@ class ring(region):
     y0 = 0
     shape = []
     corner = np.array([])
-    
+
 
     def __init__(self,r1,r2,(x0,y0)):
         '''
-        
+
         Paramterers
         ---------
         r1 : int
@@ -325,7 +325,7 @@ class ring(region):
             outer radius
         (x0, y0) : (int, int)
             position of center
-        
+
         '''
         self.r1 = r1
         self.r2 = r2
@@ -350,14 +350,14 @@ class ring(region):
 
     def isinregion(self,R):
         return ((self.r2dist(R)>self.r1**2) and (self.r2dist(R)<self.r2**2))
-          
+
     def getmask(self, frame):
         frame[:,0] = frame[:,0]-self.x0
         frame[:,1] = frame[:,1]-self.y0
         mask1 = np.sum(frame**2,axis=1) > self.r1**2
         mask2 = np.sum(frame**2,axis=1) < self.r2**2
         return mask1 * mask2
-            
+
 
 class ellpise(region):
     '''
@@ -371,11 +371,11 @@ class ellpise(region):
     frames = []
     shape = []
     corner = np.array([])
-    
+
 
     def __init__(self,a,b,(x0,y0),angle):
         '''
-        
+
         Paramterers
         ---------
         a : int
@@ -386,7 +386,7 @@ class ellpise(region):
             position of center
         angle : float
             rotation angle (in radians); not implemented
-        
+
         '''
         self.a = b
         self.a = b
@@ -410,10 +410,10 @@ class ellpise(region):
     def isinregion(self,R):
         # TODO: rewrite
         return ((self.r2dist(R)>self.r1**2) and (self.r2dist(R)<self.r2**2))
-    
+
     def getmask(self, frame):
         pass
-    
+
 class halfcircle(region):
     '''
     Halfcircle region
@@ -425,11 +425,11 @@ class halfcircle(region):
     frames = []
     shape = []
     corner = np.array([])
-    
+
 
     def __init__(self,r,angle,(x0,y0)):
         '''
-        
+
         Paramterers
         ---------
         r : int
@@ -438,7 +438,7 @@ class halfcircle(region):
             rotation angle (in radians)
         (x0, y0) : (int, int)
             position of center
-        
+
         '''
         self.r=r
         self.angle=angle
@@ -463,7 +463,7 @@ class halfcircle(region):
     def isinregion(self,R):
         # TODO: rewrite
         return ((self.r2dist(R)>self.r1**2) and (self.r2dist(R)<self.r2**2))
-    
+
     def getmask(self, frame):
         pass
 
