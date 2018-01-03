@@ -3,7 +3,7 @@ from scipy.signal import convolve2d
 from bincountnd import bincountnd
 from message import message, progress
 from collections import deque
-from frameutils.coinc import bincoinc, bincoincsd, bincount2d, coinc
+from frameutils.coinc import bincoinc, bincoincsd, bincount2d, coinc, binautocoincsd
 
 accumtype = np.uint32
 
@@ -178,3 +178,36 @@ def acccoinc(h1, h2, axis=0, constr=None):
                     acc += np.outer(h1[:, v1], h2[:, v2])
     return acc
     
+def autocoinchist(fs1, signs):
+    '''
+    Autocoincidence histogram in terms of sum/differnce variables
+    
+    Parameters
+    ----------
+    fs1 : :class:`photonpacket.frameseries`
+        
+    fs2 : :class:`photonpacket.frameseries`
+        
+    signs : 
+        
+    Returns
+    ----------
+    
+    See Also
+    ----------
+    
+    Notes
+    ----------
+    
+    Examples
+    ----------
+    '''
+    #i = 0
+    shape = (2*fs1.shape[0]-1, 2*fs1.shape[1]-1)
+    accum = np.zeros(shape, dtype=accumtype)
+    for frame1 in fs1.frames:
+        #progress(i)
+        if frame1.shape[0] != 0:
+            binautocoincsd(frame1, accum, signs, fs1.shape)
+        #i += 1
+    return accum
