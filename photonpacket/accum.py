@@ -3,7 +3,8 @@ from scipy.signal import convolve2d
 from bincountnd import bincountnd
 from message import message, progress
 from collections import deque
-from frameutils.coinc import bincoinc, bincoincsd, bincount2d, coinc
+from coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2
+import itertools as it
 
 accumtype = np.uint32
 
@@ -177,4 +178,41 @@ def acccoinc(h1, h2, axis=0, constr=None):
                 else:
                     acc += np.outer(h1[:, v1], h2[:, v2])
     return acc
+
+def coinchist4(fs1, fs2, fs3, fs4, signs):
+    '''
+    Coincidence quad histogram in terms of sum/differnce variables of four-fold coincidences
     
+    Parameters
+    ----------
+    fs1 : :class:`photonpacket.frameseries`
+        
+    fs2 : :class:`photonpacket.frameseries`
+    
+    fs3 : :class:`photonpacket.frameseries`
+    
+    fs4 : :class:`photonpacket.frameseries`
+        
+    signs : 
+        
+    Returns
+    ----------
+    
+    See Also
+    ----------
+    
+    Notes
+    ----------
+    
+    Examples
+    ----------
+    '''
+    i = 0
+    shape = (fs1.shape[0]+fs2.shape[0]+fs3.shape[0]+fs4.shape[0]-1, fs1.shape[1]+fs2.shape[1]+fs3.shape[1]+fs4.shape[1]-1)
+    accum = np.zeros(shape, dtype=accumtype)
+    for frame1, frame2, frame3, frame4 in it.izip(fs1.frames, fs2.frames, fs3.frames, fs4.frames):
+        progress(i)
+        if frame1.shape[0] != 0 and frame2.shape[0] != 0 and frame3.shape[0] != 0 and frame4.shape[0] != 0:
+            bincoinc4sd2(frame1, frame2, frame3, frame4, accum, signs, fs2.shape)
+        i += 1
+    return accum

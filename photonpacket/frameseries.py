@@ -6,7 +6,7 @@ from arraysplit import array_split
 from matplotlib import pyplot as plt
 from copy import deepcopy
 
-from frameutils.coinc import binautocoinc
+from coinc import binautocoinc
 from frameutils.arraysplit2 import arraysplit
 
 try:
@@ -449,6 +449,11 @@ def fsconcat(fslist):
     frames = np.concatenate(map(lambda fs: fs.frames, fslist))
     return frameseries(frames, shape = fslist[0].shape, cut=False)
 
+def fsmerge(fslist):
+    '''
+    Merge frame-by-frame
+    '''
+    
 def fsplot(fslist, samples=1000):
     '''
     Plot mutltiple frameseries as photon number time series

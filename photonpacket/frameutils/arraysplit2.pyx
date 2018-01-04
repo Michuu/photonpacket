@@ -83,8 +83,6 @@ def arraysplit(np.ndarray ary, np.ndarray[cNDTYPE_t, ndim=1] indices_or_sections
         ary[2:3]
         ary[3:]
         If an index exceeds the dimension of the array along axis, an empty sub-array is returned correspondingly.
-    axis : int, optional
-        The axis along which to split, default is 0.
 
     Returns
     ---------    

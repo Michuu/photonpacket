@@ -197,3 +197,34 @@ def bincount2d(np.ndarray[DTYPE_t, ndim=2] cframe,
     cdef int i = 0
     for i in range(cfl):
             hist[cframe[i,0], cframe[i,1]] += 1
+            
+@cython.boundscheck(False)
+@cython.wraparound(False)  
+def bincoinc4sd2(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2,
+                np.ndarray[DTYPE_t, ndim=2] frame3, np.ndarray[DTYPE_t, ndim=2] frame4,
+             np.ndarray[DTYPE_t, ndim=2] hist, signs, shape):
+    '''
+    Bin quad coincidences in total sum/difference variables, adding them to 2D hist
+    order = s, i, s, i
+    '''
+    cdef int f1l = frame1.shape[0]
+    cdef int f2l = frame2.shape[0]
+    cdef int f3l = frame3.shape[0]
+    cdef int f4l = frame4.shape[0]
+    cdef int i = 0
+    cdef int j = 0
+    cdef int k = 0
+    cdef int l = 0
+    cdef int shift1 = 0
+    cdef int shift2 = 0
+    cdef int sign0 = signs[0]
+    cdef int sign1 = signs[1]
+    if sign0 == -1:
+        shift1 = 2*shape[0]
+    if sign1 == -1:
+        shift2 = 2*shape[1]
+    for i in range(f1l):
+        for j in range(f2l):
+            for k in range(f3l):
+                for l in range(f4l):            
+                        hist[frame1[i,0] + sign0*frame2[j,0] + frame3[k,0] + sign0*frame4[l,0] + shift1, frame1[i,1] + sign1*frame2[j,1] + frame3[k,1] + sign0*frame4[l,1] + shift2] += 1
