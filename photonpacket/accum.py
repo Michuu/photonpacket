@@ -3,12 +3,9 @@ from scipy.signal import convolve2d
 from bincountnd import bincountnd
 from message import message, progress
 from collections import deque
-<<<<<<< .merge_file_a14968
-from coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2
+from coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2, binautocoincsd
 import itertools as it
-=======
 from frameutils.coinc import bincoinc, bincoincsd, bincount2d, coinc, binautocoincsd
->>>>>>> .merge_file_a12840
 
 accumtype = np.uint32
 
@@ -208,7 +205,6 @@ def coinchist4(fs1, fs2, fs3, fs4, signs):
     Notes
     ----------
     
-<<<<<<< .merge_file_a14968
     Examples
     ----------
     '''
@@ -220,7 +216,7 @@ def coinchist4(fs1, fs2, fs3, fs4, signs):
         if frame1.shape[0] != 0 and frame2.shape[0] != 0 and frame3.shape[0] != 0 and frame4.shape[0] != 0:
             bincoinc4sd2(frame1, frame2, frame3, frame4, accum, signs, fs2.shape)
         i += 1
-=======
+        
 def autocoinchist(fs1, signs):
     '''
     Autocoincidence histogram in terms of sum/differnce variables
@@ -253,5 +249,4 @@ def autocoinchist(fs1, signs):
         if frame1.shape[0] != 0:
             binautocoincsd(frame1, accum, signs, fs1.shape)
         #i += 1
->>>>>>> .merge_file_a12840
     return accum
