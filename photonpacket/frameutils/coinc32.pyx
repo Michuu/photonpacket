@@ -184,7 +184,30 @@ def binautocoinc(np.ndarray[DTYPE_t, ndim=2] frame,
         for j in range(f1l):
             if i != j:
                 hist[frame[i,0], frame[j,0], frame[i,1], frame[j,1]] += 1
-                
+
+@cython.boundscheck(False)
+@cython.wraparound(False) 
+def binautocoincsd(np.ndarray[DTYPE_t, ndim=2] frame1,
+             np.ndarray[DTYPE_t, ndim=2] hist, signs, shape):
+    '''
+    Bin autocoincidences in sum/difference variables, adding them to hist
+    '''
+    cdef int f1l = frame1.shape[0]
+    cdef int i = 0
+    cdef int j = 0
+    cdef int shift1 = 0
+    cdef int shift2 = 0
+    cdef int sign0 = signs[0]
+    cdef int sign1 = signs[1]
+    if sign0 == -1:
+        shift1 = shape[0]-1
+    if sign1 == -1:
+        shift2 = shape[1]-1
+    for i in range(f1l):
+        for j in range(f1l):
+            if i != j:
+                hist[frame1[i,0] + sign0*frame1[j,0] + shift1,frame1[i,1] + sign1*frame1[j,1] + shift2] += 1                
+
 @cython.boundscheck(False)
 @cython.wraparound(False)  
 def bincount2d(np.ndarray[DTYPE_t, ndim=2] cframe,

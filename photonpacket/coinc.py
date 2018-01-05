@@ -76,6 +76,12 @@ def binautocoinc(frame, hist):
 
     '''
 
+@detectdtype(2)    
+def binautocoincsd(frame, hist, signs, shape):
+    '''
+    Bin autocoincidences in sum/difference variables, adding them to hist
+    '''
+    
 @detectdtype(2)
 def bincount2d(frame, hist):
     '''

@@ -5,7 +5,6 @@ from message import message, progress
 from collections import deque
 from coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2, binautocoincsd
 import itertools as it
-from frameutils.coinc import bincoinc, bincoincsd, bincount2d, coinc, binautocoincsd
 
 accumtype = np.uint32
 
