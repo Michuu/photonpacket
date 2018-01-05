@@ -208,7 +208,7 @@ def coinchist4(fs1, fs2, fs3, fs4, signs):
     ----------
     '''
     i = 0
-    shape = (fs1.shape[0]+fs2.shape[0]+fs3.shape[0]+fs4.shape[0]-1, fs1.shape[1]+fs2.shape[1]+fs3.shape[1]+fs4.shape[1]-1)
+    shape = (fs1.shape[0]+fs2.shape[0]+fs3.shape[0]+fs4.shape[0]-3, fs1.shape[1]+fs2.shape[1]+fs3.shape[1]+fs4.shape[1]-3)
     accum = np.zeros(shape, dtype=accumtype)
     for frame1, frame2, frame3, frame4 in it.izip(fs1.frames, fs2.frames, fs3.frames, fs4.frames):
         progress(i)

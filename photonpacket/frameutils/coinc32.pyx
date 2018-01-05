@@ -220,9 +220,9 @@ def bincoinc4sd2(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2]
     cdef int sign0 = signs[0]
     cdef int sign1 = signs[1]
     if sign0 == -1:
-        shift1 = 2*shape[0]
+        shift1 = 2*(shape[0]-1)
     if sign1 == -1:
-        shift2 = 2*shape[1]
+        shift2 = 2*(shape[1]-1)
     for i in range(f1l):
         for j in range(f2l):
             for k in range(f3l):
