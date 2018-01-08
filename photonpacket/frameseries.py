@@ -5,6 +5,7 @@ from scipy.signal import resample
 from arraysplit import array_split
 from matplotlib import pyplot as plt
 from copy import deepcopy
+from message import message, progress
 
 from coinc import binautocoinc
 from frameutils.arraysplit2 import arraysplit
@@ -153,6 +154,7 @@ class frameseries:
         Find photon pairs that are too close to each other and remove second photon from the frame
         '''
         for i, frame in enumerate(self.frames):
+            progress(i)
             if len(frame)>=2:
                 kdt=KDTree(np.array(frame))
                 ridx=[]

@@ -54,7 +54,7 @@ def bincountnd(array, shape):
     # we are using Fortran style indexing
     # first index changing fastest
     accum = np.reshape(accum, aux_shape, 'F')
-    # resort
+    # re-sort
     for i in np.arange(np.max(sel)):
         j = sel[i]
         accum = accum.swapaxes(i, j)

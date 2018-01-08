@@ -43,7 +43,7 @@ def coinc4(frame1, frame2, frame3, frame4):
     Generate quadrupole coincidences between four frames
     '''
 
-@detectdtype(3)
+@detectdtype(2)
 def bincoinc(frame1, frame2, hist):
     '''
     Bin coincidences between two frames, adding them to hist
@@ -56,7 +56,7 @@ def coincsd(frame1, frame2, signs, shape):
     Generete coincidences between two frames in sum/difference variables
     '''
 
-@detectdtype(3)
+@detectdtype(2)
 def bincoincsd(frame1, frame2, hist, signs, shape):
     '''
     Bin coincidences in sum/difference variables, adding them to hist
@@ -69,27 +69,35 @@ def autocoinc(frame):
 
     '''
 
-@detectdtype(2)
+@detectdtype(1)
 def binautocoinc(frame, hist):
     '''
     Bin autocoincidences inside a single frame, adding them to hist
 
     '''
 
-@detectdtype(2)    
+@detectdtype(1)    
 def binautocoincsd(frame, hist, signs, shape):
     '''
     Bin autocoincidences in sum/difference variables, adding them to hist
     '''
     
-@detectdtype(2)
+@detectdtype(1)
 def bincount2d(frame, hist):
     '''
     Bin counts with two cooridinates
 
     '''
    
-@detectdtype(5)     
+@detectdtype(2)     
+def bincoinc4sd(frame1, frame2, hist, signs, shape):
+    '''
+    Bin quad coincidences in total sum/difference variables, adding them to 2D hist
+    order = s, i, s, i
+
+    '''
+    
+@detectdtype(4)     
 def bincoinc4sd2(frame1, frame2, frame3, frame4, hist, signs, shape):
     '''
     Bin quad coincidences in total sum/difference variables, adding them to 2D hist

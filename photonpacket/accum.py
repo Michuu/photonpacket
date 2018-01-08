@@ -3,7 +3,8 @@ from scipy.signal import convolve2d
 from bincountnd import bincountnd
 from message import message, progress
 from collections import deque
-from coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2, binautocoincsd
+from coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2, \
+bincoinc4sd, binautocoincsd
 import itertools as it
 
 accumtype = np.uint32
@@ -179,7 +180,7 @@ def acccoinc(h1, h2, axis=0, constr=None):
                     acc += np.outer(h1[:, v1], h2[:, v2])
     return acc
 
-def coinchist4(fs1, fs2, fs3, fs4, signs):
+def coinchist4(*args):
     '''
     Coincidence quad histogram in terms of sum/differnce variables of four-fold coincidences
     
@@ -207,14 +208,39 @@ def coinchist4(fs1, fs2, fs3, fs4, signs):
     Examples
     ----------
     '''
-    i = 0
-    shape = (fs1.shape[0]+fs2.shape[0]+fs3.shape[0]+fs4.shape[0]-3, fs1.shape[1]+fs2.shape[1]+fs3.shape[1]+fs4.shape[1]-3)
-    accum = np.zeros(shape, dtype=accumtype)
-    for frame1, frame2, frame3, frame4 in it.izip(fs1.frames, fs2.frames, fs3.frames, fs4.frames):
-        progress(i)
-        if frame1.shape[0] != 0 and frame2.shape[0] != 0 and frame3.shape[0] != 0 and frame4.shape[0] != 0:
-            bincoinc4sd2(frame1, frame2, frame3, frame4, accum, signs, fs2.shape)
-        i += 1
+    if len(args) == 5:
+        # use bincoinc4sd2
+        fs1=args[0]
+        fs2=args[1]
+        fs3=args[2]
+        fs4=args[3]
+        signs=args[4]
+        i = 0
+        shape = (fs1.shape[0]+fs2.shape[0]+fs3.shape[0]+fs4.shape[0]-3, fs1.shape[1]+fs2.shape[1]+fs3.shape[1]+fs4.shape[1]-3)
+        accum = np.zeros(shape, dtype=accumtype)
+        for frame1, frame2, frame3, frame4 in it.izip(fs1.frames, fs2.frames, fs3.frames, fs4.frames):
+            progress(i)
+            if frame1.shape[0] != 0 and frame2.shape[0] != 0 and frame3.shape[0] != 0 and frame4.shape[0] != 0:
+                bincoinc4sd2(frame1, frame2, frame3, frame4, accum, signs, fs2.shape)
+            i += 1
+        return accum
+    elif len(args)==3:
+        #use bincoinc4sd
+        fs1=args[0]
+        fs2=args[1]
+        signs=args[2]
+        i = 0
+        shape = (2*fs1.shape[0]+2*fs2.shape[0]-3, 2*fs1.shape[1]+2*fs2.shape[1]-3)
+        accum = np.zeros(shape, dtype=accumtype)
+        for frame1, frame2 in it.izip(fs1.frames, fs2.frames):
+            progress(i)
+            if frame1.shape[0] != 0 and frame2.shape[0] != 0:
+                bincoinc4sd(frame1, frame2, accum, signs, fs2.shape)
+            i += 1
+        return accum
+    else:
+        #error
+        return -1
         
 def autocoinchist(fs1, signs):
     '''
