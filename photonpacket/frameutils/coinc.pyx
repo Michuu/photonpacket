@@ -82,6 +82,36 @@ cpdef coinc4(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] fra
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
+cpdef coinc4_2(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2):
+    '''
+    Generate quadrupole coincidences between two frames
+    '''
+    cdef int f1l = frame1.shape[0]
+    cdef int f2l = frame2.shape[0]
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*f2l*(f1l-1)*(f2l-1), 8], dtype=frame1.dtype)
+    cdef int i = 0
+    cdef int j = 0
+    cdef int k = 0
+    cdef int l = 0
+    cdef int idx =0
+    for i in range(f1l):
+        for j in range(f2l):
+            for k in range(f1l):
+                for l in range(f2l):
+                    if i < k and j < l:
+                        cframe[idx,0] =  frame1[i,0]
+                        cframe[idx,1] =  frame2[j,0]
+                        cframe[idx,2] =  frame1[k,0]
+                        cframe[idx,3] =  frame2[l,0]
+                        cframe[idx,4] =  frame1[i,1]
+                        cframe[idx,5] =  frame2[j,1]
+                        cframe[idx,6] =  frame1[k,1]
+                        cframe[idx,7] =  frame2[l,1]
+                        idx += 1
+    return cframe
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef bincoinc(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2,
              np.ndarray[hist_DTYPE_t, ndim=4] hist):
     '''
@@ -245,7 +275,7 @@ cpdef bincoinc4sd(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2
         for j in range(f2l):
             for k in range(f1l):
                 for l in range(f2l):
-                    if i != k and i != l:
+                    if i < k and j < l:
                         hist[frame1[i,0] + sign0*frame2[j,0] + \
                         frame1[k,0] + sign0*frame2[l,0] + shift1, \
                         frame1[i,1] + sign1*frame2[j,1] + \

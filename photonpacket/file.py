@@ -45,7 +45,11 @@ class file:
         '''
         self.name = name
         self.frames = []
-
+    
+    def __del__(self):
+        del self.frames
+        del self.params
+        
     @staticmethod
     def read(path, **kwargs):
         '''
@@ -208,7 +212,7 @@ class file:
         fs : :class:`photonpacket.frameseries`
         
         '''
-        return frameseries(self.frames, self.shape)
+        return frameseries(self.frames, self.shape, dtype=np.uint16)
         
     def getattribute(self, attr):
         if self.nameversion == 1:

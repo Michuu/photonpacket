@@ -67,7 +67,7 @@ class hist2d:
         else:
             return self.hist
         
-    def plot(self, showvalues=False, normed=None, cmap=None, log=None, cutted=None):
+    def plot(self, showvalues=False, normed=None, cmap=None, log=None, cut=None):
         '''
         Plot the joint statistics histogram generated with :func:`joint`
         '''
@@ -79,7 +79,7 @@ class hist2d:
         else:
 			data = self.hist			
         q=-1
-        if cutted:
+        if cut:
 			data=data[:3,:3]
 			X=X[:3,:3]
 			Y=Y[:3,:3]

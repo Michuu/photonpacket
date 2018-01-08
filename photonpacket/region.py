@@ -65,7 +65,7 @@ class region(object):
         See Also
         ---------
 
-        Notesa
+        Notes
         ---------
 
         Examples
@@ -80,9 +80,9 @@ class region(object):
         cN = np.insert(cN, 0, 0)
         if reshape:
             cc_frames = self.reshape(cc_frames)
-            return frameseries(arraysplit(cc_frames[mask], cN)[1:-1], self.shape, cut=False)
+            return frameseries(arraysplit(cc_frames[mask], cN)[1:-1], self.shape, cut=False, dtype=fs.dtype)
         else:
-            return frameseries(arraysplit(cc_frames[mask], cN)[1:-1], fs.shape, cut=False)
+            return frameseries(arraysplit(cc_frames[mask], cN)[1:-1], fs.shape, cut=False, dtype=fs.dtype)
 
     def getcounts(self,fs):
         '''

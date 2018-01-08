@@ -41,7 +41,7 @@ def bincountnd(array, shape):
     # initial exponent
     exp = 1
     # sorted data array
-    array = array[:, sel]
+    array = np.array(array[:, sel], dtype=np.uint32)
     # for each dimension
     for dim, size in enumerate(aux_shape):
         # generate flat data array

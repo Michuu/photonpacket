@@ -23,9 +23,9 @@ class frameseries:
     shape = (())
     Nframes = 0
     concat = np.array([])
-    dtype = np.uint32
+    dtype = np.uint16
 
-    def __init__(self, frames, shape, cut = True, dtype = np.uint32):
+    def __init__(self, frames, shape, cut = True, dtype = np.uint16):
         '''
         Create `frameseries` object from array of frames
 
@@ -58,6 +58,8 @@ class frameseries:
         self.dtype = dtype
         # calculate photon numbers
         self.N = np.array([frame.shape[0] for frame in self.frames])
+#        self.frames = np.array(arraysplit(np.concatenate(frames).astype(self.dtype),
+#            np.r_[0,self.N.cumsum(dtype=np.int)[:-1]]), dtype=np.object)
         # cut to rectangular shape if requested
         if cut:
             self.cuttoshape(self.shape)
@@ -80,7 +82,12 @@ class frameseries:
             self.N[key] = len(frame)
         else:
             raise TypeError
-
+            
+    def __del__(self):
+        del self.frames
+        del self.concat
+        del self.N
+        
     def store(self, fname):
         '''
         Store pickled frameseries
@@ -114,7 +121,7 @@ class frameseries:
         ---------
         '''
         from region import rect
-
+        
         self.shape = shape
         # prepare a rectangle
         r = rect((0,0),(shape[0],shape[1]))
@@ -335,7 +342,7 @@ class frameseries:
         rcc_frames[:,0] = cc_frames[:,0]*a + cc_frames[:,1]*b + e
         rcc_frames[:,1] = cc_frames[:,1]*d + cc_frames[:,0]*c + f
         self.concat = np.array(np.around(rcc_frames), dtype=self.dtype)
-        self.frames = array_split(self.concat, self.N)[1:-1]
+        # frames are generated from concat in cuttoshape
         self.cuttoshape(self.shape)
 
     def append(self, fs):
@@ -449,7 +456,7 @@ def fsconcat(fslist):
     Concatenate frameseries
     '''
     frames = np.concatenate(map(lambda fs: fs.frames, fslist))
-    return frameseries(frames, shape = fslist[0].shape, cut=False)
+    return frameseries(frames, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
 
 def fsmerge(fslist):
     '''
