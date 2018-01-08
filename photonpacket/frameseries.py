@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from copy import deepcopy
 
 from coinc import binautocoinc
-from frameutils.arraysplit2 import arraysplit
+from frameutils.arraysplit import arraysplit
 
 try:
     import cPickle as pickle
@@ -453,7 +453,7 @@ def fsmerge(fslist):
     '''
     Merge frame-by-frame
     '''
-    
+
 def fsplot(fslist, samples=1000):
     '''
     Plot mutltiple frameseries as photon number time series

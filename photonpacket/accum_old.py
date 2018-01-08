@@ -3,13 +3,10 @@ from scipy.signal import convolve2d
 from bincountnd import bincountnd
 from message import message, progress
 from collections import deque
-from frameutils.coinc import bincount2d
-from frameutils.accum import accum_bincoinc, concat_coinc, accum_bincoincsd, accum_bincoinc4sd2, accum_binautocoincsd
+from coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2, binautocoincsd
 import itertools as it
 
-accumtype = np.uint16
-def dtype(fs):
-    return np.empty(shape=(0,2),dtype=fs.dtype)
+accumtype = np.uint32
 
 def accumframes(fs):
     '''
@@ -60,17 +57,29 @@ def accumcoinc(fs1, fs2):
     Examples
     ----------
     '''
+    i = 0
     accum = np.zeros(shape=(fs1.shape[0],fs2.shape[0],
                           fs1.shape[1],fs2.shape[1]), dtype=accumtype)
-    accum_bincoinc(list(fs1.frames), list(fs2.frames), accum, dtype(fs1))
+    for frame1, frame2 in zip(fs1.frames, fs2.frames):
+        progress(i)
+        if frame1.shape[0] != 0 and frame2.shape[1] != 0:
+            bincoinc(frame1, frame2, accum)
+        i += 1
     return accum
 
 def accumcoinc2d(fs1, fs2, axis=0, constr=None):
     '''
     Coincidences map for one of the dimensions
     '''
-    accum = np.zeros(shape=(fs1.shape[axis],fs2.shape[axis]), dtype=np.uint16)
-    cframes = concat_coinc(list(fs1.frames), list(fs2.frames), dtype(fs1))
+    i = 0
+    accum = np.zeros(shape=(fs1.shape[axis],fs2.shape[axis]), dtype=accumtype)
+    cframes = []
+    A = cframes.append
+    for frame1, frame2 in zip(fs1.frames, fs2.frames):
+        if frame1.shape[0] != 0 and frame2.shape[1] != 0:
+            A(coinc(frame1, frame2))
+        i += 1
+    cframes = np.concatenate(cframes)
     if constr is not None:
         mask = constr(cframes.copy())
         bincount2d(cframes.take([2*axis, 2*axis+1], axis=1)[mask], accum)
@@ -102,9 +111,14 @@ def coinchist(fs1, fs2, signs):
     Examples
     ----------
     '''
+    i = 0
     shape = (fs1.shape[0]+fs2.shape[0]-1, fs1.shape[1]+fs2.shape[1]-1)
     accum = np.zeros(shape, dtype=accumtype)
-    accum_bincoincsd(list(fs1.frames), list(fs2.frames), accum, signs, fs2.shape, dtype(fs1))
+    for frame1, frame2 in zip(fs1.frames, fs2.frames):
+        progress(i)
+        if frame1.shape[0] != 0 and frame2.shape[0] != 0:
+            bincoincsd(frame1, frame2, accum, signs, fs2.shape)
+        i += 1
     return accum
 
 
@@ -193,10 +207,14 @@ def coinchist4(fs1, fs2, fs3, fs4, signs):
     Examples
     ----------
     '''
+    i = 0
     shape = (fs1.shape[0]+fs2.shape[0]+fs3.shape[0]+fs4.shape[0]-3, fs1.shape[1]+fs2.shape[1]+fs3.shape[1]+fs4.shape[1]-3)
     accum = np.zeros(shape, dtype=accumtype)
-    accum_bincoinc4sd2(list(fs1.frames), list(fs2.frames),list(fs3.frames), list(fs4.frames), accum, signs, fs2.shape, dtype(fs1))
-    return accum
+    for frame1, frame2, frame3, frame4 in it.izip(fs1.frames, fs2.frames, fs3.frames, fs4.frames):
+        progress(i)
+        if frame1.shape[0] != 0 and frame2.shape[0] != 0 and frame3.shape[0] != 0 and frame4.shape[0] != 0:
+            bincoinc4sd2(frame1, frame2, frame3, frame4, accum, signs, fs2.shape)
+        i += 1
 
 def autocoinchist(fs1, signs):
     '''
@@ -222,7 +240,12 @@ def autocoinchist(fs1, signs):
     Examples
     ----------
     '''
+    #i = 0
     shape = (2*fs1.shape[0]-1, 2*fs1.shape[1]-1)
     accum = np.zeros(shape, dtype=accumtype)
-    accum_binautocoincsd(list(fs1.frames), accum, signs, fs1.shape, dtype(fs1))
+    for frame1 in fs1.frames:
+        #progress(i)
+        if frame1.shape[0] != 0:
+            binautocoincsd(frame1, accum, signs, fs1.shape)
+        #i += 1
     return accum

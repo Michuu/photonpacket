@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from frameseries import frameseries
-from frameutils.arraysplit2 import arraysplit
+from frameutils.arraysplit import arraysplit
 
 class region(object):
     component_regions = ()
