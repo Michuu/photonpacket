@@ -212,7 +212,9 @@ class file:
         fs : :class:`photonpacket.frameseries`
         
         '''
-        return frameseries(self.frames, self.shape, dtype=np.uint16)
+        photons = np.concatenate(self.frames)
+        idxs = np.r_[0, np.cumsum([frame.shape[0] for frame in self.frames])]
+        return frameseries(photons, idxs, self.shape, dtype=np.uint16)
         
     def getattribute(self, attr):
         if self.nameversion == 1:

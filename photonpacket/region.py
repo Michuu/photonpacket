@@ -71,7 +71,7 @@ class region(object):
         Examples
         ---------
         '''
-        cc_frames = np.array(fs.concat, dtype=fs.dtype)
+        cc_frames = np.array(fs.photons, dtype=fs.dtype)
         csum = np.cumsum(fs.N, dtype=np.uint32)
         mask = self.getmask(cc_frames.copy())
         cmask = np.cumsum(mask)
@@ -80,11 +80,11 @@ class region(object):
         cN = np.insert(cN, 0, 0)
         if reshape:
             cc_frames = self.reshape(cc_frames)
-            return frameseries(arraysplit(cc_frames[mask], cN)[1:-1], self.shape, cut=False, dtype=fs.dtype)
+            return frameseries(cc_frames, cN, self.shape, cut=False, dtype=fs.dtype)
         else:
-            return frameseries(arraysplit(cc_frames[mask], cN)[1:-1], fs.shape, cut=False, dtype=fs.dtype)
+            return frameseries(cc_frames, cN, fs.shape, cut=False, dtype=fs.dtype)
 
-    def getcounts(self,fs):
+    def getcounts(self, fs):
         '''
         Get total photon number in each frame
 
@@ -107,7 +107,7 @@ class region(object):
         ---------
         '''
 
-        cc_frames = np.array(fs.concat, dtype=np.uint32)
+        cc_frames = np.array(fs.photons, dtype=np.uint32)
         csum = np.cumsum(fs.N)
 
         mask = self.getmask(cc_frames)

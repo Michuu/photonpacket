@@ -1,8 +1,6 @@
 import numpy as np
 from bincountnd import bincountnd
 from scipy.spatial import KDTree
-from scipy.signal import resample
-from arraysplit import array_split
 from matplotlib import pyplot as plt
 from copy import deepcopy
 from message import message, progress
@@ -22,17 +20,69 @@ class frameseries:
     N = np.array([])
     shape = (())
     Nframes = 0
-    concat = np.array([])
+    photons = np.array([])
+    idxs = np.array([])
     dtype = np.uint16
 
-    def __init__(self, frames, shape, cut = True, dtype = np.uint16):
+    class fs_frames:
         '''
-        Create `frameseries` object from array of frames
+        '''
+        def __init__(self, fs):
+            '''
+            '''
+            self.fs =  fs
+           
+        def __getitem__(self, key):
+            '''
+            '''
+            if isinstance(key, slice):
+                start, stop, step = key.indices(self.fs.Nframes)
+                frames = []
+                idx = start
+                while idx <= stop:
+                    frames.append(self.fs.photons[self.fs.idxs[idx]:self.fs.idxs[idx+1]])
+                    idx += step
+                return np.array(frames, dtype=np.object)
+            elif isinstance(key, list) or isinstance(key, np.ndarray):
+                if max(key) > self.fs.Nframes:
+                    raise KeyError
+                else:
+                    frames = []
+                    for idx in key:
+                        frames.append(self.fs.photons[self.fs.idxs[idx]:self.fs.idxs[idx+1]])
+                    idx += step
+                    return np.array(frames, dtype=np.object)
+            elif isinstance(key, int):
+                if key > self.fs.Nframes:
+                    raise KeyError
+                else:
+                    st_idx = self.fs.idxs[key]
+                    end_idx = self.fs.idxs[key+1]
+                    photons = self.fs.photons[st_idx:end_idx]
+                    return np.array([photons], dtype=np.object)
+            else:
+                raise TypeError
+            
+        def asarray(self):
+            '''
+            '''
+            return arraysplit(self.fs.photon, self.fs.idxs[1:-1])
+        
+        def __repr__(self):
+            '''
+            '''
+            return arraysplit(self.fs.photon, self.fs.idxs[1:-1]).__repr__()
+            
+    def __init__(self, photons, idxs, shape, cut = True, dtype = np.uint16):
+        '''
+        Create `frameseries` object from photons and indices
 
         Parameters
         ---------
-        frames : :class:`numpy.ndarray`
+        photons : :class:`numpy.ndarray`
 
+        idxs : :class:`numpy.ndarray`
+        
         shape : tuple
 
         cut : bool
@@ -51,15 +101,14 @@ class frameseries:
         Examples
         ---------
         '''
-        self.frames = np.array(frames, dtype=np.object)
-        self.concat = np.concatenate(frames)
-        self.Nframes = len(frames)
+        self.photons = photons
+        self.idxs = idxs
+        self.frames = frameseries.fs_frames(self)
+        self.Nframes = len(idxs) - 1
         self.shape = shape
         self.dtype = dtype
         # calculate photon numbers
-        self.N = np.array([frame.shape[0] for frame in self.frames])
-#        self.frames = np.array(arraysplit(np.concatenate(frames).astype(self.dtype),
-#            np.r_[0,self.N.cumsum(dtype=np.int)[:-1]]), dtype=np.object)
+        self.N = np.diff(idxs)
         # cut to rectangular shape if requested
         if cut:
             self.cuttoshape(self.shape)
@@ -68,9 +117,13 @@ class frameseries:
         '''
         '''
         if isinstance(key, slice) or isinstance(key, list) or isinstance(key, np.ndarray):
-            return frameseries(self.frames[key], self.shape, cut=False)
+            pass# TODO
         elif isinstance(key, int):
-            return singleframe([self.frames[key]], self.shape)
+            st_idx = self.idxs[key]
+            end_idx = self.idxs[key+1]
+            photons = self.photons[st_idx:end_idx]
+            return singleframe(photons, np.array([0, end_idx - st_idx]), 
+                               self.shape, cut=False)
         else:
             raise TypeError
 
@@ -78,15 +131,17 @@ class frameseries:
         '''
         '''
         if isinstance(frame, np.ndarray):
+            # TODO
             self.frames[key] = frame
             self.N[key] = len(frame)
         else:
             raise TypeError
             
     def __del__(self):
-        del self.frames
-        del self.concat
+        del self.photons
+        del self.idxs
         del self.N
+        del self.frames
         
     def store(self, fname):
         '''
@@ -98,7 +153,7 @@ class frameseries:
             file name
 
         '''
-        pickle.dumps(self, open(fname, 'w'))
+        pickle.dumps(self, open(fname, 'wb'))
 
     def cuttoshape(self, shape):
         '''
@@ -126,8 +181,8 @@ class frameseries:
         # prepare a rectangle
         r = rect((0,0),(shape[0],shape[1]))
         cfs = r.getframeseries(self, reshape=False)
-        self.frames = cfs.frames
-        self.concat = cfs.concat
+        self.idxs = cfs.idxs
+        self.photons = cfs.photons
         self.N = cfs.N
 
 
@@ -153,7 +208,7 @@ class frameseries:
         ---------
         '''
         # count photons in each pixel
-        accum = bincountnd(np.array(self.concat, dtype=self.dtype), self.shape)
+        accum = bincountnd(np.array(self.photons, dtype=self.dtype), self.shape)
         return accum
 
     def delneighbours(self, r=5):
@@ -223,13 +278,12 @@ class frameseries:
         Examples
         ---------
         '''
-        cc_frames = np.array(self.concat, dtype=np.float) - centerpoint
+        cc_frames = np.array(self.photons, dtype=np.float) - centerpoint
         rcc_frames = np.zeros(shape=cc_frames.shape, dtype=cc_frames.dtype)
         rcc_frames[:,0] = cc_frames[:,0]*np.cos(angle) + cc_frames[:,1]*np.sin(angle)
         rcc_frames[:,1] = cc_frames[:,1]*np.cos(angle) - cc_frames[:,0]*np.sin(angle)
         rcc_frames += centerpoint
-        self.concat = np.array(np.around(rcc_frames), dtype=self.dtype)
-        self.frames = array_split(self.concat, self.N)[1:-1]
+        self.photons = np.array(np.around(rcc_frames), dtype=self.dtype)
         self.cuttoshape(self.shape)
 
 
@@ -282,7 +336,7 @@ class frameseries:
 
     def __len__(self):
         '''
-        Get total length fo series of frames `Nframes`
+        Get total length of series of frames `Nframes`
 
         Parameters
         ---------
@@ -322,9 +376,9 @@ class frameseries:
         Examples
         ---------
         '''
-        self.frames = self.frames[n:] + self.frames[:n]
+        self.photons = self.frames[self.idxs[n]:] + self.frames[:self.idxs[n]]
         self.N = np.roll(self.N, n)
-        self.concat = np.concatenate(self.frames)
+        self.idxs = np.r_[0, np.cumsum(self.N)]
 
     def transform(self, transform):
         '''
@@ -333,25 +387,25 @@ class frameseries:
         Parameters
         ---------
         transform : tuple
-            (a,b,c,d,e,f), where ((a,b), (c,d)) is transofmration matrix
+            (a,b,c,d,e,f), where ((a,b), (c,d)) is transformation matrix
             and (e,f) is the added vector
         '''
         a, b, c, d, e, f=transform
-        cc_frames = np.array(self.concat, dtype=np.float)
+        cc_frames = np.array(self.photons, dtype=np.float)
         rcc_frames = np.zeros(shape=cc_frames.shape, dtype=cc_frames.dtype)
         rcc_frames[:,0] = cc_frames[:,0]*a + cc_frames[:,1]*b + e
         rcc_frames[:,1] = cc_frames[:,1]*d + cc_frames[:,0]*c + f
-        self.concat = np.array(np.around(rcc_frames), dtype=self.dtype)
-        # frames are generated from concat in cuttoshape
+        self.photons = np.array(np.around(rcc_frames), dtype=self.dtype)
+        # frames are generated from photons in cuttoshape
         self.cuttoshape(self.shape)
 
     def append(self, fs):
         '''
         Append antoher frameseries to current frameseries
         '''
-        self.frames = np.concatenate((self.frames, fs.frames))
-        self.N = np.array(map(len, self.frames))
-        self.concat = np.concatenate(self.frames)
+        self.idxs = np.concatenate([self.idxs, self.idxs[-1] + fs.idxs[1:]])
+        self.N = np.concatenate([self.N, fs.N])
+        self.photos = np.concatenate([self.photons, fs.photons])
         self.Nframes = self.Nframes + fs.Nframes
 
     def timeseries(self, samples=1000):
@@ -406,31 +460,36 @@ class frameseries:
 
     def imshow(self):
         '''
+        
         '''
         plt.imshow(self.accumframes())
-
+    
+    def maskframes(self, frame_mask):
+        '''
+        
+        '''
+        mask = np.repeat(frame_mask, self.N)
+        self.photons = self.photons[mask]
+        self.N = self.N[frame_mask]
+        self.idxs = np.r_[0, np.cumsum(self.N)]
+        
     def delframes(self, max_photons=20):
         '''
         '''
-        self.frames=np.array([frame for frame in self.frames if frame.shape[0] <= max_photons], dtype=np.object)
-        self.concat = np.concatenate(self.frames)
-        self.N = [frame.shape[0] for frame in self.frames]
-        self.Nframes = len(self.frames)
+        frame_mask = self.N <= max_photons
+        self.maskframes(frame_mask)
 
-    def delsubsequent(self,Nf=10):
+    def delsubsequent(self, Nf=10):
         '''
         Delete Nf frames after photon is detected in one
         '''
         tmp = np.cumsum(self.N)[Nf:]
         tmp2 = np.cumsum(self.N)[:-Nf]
         running_sum = (tmp - tmp2)
-        mask=np.concatenate([np.zeros(Nf+1,dtype=np.bool),running_sum[:-1]==0])
-        self.frames=self.frames[mask]
-        self.concat = np.concatenate(self.frames)
-        self.N = [frame.shape[0] for frame in self.frames]
-        self.Nframes = len(self.frames)
+        frame_mask = np.concatenate([np.zeros(Nf+1,dtype=np.bool),running_sum[:-1]==0])
+        self.maskframes(frame_mask)
 
-    def delsubsmask(self,Nf=10):
+    def delsubsmask(self, Nf=10):
         '''
         Get the mask corresponding to delsubsequent function; does not alter the object
         '''
@@ -446,7 +505,7 @@ class singleframe(frameseries):
     '''
 
     def scatter(self):
-        plt.scatter(self.frames[0][:,1], self.frames[0][:,0])
+        plt.scatter(self.photons[:,1], self.photons[:,0])
 
 
 # functions
@@ -455,14 +514,26 @@ def fsconcat(fslist):
     '''
     Concatenate frameseries
     '''
-    frames = np.concatenate(map(lambda fs: fs.frames, fslist))
-    return frameseries(frames, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
+    photons = np.concatenate([fs.photons for fs in fslist])
+    fs_idxs = np.r_[0, [fs.idxs[-1] for fs in fslist]]
+    idxs = np.concatenate([fs.idxs[1:] + fs_idxs[i] for i, fs in enumerate(fslist)])
+    idxs = np.r_[0, idxs]
+    return frameseries(photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
 
 def fsmerge(fslist):
     '''
     Merge frame-by-frame
+    ''' 
     '''
-
+    TODO
+    for i, fs in enumerate(fslist):
+        if i==0:
+            photons = fs.photons
+            idxs = fs.idxs
+        else:
+            idxs += fs.idxs
+     '''
+            
 def fsplot(fslist, samples=1000):
     '''
     Plot mutltiple frameseries as photon number time series
@@ -471,7 +542,7 @@ def fsplot(fslist, samples=1000):
         fs.plot(samples)
 
 def emptyframe(shape):
-    return singleframe(np.empty(shape=(0, 2), dtype=self.dtype),
+    return singleframe(np.empty(shape=(0, 2), dtype=np.uint16),
                        shape, cut=False)
 
 def loadfs(fname):
