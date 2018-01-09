@@ -17,14 +17,17 @@ ctypedef fused accum_DTYPE_t:
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def concat_coinc(list frames1, list frames2, np.ndarray[DTYPE_t, ndim=2] dtype):
+def concat_coinc(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, ndim=1] idxs1,
+                 np.ndarray[DTYPE_t, ndim=2] photons2, np.ndarray[np.int32_t, ndim=1] idxs2):
     cdef int i = 0
     cdef list cframes = []
     cdef np.ndarray[DTYPE_t, ndim=2] frame1
     cdef np.ndarray[DTYPE_t, ndim=2] frame2
-    for frame1, frame2 in izip(frames1, frames2):
+    for idx1, idx2 in izip(idxs1, idxs2):
         progress(i)
-        if frame1.shape[0] != 0 and frame2.shape[1] != 0:
+        if idx1 != idxs1[i+1] and idx2 != idxs2[i+1]:
+            frame1 = photons1[idx1, idxs1[i+1]]
+            frame2 =  photons2[idx2, idxs2[i+1]]
             cframes.append(coinc(frame1, frame2))
         i += 1
     return np.concatenate(cframes)

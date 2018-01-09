@@ -59,19 +59,19 @@ class frameseries:
                     st_idx = self.fs.idxs[key]
                     end_idx = self.fs.idxs[key+1]
                     photons = self.fs.photons[st_idx:end_idx]
-                    return np.array([photons], dtype=np.object)
+                    return np.array([photons])
             else:
                 raise TypeError
             
         def asarray(self):
             '''
             '''
-            return arraysplit(self.fs.photon, self.fs.idxs[1:-1])
+            return arraysplit(self.fs.photons, self.fs.idxs[1:-1])
         
         def __repr__(self):
             '''
             '''
-            return arraysplit(self.fs.photon, self.fs.idxs[1:-1]).__repr__()
+            return arraysplit(self.fs.photons, self.fs.idxs[1:-1]).__repr__()
             
     def __init__(self, photons, idxs, shape, cut = True, dtype = np.uint16):
         '''
@@ -472,6 +472,7 @@ class frameseries:
         self.photons = self.photons[mask]
         self.N = self.N[frame_mask]
         self.idxs = np.r_[0, np.cumsum(self.N)]
+        self.Nframes = len(self.idxs) - 1
         
     def delframes(self, max_photons=20):
         '''
@@ -515,7 +516,8 @@ def fsconcat(fslist):
     Concatenate frameseries
     '''
     photons = np.concatenate([fs.photons for fs in fslist])
-    fs_idxs = np.r_[0, [fs.idxs[-1] for fs in fslist]]
+    fs_idxs = np.array([fs.idxs[-1] for fs in fslist])
+    fs_idxs = np.r_[0, np.cumsum(fs_idxs)]
     idxs = np.concatenate([fs.idxs[1:] + fs_idxs[i] for i, fs in enumerate(fslist)])
     idxs = np.r_[0, idxs]
     return frameseries(photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
