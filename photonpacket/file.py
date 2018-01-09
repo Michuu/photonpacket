@@ -13,8 +13,6 @@ class file:
     
     
     '''
-    
-    frames = []
     Nframes = 0
     name = ''
     path = ''
@@ -44,11 +42,13 @@ class file:
         ----------
         '''
         self.name = name
-        self.frames = []
+    
     
     def __del__(self):
-        del self.frames
         del self.params
+        del self.photons
+        del self.idxs
+        print 'niszcze'
         
     @staticmethod
     def read(path, **kwargs):
@@ -156,7 +156,8 @@ class file:
         nframes = 0
         # open file for binary reading
         f = open(path,'rb')
-
+        
+        frames = []
         empty_frame = np.empty(shape=(0, 2), dtype=np.uint16)
         while(True):
             # read number of photons in a frame
@@ -176,7 +177,7 @@ class file:
                 frame = np.reshape(img/div, nxy)[:, :2]
             else:
                 frame = empty_frame
-            self.frames.append(frame)
+            frames.append(frame)
             progress(nframes)
         # close file access
         f.close()
@@ -185,19 +186,18 @@ class file:
         
         message("\nRead " + str(nframes) + " frames", 1)
         
+        self.photons = np.concatenate(frames)
+        self.idxs = (np.r_[0, np.cumsum([frame.shape[0] for frame in frames])])
+        
         if shapedetect:
             try:
-                shape = np.max(np.concatenate(self.frames), axis=0)
+                shape = np.max(self.photons, axis=0)
             except ValueError:
                 print 'You must be joking... file contains 0 photons; aborting'
                 return False
                      
         # set shape
         self.shape = shape*10/div
-        
-        # build numpy array of frames
-        # return file object
-        self.frames = np.array(self.frames)
         return self
 
     def getframeseries(self):
@@ -212,9 +212,7 @@ class file:
         fs : :class:`photonpacket.frameseries`
         
         '''
-        photons = np.concatenate(self.frames)
-        idxs = np.r_[0, np.cumsum([frame.shape[0] for frame in self.frames])]
-        return frameseries(photons, idxs, self.shape, dtype=np.uint16)
+        return frameseries(self.photons, self.idxs, self.shape, dtype=np.uint16)
         
     def getattribute(self, attr):
         if self.nameversion == 1:

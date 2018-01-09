@@ -9,8 +9,6 @@ from frameutils.accum import accum_bincoinc, concat_coinc, accum_bincoincsd,\
 import itertools as it
 
 accumtype = np.uint16
-def dtype(fs):
-    return np.empty(shape=(0,2),dtype=fs.dtype)
 
 def accumframes(fs):
     '''
@@ -63,7 +61,7 @@ def accumcoinc(fs1, fs2):
     '''
     accum = np.zeros(shape=(fs1.shape[0],fs2.shape[0],
                           fs1.shape[1],fs2.shape[1]), dtype=accumtype)
-    accum_bincoinc(list(fs1.frames), list(fs2.frames), accum, dtype(fs1))
+    accum_bincoinc(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs, accum)
     return accum
 
 def accumcoinc2d(fs1, fs2, axis=0, constr=None):
@@ -105,7 +103,8 @@ def coinchist(fs1, fs2, signs):
     '''
     shape = (fs1.shape[0]+fs2.shape[0]-1, fs1.shape[1]+fs2.shape[1]-1)
     accum = np.zeros(shape, dtype=accumtype)
-    accum_bincoincsd(list(fs1.frames), list(fs2.frames), accum, signs, fs2.shape, dtype(fs1))
+    accum_bincoincsd(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs,
+                     accum, signs, fs2.shape)
     return accum
 
 
@@ -201,18 +200,23 @@ def coinchist4(*args):
         fs3=args[2]
         fs4=args[3]
         signs=args[4]
-        shape = (fs1.shape[0]+fs2.shape[0]+fs3.shape[0]+fs4.shape[0]-3, fs1.shape[1]+fs2.shape[1]+fs3.shape[1]+fs4.shape[1]-3)
+        shape = (fs1.shape[0]+fs2.shape[0]+fs3.shape[0]+fs4.shape[0]-3,
+                 fs1.shape[1]+fs2.shape[1]+fs3.shape[1]+fs4.shape[1]-3)
         accum = np.zeros(shape, dtype=accumtype)
-        accum_bincoinc4sd2(list(fs1.frames), list(fs2.frames),list(fs3.frames), list(fs4.frames), accum, signs, fs2.shape, dtype(fs1))
+        accum_bincoinc4sd2(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs,
+                           fs3.photons, fs3.idxs, fs4.photons, fs4.idxs,
+                           accum, signs, fs2.shape)
         return accum
     elif len(args)==3:
         #use accum_bincoinc4sd
         fs1=args[0]
         fs2=args[1]
         signs=args[2]
-        shape = (2*fs1.shape[0]+2*fs2.shape[0]-3, 2*fs1.shape[1]+2*fs2.shape[1]-3)
+        shape = (2 * fs1.shape[0] + 2 * fs2.shape[0] - 3,
+                 2 * fs1.shape[1] + 2 * fs2.shape[1] - 3)
         accum = np.zeros(shape, dtype=accumtype)
-        accum_bincoinc4sd(list(fs1.frames), list(fs2.frames), accum, signs, fs2.shape, dtype(fs1))
+        accum_bincoinc4sd(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs, accum,
+                          signs, fs2.shape)
         return accum
     else:
         #error
@@ -244,5 +248,5 @@ def autocoinchist(fs1, signs):
     '''
     shape = (2*fs1.shape[0]-1, 2*fs1.shape[1]-1)
     accum = np.zeros(shape, dtype=accumtype)
-    accum_binautocoincsd(list(fs1.frames), accum, signs, fs1.shape, dtype(fs1))
+    accum_binautocoincsd(fs1.photons, fs1.idxs, accum, signs, fs1.shape)
     return accum

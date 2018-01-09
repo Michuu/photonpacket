@@ -16,7 +16,6 @@ except:
 # main frameseries class
 
 class frameseries:
-    frames = np.array([], dtype=np.object)
     N = np.array([])
     shape = (())
     Nframes = 0
@@ -39,7 +38,7 @@ class frameseries:
                 start, stop, step = key.indices(self.fs.Nframes)
                 frames = []
                 idx = start
-                while idx <= stop:
+                while idx < stop:
                     frames.append(self.fs.photons[self.fs.idxs[idx]:self.fs.idxs[idx+1]])
                     idx += step
                 return np.array(frames, dtype=np.object)
@@ -66,12 +65,12 @@ class frameseries:
         def asarray(self):
             '''
             '''
-            return arraysplit(self.fs.photons, self.fs.idxs[1:-1])
+            return np.array(arraysplit(self.fs.photons, self.fs.idxs[1:-1]), dtype=np.object)
         
         def __repr__(self):
             '''
             '''
-            return arraysplit(self.fs.photons, self.fs.idxs[1:-1]).__repr__()
+            return np.array(arraysplit(self.fs.photons, self.fs.idxs[1:-1]), dtype=np.object).__repr__()
             
     def __init__(self, photons, idxs, shape, cut = True, dtype = np.uint16):
         '''
@@ -102,13 +101,13 @@ class frameseries:
         ---------
         '''
         self.photons = photons
-        self.idxs = idxs
+        self.idxs = idxs #maybe from N?
         self.frames = frameseries.fs_frames(self)
         self.Nframes = len(idxs) - 1
         self.shape = shape
         self.dtype = dtype
         # calculate photon numbers
-        self.N = np.diff(idxs)
+        self.N = np.diff(idxs) #from arg?
         # cut to rectangular shape if requested
         if cut:
             self.cuttoshape(self.shape)
@@ -376,7 +375,7 @@ class frameseries:
         Examples
         ---------
         '''
-        self.photons = self.frames[self.idxs[n]:] + self.frames[:self.idxs[n]]
+        self.photons = self.photons[self.idxs[n]:] + self.photons[:self.idxs[n]]
         self.N = np.roll(self.N, n)
         self.idxs = np.r_[0, np.cumsum(self.N)]
 
@@ -396,7 +395,7 @@ class frameseries:
         rcc_frames[:,0] = cc_frames[:,0]*a + cc_frames[:,1]*b + e
         rcc_frames[:,1] = cc_frames[:,1]*d + cc_frames[:,0]*c + f
         self.photons = np.array(np.around(rcc_frames), dtype=self.dtype)
-        # frames are generated from photons in cuttoshape
+
         self.cuttoshape(self.shape)
 
     def append(self, fs):
@@ -526,15 +525,12 @@ def fsmerge(fslist):
     '''
     Merge frame-by-frame
     ''' 
-    '''
-    TODO
-    for i, fs in enumerate(fslist):
-        if i==0:
-            photons = fs.photons
-            idxs = fs.idxs
-        else:
-            idxs += fs.idxs
-     '''
+    
+    new_photons = []
+    idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
+    for i in xrange(len(idxs)-1):
+        new_photons.extend([fs.photons[fs.idxs[i]:fs.idxs[i+1]] for fs in fslist])
+    return frameseries(np.concatenate(new_photons), idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
             
 def fsplot(fslist, samples=1000):
     '''

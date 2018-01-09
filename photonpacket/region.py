@@ -71,18 +71,18 @@ class region(object):
         Examples
         ---------
         '''
-        cc_frames = np.array(fs.photons, dtype=fs.dtype)
-        csum = np.cumsum(fs.N, dtype=np.uint32)
-        mask = self.getmask(cc_frames.copy())
+        cc_frames = fs.photons.copy()
+        mask = self.getmask(cc_frames.copy()) 
+        #N mask?
         cmask = np.cumsum(mask)
         cmask = np.insert(cmask, 0, 0)
-        cN = cmask[csum]
+        cN = cmask[fs.idxs[1:]]
         cN = np.insert(cN, 0, 0)
         if reshape:
             cc_frames = self.reshape(cc_frames)
-            return frameseries(cc_frames, cN, self.shape, cut=False, dtype=fs.dtype)
+            return frameseries(cc_frames[mask], cN, self.shape, cut=False, dtype=fs.dtype)
         else:
-            return frameseries(cc_frames, cN, fs.shape, cut=False, dtype=fs.dtype)
+            return frameseries(cc_frames[mask], cN, fs.shape, cut=False, dtype=fs.dtype)
 
     def getcounts(self, fs):
         '''
