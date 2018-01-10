@@ -48,7 +48,6 @@ class file:
         del self.params
         del self.photons
         del self.idxs
-        print 'niszcze'
         
     @staticmethod
     def read(path, **kwargs):

@@ -1,11 +1,11 @@
 import numpy as np
 from bincountnd import bincountnd
 from scipy.spatial import KDTree
+from scipy.spatial.distance import pdist, squareform
 from matplotlib import pyplot as plt
 from copy import deepcopy
 from message import message, progress
 
-from coinc import binautocoinc
 from frameutils.arraysplit import arraysplit
 
 try:
@@ -37,18 +37,18 @@ class frameseries:
             if isinstance(key, slice):
                 start, stop, step = key.indices(self.fs.Nframes)
                 frames = []
-                idx = start
-                while idx < stop:
-                    frames.append(self.fs.photons[self.fs.idxs[idx]:self.fs.idxs[idx+1]])
-                    idx += step
+                i = start
+                while i < stop:
+                    frames.append(self.fs.photons[self.fs.idxs[i]:self.fs.idxs[i+1]])
+                    i += step
                 return np.array(frames, dtype=np.object)
             elif isinstance(key, list) or isinstance(key, np.ndarray):
                 if max(key) > self.fs.Nframes:
                     raise KeyError
                 else:
                     frames = []
-                    for idx in key:
-                        frames.append(self.fs.photons[self.fs.idxs[idx]:self.fs.idxs[idx+1]])
+                    for i in key:
+                        frames.append(self.fs.photons[self.fs.idxs[i]:self.fs.idxs[i+1]])
                     idx += step
                     return np.array(frames, dtype=np.object)
             elif isinstance(key, int):
@@ -115,26 +115,93 @@ class frameseries:
     def __getitem__(self, key):
         '''
         '''
-        if isinstance(key, slice) or isinstance(key, list) or isinstance(key, np.ndarray):
-            pass# TODO
+        if isinstance(key, slice):
+            start, stop, step = key.indices(self.Nframes)
+            photons = []
+            i = start
+            idx = 0
+            idxs = np.array([0,])
+            while i < stop:
+                st = self.idxs[i]
+                end = self.idxs[i+1]
+                photons.append(self.photons[st:end])
+                i += step
+                idx += end - st
+                np.append(idxs, idx)
+            photons = np.concatenate(photons)
+            return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
+        elif isinstance(key, list) or isinstance(key, np.ndarray):
+            if max(key) > self.Nframes:
+                raise KeyError
+            else:
+                photons = []
+                idxs = np.zeros(len(key) + 1)
+                idxs[0] = 0
+                idx = 0
+                for i in key:
+                    st = self.idxs[i]
+                    end = self.idxs[i+1]
+                    photons.append(self.photons[st:end])
+                    idx += end - st
+                    idxs[i+1] = idx
+                photons = np.concatenate(photons)
+                return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
         elif isinstance(key, int):
             st_idx = self.idxs[key]
             end_idx = self.idxs[key+1]
             photons = self.photons[st_idx:end_idx]
             return singleframe(photons, np.array([0, end_idx - st_idx]), 
-                               self.shape, cut=False)
+                               self.shape, cut=False, dtype=self.dtype)
         else:
             raise TypeError
 
-    def __setitem__(self, key, frame):
+    def __setitem__(self, key, fr):
         '''
         '''
-        if isinstance(frame, np.ndarray):
-            # TODO
-            self.frames[key] = frame
-            self.N[key] = len(frame)
+        # fr is a numpy array
+        if isinstance(fr, np.ndarray):
+            
+            # fr is a series of frames
+            if fr.dtype == np.object:
+
+                if isinstance(key, int) and len(fr) == 1:
+                    pass
+                elif isinstance(key, list) or isinstance(key, np.ndarray):
+                    if len(key) == len(fr):
+                        pass
+                    else:
+                        raise KeyError
+                elif isinstance(key, slice):
+                    pass
+                else:
+                    raise KeyError
+                    
+            # fr is a single frame
+            elif fr.dtype == self.dtype:
+                if isinstance(key, int):
+                    pass
+                else:
+                    # this does not make sense
+                    raise KeyError
+            else:
+                raise TypeError
+                
+        # fr is a frameseries
+        elif isinstance(fr, frameseries):
+            if isinstance(key, int) and len(fr) == 1:
+                pass
+            elif isinstance(key, list) or isinstance(key, np.ndarray):
+                if len(key) == len(fr):
+                    pass
+                else:
+                    raise KeyError
+            elif isinstance(key, slice):
+                pass
+            else:
+                raise KeyError
+                
         else:
-            raise TypeError
+            raise KeyError
             
     def __del__(self):
         del self.photons
@@ -214,6 +281,9 @@ class frameseries:
         '''
         Find photon pairs that are too close to each other and remove second photon from the frame
         '''
+        
+        '''
+        This is an old version of delneighbours that does not actually delete all neigbours that should be deleted
         for i, frame in enumerate(self.frames):
             progress(i)
             if len(frame)>=2:
@@ -229,7 +299,30 @@ class frameseries:
                 self.N[i]=np.sum(mask)
                 self.frames[i]=frame[mask]
         self.concat = np.concatenate(self.frames)
-
+        '''
+        def outofrange(frame, rng):
+            tmp = pdist(frame, 'euclidean')
+            tmp = squareform(tmp)<=rng
+            plist = range(0,frame.shape[0])
+            for j in plist:
+                tmp[:,j]=False
+                for i in np.where(tmp[j])[0]:
+                    try:
+                        plist.remove(i)
+                    except ValueError:
+                        pass
+            return plist
+        
+        masks = []
+        for i in range(len(self.idxs)-1):
+            frame = self.photons[self.idxs[i]:self.idxs[i+1]]
+            masks.append(outofrange(frame, r))
+        mask = np.concatenate(masks)
+        self.photons = self.photons[mask]
+        cmask = np.r_[0, np.cumsum(mask)]
+        self.idxs = np.r_[0, cmask[self.idxs[1:]]]
+        self.N = np.diff(self.idxs)
+        
     def accumautocoinc(self):
         '''
         Accumulate autocoincidences
@@ -547,7 +640,7 @@ def loadfs(fname):
     '''
     Load frameseries from file
     '''
-    fs = pickle.load(open(fname, 'r'))
+    fs = pickle.load(open(fname, 'rb'))
     if fs.__class__ == frameseries:
         return fs
     else:
