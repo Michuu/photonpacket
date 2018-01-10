@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from copy import deepcopy
 from message import message, progress
 
-from coinc import binautocoinc
+#from coinc import binautocoinc
 from frameutils.arraysplit import arraysplit
 
 try:
