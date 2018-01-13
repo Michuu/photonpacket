@@ -8,8 +8,8 @@ class region(object):
     logic = None
     corner = np.array([])
 
-    def __init__(self, components_regions, logic):
-        self.component_regions = components_regions
+    def __init__(self, component_regions, logic):
+        self.component_regions = component_regions
         self.logic = logic
         if component_regions.__class__ == tuple:
             self.corner[0] = min(component_regions[0].corner[0], component_regions[1].corner[0])

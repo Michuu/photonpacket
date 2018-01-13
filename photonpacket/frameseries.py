@@ -120,16 +120,16 @@ class frameseries:
             photons = []
             i = start
             idx = 0
-            idxs = np.array([0,])
+            idxs = [0,]
             while i < stop:
                 st = self.idxs[i]
                 end = self.idxs[i+1]
                 photons.append(self.photons[st:end])
                 i += step
                 idx += end - st
-                np.append(idxs, idx)
+                idxs.append(idx)
             photons = np.concatenate(photons)
-            return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
+            return frameseries(photons, np.array(idxs), self.shape, cut=False, dtype=self.dtype)
         elif isinstance(key, list) or isinstance(key, np.ndarray):
             if max(key) > self.Nframes:
                 raise KeyError

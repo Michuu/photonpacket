@@ -2,7 +2,8 @@ from itertools import izip
 import numpy as np
 from photonpacket.message import progress
 cimport numpy as np
-from coinc cimport bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd, bincoinc4sd2,  binautocoincsd
+from coinc cimport bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd, \
+bincoinc4sd2,  binautocoincsd, coinc4, coinc4_2
 cimport cython
 
 ctypedef fused DTYPE_t:
@@ -29,9 +30,38 @@ def concat_coinc(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, nd
             frame1 = photons1[idxs1[i]:idxs1[i+1]]
             frame2 = photons2[idxs2[i]:idxs2[i+1]]
             cframes.append(coinc(frame1, frame2))
-        i += 1
     return np.concatenate(cframes)
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def concat_coinc4(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, ndim=1] idxs1,
+                       np.ndarray[DTYPE_t, ndim=2] photons2, np.ndarray[np.int32_t, ndim=1] idxs2,
+                       np.ndarray[DTYPE_t, ndim=2] photons3, np.ndarray[np.int32_t, ndim=1] idxs3,
+                       np.ndarray[DTYPE_t, ndim=2] photons4, np.ndarray[np.int32_t, ndim=1] idxs4, constr=None):
+    cdef list cframes = []
+    cdef np.ndarray[DTYPE_t, ndim=2] frame1
+    cdef np.ndarray[DTYPE_t, ndim=2] frame2
+    cdef np.ndarray[DTYPE_t, ndim=2] frame3
+    cdef np.ndarray[DTYPE_t, ndim=2] frame4
+    cdef np.ndarray[np.uint8_t, ndim=1] mask
+    cdef np.ndarray[DTYPE_t, ndim=2] c4
+    cdef int i = 0
+    for i in xrange(len(idxs1)-1):
+        progress(i)
+        if idxs1[i] != idxs1[i+1] and idxs2[i] != idxs2[i+1] and idxs3[i] != idxs3[i+1] and idxs4[i] != idxs4[i+1]:
+            frame1 = photons1[idxs1[i]:idxs1[i+1]]
+            frame2 = photons2[idxs2[i]:idxs2[i+1]]
+            frame3 = photons3[idxs3[i]:idxs3[i+1]]
+            frame4 = photons4[idxs4[i]:idxs4[i+1]]
+            if constr is None:
+                cframes.append(coinc4(frame1, frame2, frame3, frame4))
+            else:
+                c4 = coinc4(frame1, frame2, frame3, frame4)
+                mask = constr(c4)
+                cframes.append(c4[mask])
+    return np.concatenate(cframes)
+        
+    
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def accum_bincoinc(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, ndim=1] idxs1,
@@ -46,7 +76,6 @@ def accum_bincoinc(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, 
             frame1 = photons1[idxs1[i]:idxs1[i+1]]
             frame2 = photons2[idxs2[i]:idxs2[i+1]]
             bincoinc(frame1, frame2, accum)
-        i += 1
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -62,7 +91,6 @@ def accum_bincoincsd(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t
             frame1 = photons1[idxs1[i]:idxs1[i+1]]
             frame2 = photons2[idxs2[i]:idxs2[i+1]]
             bincoincsd(frame1, frame2, accum, signs, shape)
-        i += 1
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -78,7 +106,6 @@ def accum_bincoinc4sd(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_
             frame1 = photons1[idxs1[i]:idxs1[i+1]]
             frame2 = photons2[idxs2[i]:idxs2[i+1]]
             bincoinc4sd(frame1, frame2, accum, signs, shape)
-        i += 1
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -100,7 +127,6 @@ def accum_bincoinc4sd2(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32
             frame3 = photons1[idxs3[i]:idxs3[i+1]]
             frame4 = photons2[idxs4[i]:idxs4[i+1]]
             bincoinc4sd2(frame1, frame2, frame3, frame4, accum, signs, shape)
-        i += 1
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -113,4 +139,4 @@ def accum_binautocoincsd(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int
         if idxs1[i] != idxs1[i+1]:
             frame1 = photons1[idxs1[i]:idxs1[i+1]]
             binautocoincsd(frame1, accum, signs, shape)
-        i += 1
+        
