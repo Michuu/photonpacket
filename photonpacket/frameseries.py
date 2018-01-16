@@ -314,14 +314,16 @@ class frameseries:
             return plist
         
         masks = []
+        newN = []
         for i in range(len(self.idxs)-1):
             frame = self.photons[self.idxs[i]:self.idxs[i+1]]
-            masks.append(outofrange(frame, r))
-        mask = np.concatenate(masks)
+            tmp = self.idxs[i]+np.array(outofrange(frame, r))
+            masks.append(tmp)
+            newN.append(tmp.shape[0])
+        mask = np.array(np.hstack(masks),dtype=np.uint16)
         self.photons = self.photons[mask]
-        cmask = np.r_[0, np.cumsum(mask)]
-        self.idxs = np.r_[0, cmask[self.idxs[1:]]]
-        self.N = np.diff(self.idxs)
+        self.N = np.array(newN)
+        self.idxs = np.array(np.r_[0, np.cumsum(self.N)],dtype=np.int32)
         
     def accumautocoinc(self):
         '''
