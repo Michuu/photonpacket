@@ -277,9 +277,10 @@ class frameseries:
         accum = bincountnd(np.array(self.photons, dtype=self.dtype), self.shape)
         return accum
 
-    def delneighbours(self, r=5):
+    def delneighbours(self, r=5, metric='euclidean'):
         '''
         Find photon pairs that are too close to each other and remove second photon from the frame
+        args: radius, metric (c.f. scipy.spatial.distance.pdist)
         '''
         
         '''
@@ -301,8 +302,8 @@ class frameseries:
         self.concat = np.concatenate(self.frames)
         '''
         def outofrange(frame, rng):
-            tmp = pdist(frame, 'euclidean')
-            tmp = squareform(tmp)<=rng
+            tmp = pdist(frame, metric)
+            tmp = squareform(tmp)<rng
             plist = range(0,frame.shape[0])
             for j in plist:
                 tmp[:,j]=False
