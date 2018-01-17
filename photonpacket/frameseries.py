@@ -318,10 +318,10 @@ class frameseries:
         newN = []
         for i in range(len(self.idxs)-1):
             frame = self.photons[self.idxs[i]:self.idxs[i+1]]
-            tmp = self.idxs[i]+np.array(outofrange(frame, r))
+            tmp = self.idxs[i]+np.array(outofrange(frame, r),dtype=np.uint32)
             masks.append(tmp)
             newN.append(tmp.shape[0])
-        mask = np.array(np.hstack(masks),dtype=np.uint16)
+        mask = np.array(np.hstack(masks),dtype=np.uint32)
         self.photons = self.photons[mask]
         self.N = np.array(newN)
         self.idxs = np.array(np.r_[0, np.cumsum(self.N)],dtype=np.int32)
