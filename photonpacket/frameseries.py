@@ -277,9 +277,11 @@ class frameseries:
         # count photons in each pixel
         if (nframes != 'all' or first != 0):
             if isinstance(first,int):
+                first = max(0,min(first,self.N.shape[0]))
                 if(nframes == 'all'): 
-                    nframes = self.N.shape[0] - first
-                nrest = self.N.shape[0] - first - nframes
+                    nframes = max(self.N.shape[0] - first,0)
+                nframes = max(0,min(nframes,self.N.shape[0]))  
+                nrest = max(self.N.shape[0] - first - nframes,0)
                 frame_mask = np.r_[np.zeros(first,dtype=np.bool),np.ones(nframes,dtype=np.bool),np.zeros(nrest,dtype=np.bool)]
                 mask = np.repeat(frame_mask, self.N)
                 phts = self.photons[mask]
