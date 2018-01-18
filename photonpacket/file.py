@@ -60,6 +60,9 @@ class file:
             path to file, passed to :func:`open`
         Nframes : int
             number of frames to read
+        mode : string
+            'fit' to extract photon positions as fitted by photon-finder (default)
+            'max' to extract raw maximal photon positions
             
         Returns
         ----------
@@ -152,6 +155,18 @@ class file:
         else:
             div = 10
             
+        photinfoBeg = 0
+        photinfoEnd = 2
+        if 'mode' in kwargs:
+            if kwargs['mode'] == 'fit':
+                photinfoBeg = 0
+                photinfoEnd = 2
+            elif kwargs['mode'] == 'max':
+                photinfoBeg = 6
+                photinfoEnd = 8
+            else:
+                print 'Invalid mode selected, modes available: fit, max'
+                return False
         nframes = 0
         # open file for binary reading
         f = open(path,'rb')
@@ -173,7 +188,7 @@ class file:
                 # TODO: possibility of getting other info about photons
                 # extract only photon positions
                 img = np.fromfile(f, '>u2', N)
-                frame = np.reshape(img/div, nxy)[:, :2]
+                frame = np.reshape(img/div, nxy)[:, photinfoBeg:photinfoEnd]
             else:
                 frame = empty_frame
             frames.append(frame)
