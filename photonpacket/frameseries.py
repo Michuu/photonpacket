@@ -516,7 +516,7 @@ class frameseries:
         '''
         self.idxs = np.concatenate([self.idxs, self.idxs[-1] + fs.idxs[1:]])
         self.N = np.concatenate([self.N, fs.N])
-        self.photos = np.concatenate([self.photons, fs.photons])
+        self.photons = np.concatenate([self.photons, fs.photons])
         self.Nframes = self.Nframes + fs.Nframes
 
     def timeseries(self, samples=1000):
