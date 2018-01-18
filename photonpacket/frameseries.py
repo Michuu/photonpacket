@@ -252,9 +252,10 @@ class frameseries:
         self.N = cfs.N
 
 
-    def accumframes(self):
+    def accumframes(self,first=0,nframes='all'):
         '''
-        Accumulate all photons from frames
+        Accumulate all photons from frames ranging from first to first+nframes
+        defaults to all frames
 
         Parameters
         ---------
@@ -274,7 +275,19 @@ class frameseries:
         ---------
         '''
         # count photons in each pixel
-        accum = bincountnd(np.array(self.photons, dtype=self.dtype), self.shape)
+        if (nframes != 'all' or first != 0):
+            if isinstance(first,int):
+                if(nframes == 'all'): 
+                    nframes = self.N.shape[0] - first
+                nrest = self.N.shape[0] - first - nframes
+                frame_mask = np.r_[np.zeros(first,dtype=np.bool),np.ones(nframes,dtype=np.bool),np.zeros(nrest,dtype=np.bool)]
+                mask = np.repeat(frame_mask, self.N)
+                phts = self.photons[mask]
+            else:
+                raise KeyError
+        else:
+            phts = self.photons
+        accum = bincountnd(np.array(phts, dtype=self.dtype), self.shape)    
         return accum
 
     def delneighbours(self, r=5, metric='euclidean'):
