@@ -321,6 +321,7 @@ class frameseries:
             tmp = self.idxs[i]+np.array(outofrange(frame, r),dtype=np.uint32)
             masks.append(tmp)
             newN.append(tmp.shape[0])
+            progress(i)
         mask = np.array(np.hstack(masks),dtype=np.uint32)
         self.photons = self.photons[mask]
         self.N = np.array(newN)
