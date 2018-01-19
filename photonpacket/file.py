@@ -213,7 +213,7 @@ class file:
                 return False
                      
         # set shape
-        self.shape = shape*10/div
+        self.shape = np.array((np.round(shape*10/div)),dtype=int)
         return self
 
     def getframeseries(self):
