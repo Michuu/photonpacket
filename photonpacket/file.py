@@ -151,9 +151,9 @@ class file:
             frames_limit = False
         
         if 'div' in kwargs:
-            div = kwargs['div']
+            div = float(kwargs['div'])
         else:
-            div = 10
+            div = 10.
             
         photinfoDim = 2
         photinfoMask = np.r_[np.ones(2,dtype=np.bool),np.zeros(6,dtype=np.bool)]
@@ -189,7 +189,8 @@ class file:
                 # TODO: possibility of getting other info about photons
                 # extract only photon positions
                 img = np.fromfile(f, '>u2', N)
-                frame = np.reshape(img/div, nxy)[:, photinfoMask]
+                img = np.array(np.round(np.array(img,dtype=np.float)/div),dtype=np.uint16)
+                frame = np.reshape(img, nxy)[:, photinfoMask]
             else:
                 frame = empty_frame
             frames.append(frame)
