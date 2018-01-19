@@ -155,24 +155,25 @@ class file:
         else:
             div = 10
             
-        photinfoBeg = 0
-        photinfoEnd = 2
+        photinfoDim = 2
+        photinfoMask = np.r_[np.ones(2,dtype=np.bool),np.zeros(6,dtype=np.bool)]
         if 'mode' in kwargs:
             if kwargs['mode'] == 'fit':
-                photinfoBeg = 0
-                photinfoEnd = 2
+                pass
             elif kwargs['mode'] == 'max':
-                photinfoBeg = 6
-                photinfoEnd = 8
+                photinfoMask = np.r_[np.zeros(6,dtype=np.bool),np.ones(2,dtype=np.bool),]
+            elif kwargs['mode'] == 'fit_step_max':
+                photinfoMask = np.r_[np.ones(2,dtype=np.bool),np.zeros(3,dtype=np.bool),np.ones(3,dtype=np.bool)]
+                photinfoDim = 5
             else:
-                print 'Invalid mode selected, modes available: fit, max'
+                print 'Invalid mode selected, modes available: fit, max, fit_step_max'
                 return False
         nframes = 0
         # open file for binary reading
         f = open(path,'rb')
         
         frames = []
-        empty_frame = np.empty(shape=(0, 2), dtype=np.uint16)
+        empty_frame = np.empty(shape=(0, photinfoDim), dtype=np.uint16)
         while(True):
             # read number of photons in a frame
             # nxy = (number of photons, information per photon)
@@ -188,7 +189,7 @@ class file:
                 # TODO: possibility of getting other info about photons
                 # extract only photon positions
                 img = np.fromfile(f, '>u2', N)
-                frame = np.reshape(img/div, nxy)[:, photinfoBeg:photinfoEnd]
+                frame = np.reshape(img/div, nxy)[:, photinfoMask]
             else:
                 frame = empty_frame
             frames.append(frame)
