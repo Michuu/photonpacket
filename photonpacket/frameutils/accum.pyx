@@ -3,7 +3,7 @@ import numpy as np
 from photonpacket.message import progress
 cimport numpy as np
 from coinc cimport bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd, \
-bincoinc4sd2,  binautocoincsd, coinc4, coinc4_2
+bincoinc4sd2,  binautocoincsd, coinc4, coinc4_2, autocoinc
 cimport cython
 
 ctypedef fused DTYPE_t:
@@ -30,6 +30,19 @@ def concat_coinc(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, nd
             frame1 = photons1[idxs1[i]:idxs1[i+1]]
             frame2 = photons2[idxs2[i]:idxs2[i+1]]
             cframes.append(coinc(frame1, frame2))
+    return np.concatenate(cframes)
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def concat_autocoinc(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, ndim=1] idxs1):
+    cdef int i = 0
+    cdef list cframes = []
+    cdef np.ndarray[DTYPE_t, ndim=2] frame1
+    for i in xrange(len(idxs1)-1):
+        progress(i)
+        if idxs1[i] != idxs1[i+1]:
+            frame1 = photons1[idxs1[i]:idxs1[i+1]]
+            cframes.append(autocoinc(frame1))
     return np.concatenate(cframes)
 
 @cython.boundscheck(False)

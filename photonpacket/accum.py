@@ -5,7 +5,7 @@ from message import message, progress
 from collections import deque
 from frameutils.coinc import bincount2d
 from frameutils.accum import accum_bincoinc, concat_coinc, accum_bincoincsd,\
-     accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd
+     accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd, concat_autocoinc
 import itertools as it
 
 accumtype = np.uint16
@@ -70,6 +70,19 @@ def accumcoinc2d(fs1, fs2, axis=0, constr=None):
     '''
     accum = np.zeros(shape=(fs1.shape[axis],fs2.shape[axis]), dtype=np.uint16)
     cframes = concat_coinc(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs)
+    if constr is not None:
+        mask = constr(cframes.copy())
+        bincount2d(cframes.take([2*axis, 2*axis+1], axis=1)[mask], accum)
+    else:
+        bincount2d(cframes.take([2*axis, 2*axis+1], axis=1), accum)
+    return accum
+
+def accumautocoinc2d(fs1, axis=0, constr=None):
+    '''
+    Coincidences map for one of the dimensions
+    '''
+    accum = np.zeros(shape=(fs1.shape[axis],fs1.shape[axis]), dtype=np.uint16)
+    cframes = concat_autocoinc(fs1.photons, fs1.idxs)
     if constr is not None:
         mask = constr(cframes.copy())
         bincount2d(cframes.take([2*axis, 2*axis+1], axis=1)[mask], accum)

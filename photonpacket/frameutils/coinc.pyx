@@ -183,7 +183,7 @@ cpdef autocoinc(np.ndarray[DTYPE_t, ndim=2] frame):
 
     '''
     cdef int f1l = frame.shape[0]
-    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1)/2, 4], dtype=frame.dtype)
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1), 4], dtype=frame.dtype)
     cdef int i = 0
     cdef int j = 0
     cdef int k = 0
