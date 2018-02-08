@@ -49,7 +49,6 @@ class frameseries:
                     frames = []
                     for i in key:
                         frames.append(self.fs.photons[self.fs.idxs[i]:self.fs.idxs[i+1]])
-                    idx += step
                     return np.array(frames, dtype=np.object)
             elif isinstance(key, int):
                 if key > self.fs.Nframes:
