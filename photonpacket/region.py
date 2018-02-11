@@ -464,6 +464,30 @@ class halfcircle(region):
     def getmask(self, frame):
         pass
 
-
+class paramregion(region):
+    '''
+    Represtents abstract region in the space of additional photon paramters accesible via file loading with non-standard 'mode'
+    args:
+        fcomp - comparison function applied to an ARRAY of specified parameter values, yields true inside region
+    '''
+    paramid = 2 #subsequent radius redcution (SRR) step param by default
+    fcomp = lambda(x):True #do not filter out anything by default
+    
+    def __init__(self,fcomp,**kwargs):
+        self.fcomp = fcomp
+        if 'param' in kwargs:
+            if kwargs['param'] == 'step':
+                self.paramid = 2
+            elif kwargs['param'] == 'pixel_value':
+                self.paramid = 3
+            else:
+                print 'Unrecognized param, possible values: "step" (id=2), "pixel_value" (id=3)'
+    def plot(self):
+        print self.fcomp
+    def __repr__(self):
+        print self.fcomp, self.paramid
+    def getmask(self,frame):
+        return self.fcomp(frame[:,self.paramid]) 
+        
 
 
