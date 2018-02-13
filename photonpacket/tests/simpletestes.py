@@ -11,3 +11,8 @@ pmask = N<=4
 mask = np.repeat(pmask, N)
 
 nidxs=np.r_[0, np.cumsum(mask)][idxs]
+#%%
+a=np.array([1,2,3])
+b=np.array([4,5,6])
+c=np.array([7,8,9,10])
+np.stack([a,b,c],axis=1).flatten()
