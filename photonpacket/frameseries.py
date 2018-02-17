@@ -288,7 +288,7 @@ class frameseries:
                 raise KeyError
         else:
             phts = self.photons
-        accum = bincountnd(np.array(phts, dtype=self.dtype), self.shape)    
+        accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)    
         return accum
 
     def delneighbours(self, r=5, metric='euclidean'):

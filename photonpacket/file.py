@@ -218,7 +218,7 @@ class file:
         
         if shapedetect:
             try:
-                shape = np.max(self.photons, axis=0)
+                shape = np.max(self.photons[:,0:2], axis=0)
             except ValueError:
                 print 'You must be joking... file contains 0 photons; aborting'
                 return False
