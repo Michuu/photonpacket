@@ -235,7 +235,7 @@ def coinchist4(*args):
         #error
         return -1
         
-def autocoinchist(fs1, signs):
+def autocoinchist(fs1, signs, **kwargs):
     '''
     Autocoincidence histogram in terms of sum/differnce variables
 
@@ -246,6 +246,8 @@ def autocoinchist(fs1, signs):
     fs2 : :class:`photonpacket.frameseries`
 
     signs :
+    
+    kwargs : minphotons, maxphotons (filters out frames)
 
     Returns
     ----------
@@ -261,5 +263,5 @@ def autocoinchist(fs1, signs):
     '''
     shape = (2*fs1.shape[0]-1, 2*fs1.shape[1]-1)
     accum = np.zeros(shape, dtype=accumtype)
-    accum_binautocoincsd(fs1.photons, fs1.idxs, accum, signs, fs1.shape)
+    accum_binautocoincsd(fs1.photons, fs1.idxs, accum, signs, fs1.shape, **kwargs)
     return accum
