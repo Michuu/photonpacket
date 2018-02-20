@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.signal import convolve2d
+from scipy.signal import fftconvolve
 from bincountnd import bincountnd
 from message import message, progress
 from collections import deque
@@ -158,7 +158,7 @@ def acchist(h1, h2, signs, **kwargs):
         h2 = np.flip(h2, axis=0)
     if signs[1] == -1:
         h2 = np.flip(h2, axis=1)
-    return convolve2d(h1, h2)/div
+    return fftconvolve(h1, h2)/div
 
 
 def acccoinc(h1, h2, axis=0, constr=None):
@@ -248,6 +248,7 @@ def autocoinchist(fs1, signs, **kwargs):
     signs :
     
     kwargs : minphotons, maxphotons (filters out frames)
+    kwargs : shape - tuple / 2 el. array - max. size of the accumulator (farther coindicences are neglected)
 
     Returns
     ----------
@@ -261,7 +262,7 @@ def autocoinchist(fs1, signs, **kwargs):
     Examples
     ----------
     '''
-    shape = (2*fs1.shape[0]-1, 2*fs1.shape[1]-1)
+    shape = kwargs['crop'] if 'crop' in kwargs else (2*fs1.shape[0]-1, 2*fs1.shape[1]-1)
     accum = np.zeros(shape, dtype=accumtype)
     accum_binautocoincsd(fs1.photons, fs1.idxs, accum, signs, fs1.shape, **kwargs)
     return accum
