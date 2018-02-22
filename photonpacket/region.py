@@ -72,7 +72,7 @@ class region(object):
         ---------
         '''
         photons = fs.photons.copy()
-        mask = self.getmask(photons.copy()) 
+        mask = self.getmask(photons[:,:2].copy()) 
         cmask = np.r_[0, np.cumsum(mask)]
         idxs = np.r_[0, cmask[fs.idxs[1:]]]
         if reshape:
