@@ -199,7 +199,7 @@ class circle(region):
     def getmask(self, frame):
         frame[:, 0] -= self.x0
         frame[:, 1] -= self.y0
-        mask = np.sum(frame**2,axis=1) < self.r**2
+        mask = np.sum(frame[:,0:2]**2,axis=1) < self.r**2
         return mask
 
 
@@ -351,8 +351,8 @@ class ring(region):
     def getmask(self, frame):
         frame[:,0] = frame[:,0]-self.x0
         frame[:,1] = frame[:,1]-self.y0
-        mask1 = np.sum(frame**2,axis=1) > self.r1**2
-        mask2 = np.sum(frame**2,axis=1) < self.r2**2
+        mask1 = np.sum(frame[:,0:2]**2,axis=1) > self.r1**2
+        mask2 = np.sum(frame[:,0:2]**2,axis=1) < self.r2**2
         return mask1 * mask2
 
 
