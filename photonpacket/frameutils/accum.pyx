@@ -144,12 +144,31 @@ def accum_bincoinc4sd2(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def accum_binautocoincsd(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, ndim=1] idxs1,
-                                             np.ndarray[accum_DTYPE_t, ndim=2] accum, signs, shape):
+                                             np.ndarray[accum_DTYPE_t, ndim=2] accum, signs, shape, **kwargs):
+    cdef bint mincondition = False
+    cdef bint maxcondition = False
+    cdef int minphotnumber = 0
+    cdef int maxphotnumber = 0
+    
     cdef int i = 0
     cdef np.ndarray[DTYPE_t, ndim=2] frame1
+    
+    if 'minphotons' in kwargs:
+        mincondition = True
+        minphotnumber = kwargs['minphotons']
+    if 'maxphotons' in kwargs:
+        maxcondition = True
+        maxphotnumber = kwargs['maxphotons']
+    
     for i in xrange(len(idxs1)-1):
         progress(i)
         if idxs1[i] != idxs1[i+1]:
+            if mincondition:
+                if idxs1[i+1]-idxs1[i] < minphotnumber:
+                    continue
+            if maxcondition:
+                if idxs1[i+1]-idxs1[i] > maxphotnumber:
+                    continue
             frame1 = photons1[idxs1[i]:idxs1[i+1]]
             binautocoincsd(frame1, accum, signs, shape)
         

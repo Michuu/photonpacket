@@ -49,7 +49,6 @@ class frameseries:
                     frames = []
                     for i in key:
                         frames.append(self.fs.photons[self.fs.idxs[i]:self.fs.idxs[i+1]])
-                    idx += step
                     return np.array(frames, dtype=np.object)
             elif isinstance(key, int):
                 if key > self.fs.Nframes:
@@ -252,14 +251,15 @@ class frameseries:
         self.N = cfs.N
 
 
-    def accumframes(self,first=0,nframes='all'):
+    def accumframes(self,first=0,nframes='all',**kwargs):
         '''
         Accumulate all photons from frames ranging from first to first+nframes
         defaults to all frames
 
         Parameters
         ---------
-
+        
+        'kwargs' : minphotons, maxphotons (filters out frames)
 
         Returns
         ---------
@@ -275,6 +275,8 @@ class frameseries:
         ---------
         '''
         # count photons in each pixel
+        frame_mask = np.ones(self.N.shape[0],dtype=np.bool)
+        
         if (nframes != 'all' or first != 0):
             if isinstance(first,int):
                 first = max(0,min(first,self.N.shape[0]))
@@ -282,14 +284,19 @@ class frameseries:
                     nframes = max(self.N.shape[0] - first,0)
                 nframes = max(0,min(nframes,self.N.shape[0]))  
                 nrest = max(self.N.shape[0] - first - nframes,0)
-                frame_mask = np.r_[np.zeros(first,dtype=np.bool),np.ones(nframes,dtype=np.bool),np.zeros(nrest,dtype=np.bool)]
-                mask = np.repeat(frame_mask, self.N)
-                phts = self.photons[mask]
+                frame_mask *= np.r_[np.zeros(first,dtype=np.bool),np.ones(nframes,dtype=np.bool),np.zeros(nrest,dtype=np.bool)] 
             else:
                 raise KeyError
-        else:
-            phts = self.photons
-        accum = bincountnd(np.array(phts, dtype=self.dtype), self.shape)    
+        
+        if 'minphotons' in kwargs:
+            frame_mask *= (self.N >= kwargs['minphotons'])
+        if 'maxphotons' in kwargs:
+            frame_mask *= (self.N <= kwargs['maxphotons'])    
+        
+        mask = np.repeat(frame_mask, self.N)
+        phts = self.photons[mask]
+        
+        accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)    
         return accum
 
     def delneighbours(self, r=5, metric='euclidean'):

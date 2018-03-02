@@ -18,6 +18,7 @@ class file:
     path = ''
     nameversion = 0
     params = {}
+    mode = 'fit'
 
     def __init__(self, path,name):
         '''
@@ -166,11 +167,21 @@ class file:
                 pass
             elif kwargs['mode'] == 'max':
                 photinfoMask = slice(6,8,None)
+                self.mode = 'max'
             elif kwargs['mode'] == 'fit_step_max':
-                photinfoMask = np.r_[np.ones(2,dtype=np.bool),np.zeros(3,dtype=np.bool),np.ones(3,dtype=np.bool)]
+                photinfoMask = np.r_[np.ones(3,dtype=np.bool),np.zeros(3,dtype=np.bool),np.ones(2,dtype=np.bool)]
                 photinfoDim = 5
+                self.mode = 'fit_step_max'
+            elif kwargs['mode'] == 'fit_step_val_max':
+                photinfoMask = np.r_[np.ones(4,dtype=np.bool),np.zeros(2,dtype=np.bool),np.ones(2,dtype=np.bool)]
+                photinfoDim = 6
+                self.mode = 'fit_step_val_max'
+            elif kwargs['mode'] == 'all':
+                photinfoMask = np.ones(8,dtype=np.bool)
+                photinfoDim = 8
+                self.mode = 'all'
             else:
-                print 'Invalid mode selected, modes available: fit, max, fit_step_max'
+                print 'Invalid mode selected, modes available: fit, max, fit_step_max,fit_step_val_max,all'
                 return False
         nframes = 0
         # open file for binary reading
@@ -214,7 +225,7 @@ class file:
         
         if shapedetect:
             try:
-                shape = np.max(self.photons, axis=0)
+                shape = np.max(self.photons[:,0:2], axis=0)
             except ValueError:
                 print 'You must be joking... file contains 0 photons; aborting'
                 return False
