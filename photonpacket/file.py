@@ -154,14 +154,18 @@ class file:
             div = float(kwargs['div'])
         else:
             div = 10.
+        if 'rounding' in kwargs:
+            rounding = kwargs['rounding']
+        else:
+            rounding = False
             
         photinfoDim = 2
-        photinfoMask = np.r_[np.ones(2,dtype=np.bool),np.zeros(6,dtype=np.bool)]
+        photinfoMask = slice(None,2,None)
         if 'mode' in kwargs:
             if kwargs['mode'] == 'fit':
                 pass
             elif kwargs['mode'] == 'max':
-                photinfoMask = np.r_[np.zeros(6,dtype=np.bool),np.ones(2,dtype=np.bool),]
+                photinfoMask = slice(6,8,None)
             elif kwargs['mode'] == 'fit_step_max':
                 photinfoMask = np.r_[np.ones(2,dtype=np.bool),np.zeros(3,dtype=np.bool),np.ones(3,dtype=np.bool)]
                 photinfoDim = 5
@@ -189,7 +193,10 @@ class file:
                 # TODO: possibility of getting other info about photons
                 # extract only photon positions
                 img = np.fromfile(f, '>u2', N)
-                img = np.array(np.round(np.array(img,dtype=np.float)/div),dtype=np.uint16)
+                if rounding:
+                    img = np.array(np.round(np.array(img,dtype=np.float)/div),dtype=np.uint16)
+                else:
+                    img = img/int(div)
                 frame = np.reshape(img, nxy)[:, photinfoMask]
             else:
                 frame = empty_frame
