@@ -170,7 +170,11 @@ def acccoinc(h1, h2, axis=0, constr=None):
     for v1 in range(h1.shape[iaxis]):
         for v2 in range(h2.shape[iaxis]):
             if constr is not None:
-                pass
+                coinc = np.array([[v1,v2,v1,v2]])
+                if (axis == 1) & (constr(coinc)[0]):
+                    acc += np.outer(h1[v1, :], h2[v2, :])
+                elif (constr(coinc)[0]):
+                    acc += np.outer(h1[:, v1], h2[:, v2])
             else:
                 if axis == 1:
                     acc += np.outer(h1[v1, :], h2[v2, :])

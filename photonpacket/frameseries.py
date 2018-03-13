@@ -650,6 +650,23 @@ def fsmerge(fslist):
     for i in xrange(len(idxs)-1):
         new_photons.extend([fs.photons[fs.idxs[i]:fs.idxs[i+1]] for fs in fslist])
     return frameseries(np.concatenate(new_photons), idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
+
+def fsmerge2(fslist):
+    '''
+    Merge frame-by-frame
+    (wielka porazka)
+    ''' 
+    
+    idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
+    cidxs = np.cumsum(np.array([fs.idxs for fs in fslist]), axis=0)
+    didxs = np.diff(cidxs)
+    nidxs = np.insert(didxs+idxs[:-1],0,idxs[:-1],axis=0)
+    new_photons = np.zeros((len(idxs),2), dtype = fslist[0].dtype)
+    for i,fs in enumerate(fslist):
+        for j in xrange(len(idxs)-1):
+            new_photons[nidxs[i,j]:nidxs[i+1,j]] = fs.photons[fs.idxs[j]:fs.idxs[j+1]]
+    return frameseries(new_photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
+        
             
 def fsplot(fslist, samples=1000):
     '''
