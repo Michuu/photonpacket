@@ -6,14 +6,27 @@ from frameutils.arraysplit import arraysplit
 class region(object):
     component_regions = ()
     logic = None
-    corner = np.array([])
+    corner = np.array([0,0])
+    shape = np.array([0,0])
 
     def __init__(self, component_regions, logic):
         self.component_regions = component_regions
         self.logic = logic
+        # reset of default somehow required
+        self.corner = np.array([0,0])
+        self.shape = np.array([0,0])
         if component_regions.__class__ == tuple:
-            self.corner[0] = min(component_regions[0].corner[0], component_regions[1].corner[0])
-            self.corner[1] = min(component_regions[0].corner[1], component_regions[1].corner[1])
+            # top right corner
+            trc = np.array([0,0])
+            # interate over x, y coordinates
+            for i in range(2):
+                # bottom left corner
+                self.corner[i] = min(component_regions[0].corner[i], component_regions[1].corner[i])
+                # top right corner
+                trc[i] = max(component_regions[0].corner[i]+component_regions[0].shape[i],
+                 component_regions[1].corner[i]+component_regions[1].shape[i])
+                # shape
+                self.shape[i] = trc[i] - self.corner[i]
         else:
             self.corner = component_regions.corner
 
