@@ -494,7 +494,7 @@ class frameseries:
         Examples
         ---------
         '''
-        self.photons = self.photons[self.idxs[n]:] + self.photons[:self.idxs[n]]
+        self.photons = np.r_[self.photons[self.idxs[n]:], self.photons[:self.idxs[n]]]
         self.N = np.roll(self.N, n)
         self.idxs = np.r_[0, np.cumsum(self.N)]
 
