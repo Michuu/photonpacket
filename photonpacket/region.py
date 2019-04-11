@@ -6,14 +6,27 @@ from frameutils.arraysplit import arraysplit
 class region(object):
     component_regions = ()
     logic = None
-    corner = np.array([])
+    corner = np.array([0,0])
+    shape = np.array([0,0])
 
     def __init__(self, component_regions, logic):
         self.component_regions = component_regions
         self.logic = logic
+        # reset of default somehow required
+        self.corner = np.array([0,0])
+        self.shape = np.array([0,0])
         if component_regions.__class__ == tuple:
-            self.corner[0] = min(component_regions[0].corner[0], component_regions[1].corner[0])
-            self.corner[1] = min(component_regions[0].corner[1], component_regions[1].corner[1])
+            # top right corner
+            trc = np.array([0,0])
+            # interate over x, y coordinates
+            for i in range(2):
+                # bottom left corner
+                self.corner[i] = min(component_regions[0].corner[i], component_regions[1].corner[i])
+                # top right corner
+                trc[i] = max(component_regions[0].corner[i]+component_regions[0].shape[i],
+                 component_regions[1].corner[i]+component_regions[1].shape[i])
+                # shape
+                self.shape[i] = trc[i] - self.corner[i]
         else:
             self.corner = component_regions.corner
 
@@ -72,7 +85,7 @@ class region(object):
         ---------
         '''
         photons = fs.photons.copy()
-        mask = self.getmask(photons.copy()) 
+        mask = self.getmask(photons[:,:2].copy()) 
         cmask = np.r_[0, np.cumsum(mask)]
         idxs = np.r_[0, cmask[fs.idxs[1:]]]
         if reshape:
@@ -199,7 +212,7 @@ class circle(region):
     def getmask(self, frame):
         frame[:, 0] -= self.x0
         frame[:, 1] -= self.y0
-        mask = np.sum(frame**2,axis=1) < self.r**2
+        mask = np.sum(frame[:,0:2]**2,axis=1) < self.r**2
         return mask
 
 
@@ -351,8 +364,8 @@ class ring(region):
     def getmask(self, frame):
         frame[:,0] = frame[:,0]-self.x0
         frame[:,1] = frame[:,1]-self.y0
-        mask1 = np.sum(frame**2,axis=1) > self.r1**2
-        mask2 = np.sum(frame**2,axis=1) < self.r2**2
+        mask1 = np.sum(frame[:,0:2]**2,axis=1) > self.r1**2
+        mask2 = np.sum(frame[:,0:2]**2,axis=1) < self.r2**2
         return mask1 * mask2
 
 
@@ -464,6 +477,30 @@ class halfcircle(region):
     def getmask(self, frame):
         pass
 
-
+class paramregion(region):
+    '''
+    Represtents abstract region in the space of additional photon paramters accesible via file loading with non-standard 'mode'
+    args:
+        fcomp - comparison function applied to an ARRAY of specified parameter values, yields true inside region
+    '''
+    paramid = 2 #subsequent radius redcution (SRR) step param by default
+    fcomp = lambda(x):True #do not filter out anything by default
+    
+    def __init__(self,fcomp,**kwargs):
+        self.fcomp = fcomp
+        if 'param' in kwargs:
+            if kwargs['param'] == 'step':
+                self.paramid = 2
+            elif kwargs['param'] == 'pixel_value':
+                self.paramid = 3
+            else:
+                print 'Unrecognized param, possible values: "step" (id=2), "pixel_value" (id=3)'
+    def plot(self):
+        print self.fcomp
+    def __repr__(self):
+        print self.fcomp, self.paramid
+    def getmask(self,frame):
+        return self.fcomp(frame[:,self.paramid]) 
+        
 
 

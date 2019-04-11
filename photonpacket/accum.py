@@ -1,11 +1,11 @@
 import numpy as np
-from scipy.signal import convolve2d
+from scipy.signal import fftconvolve
 from bincountnd import bincountnd
 from message import message, progress
 from collections import deque
 from frameutils.coinc import bincount2d
 from frameutils.accum import accum_bincoinc, concat_coinc, accum_bincoincsd,\
-     accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd
+     accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd, concat_autocoinc
 import itertools as it
 
 accumtype = np.uint16
@@ -70,6 +70,19 @@ def accumcoinc2d(fs1, fs2, axis=0, constr=None):
     '''
     accum = np.zeros(shape=(fs1.shape[axis],fs2.shape[axis]), dtype=np.uint16)
     cframes = concat_coinc(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs)
+    if constr is not None:
+        mask = constr(cframes.copy())
+        bincount2d(cframes.take([2*axis, 2*axis+1], axis=1)[mask], accum)
+    else:
+        bincount2d(cframes.take([2*axis, 2*axis+1], axis=1), accum)
+    return accum
+
+def accumautocoinc2d(fs1, axis=0, constr=None):
+    '''
+    Coincidences map for one of the dimensions
+    '''
+    accum = np.zeros(shape=(fs1.shape[axis],fs1.shape[axis]), dtype=np.uint16)
+    cframes = concat_autocoinc(fs1.photons, fs1.idxs)
     if constr is not None:
         mask = constr(cframes.copy())
         bincount2d(cframes.take([2*axis, 2*axis+1], axis=1)[mask], accum)
@@ -145,7 +158,7 @@ def acchist(h1, h2, signs, **kwargs):
         h2 = np.flip(h2, axis=0)
     if signs[1] == -1:
         h2 = np.flip(h2, axis=1)
-    return convolve2d(h1, h2)/div
+    return fftconvolve(h1, h2)/div
 
 
 def acccoinc(h1, h2, axis=0, constr=None):
@@ -153,11 +166,15 @@ def acccoinc(h1, h2, axis=0, constr=None):
     Accidental coincidences map for one of the dimensions
     '''
     iaxis = int(not axis)
-    acc = np.zeros((h1.shape[iaxis], h2.shape[iaxis]))
+    acc = np.zeros((h1.shape[axis], h2.shape[axis]))
     for v1 in range(h1.shape[iaxis]):
         for v2 in range(h2.shape[iaxis]):
             if constr is not None:
-                pass
+                coinc = np.array([[v1,v2,v1,v2]])
+                if (axis == 1) & (constr(coinc)[0]):
+                    acc += np.outer(h1[v1, :], h2[v2, :])
+                elif (constr(coinc)[0]):
+                    acc += np.outer(h1[:, v1], h2[:, v2])
             else:
                 if axis == 1:
                     acc += np.outer(h1[v1, :], h2[v2, :])
@@ -222,7 +239,7 @@ def coinchist4(*args):
         #error
         return -1
         
-def autocoinchist(fs1, signs):
+def autocoinchist(fs1, signs, **kwargs):
     '''
     Autocoincidence histogram in terms of sum/differnce variables
 
@@ -233,6 +250,9 @@ def autocoinchist(fs1, signs):
     fs2 : :class:`photonpacket.frameseries`
 
     signs :
+    
+    kwargs : minphotons, maxphotons (filters out frames)
+    kwargs : shape - tuple / 2 el. array - max. size of the accumulator (farther coindicences are neglected)
 
     Returns
     ----------
@@ -246,7 +266,7 @@ def autocoinchist(fs1, signs):
     Examples
     ----------
     '''
-    shape = (2*fs1.shape[0]-1, 2*fs1.shape[1]-1)
+    shape = kwargs['crop'] if 'crop' in kwargs else (2*fs1.shape[0]-1, 2*fs1.shape[1]-1)
     accum = np.zeros(shape, dtype=accumtype)
-    accum_binautocoincsd(fs1.photons, fs1.idxs, accum, signs, fs1.shape)
+    accum_binautocoincsd(fs1.photons, fs1.idxs, accum, signs, fs1.shape, **kwargs)
     return accum

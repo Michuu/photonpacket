@@ -29,17 +29,25 @@ class hist1d:
         return hist1d(h[0],h[1])
     
     @staticmethod
-    def fromfs(fs):
+    def fromfs(fs,**kwargs):
         '''
         
         Parameters
         --------
         fs: frameseries
             frameseries object
-            
+        args:
+            density - passed to numpy.histogram
+            min - minimal bin value
+            max - maximal bin value
+            offset - offset from automatic maximal bin value
         '''
-        bins = np.arange(np.max(fs.N)+2)
-        h = np.histogram(fs.N, bins=bins)
+        dens = kwargs['density'] if 'density' in kwargs else False
+        vmin = kwargs['min'] if 'min' in kwargs else 0
+        offset = kwargs['offset'] if 'offset' in kwargs else 1
+        vmax = kwargs['max'] if 'max' in kwargs else np.max(fs.N)+offset+1               
+        bins = np.arange(vmin,vmax+1)
+        h = np.histogram(fs.N, bins=bins,density=dens)
         return hist1d(h[0],h[1])
         
     def __init__(self, hist, bins):

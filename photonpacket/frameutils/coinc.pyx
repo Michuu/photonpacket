@@ -183,7 +183,7 @@ cpdef autocoinc(np.ndarray[DTYPE_t, ndim=2] frame):
 
     '''
     cdef int f1l = frame.shape[0]
-    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1)/2, 4], dtype=frame.dtype)
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1), 4], dtype=frame.dtype)
     cdef int i = 0
     cdef int j = 0
     cdef int k = 0
@@ -228,13 +228,16 @@ cpdef binautocoincsd(np.ndarray[DTYPE_t, ndim=2] frame1,
     cdef int sign0 = signs[0]
     cdef int sign1 = signs[1]
     if sign0 == -1:
-        shift1 = shape[0]-1
+        shift1 = (hist.shape[0]+1)/2-1
     if sign1 == -1:
-        shift2 = shape[1]-1
+        shift2 = (hist.shape[1]+1)/2-1
     for i in range(f1l):
         for j in range(f1l):
             if i != j:
-                hist[frame1[i,0] + sign0*frame1[j,0] + shift1,frame1[i,1] + sign1*frame1[j,1] + shift2] += 1
+                coordy = frame1[i,0] + sign0*frame1[j,0] + shift1 
+                coordx = frame1[i,1] + sign1*frame1[j,1] + shift2
+                if (coordy >= hist.shape[0] or coordx >= hist.shape[1] or coordy < 0 or coordx < 0): continue
+                hist[coordy,coordx] += 1
 
 @cython.boundscheck(False)
 @cython.wraparound(False)

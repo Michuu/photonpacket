@@ -49,7 +49,6 @@ class frameseries:
                     frames = []
                     for i in key:
                         frames.append(self.fs.photons[self.fs.idxs[i]:self.fs.idxs[i+1]])
-                    idx += step
                     return np.array(frames, dtype=np.object)
             elif isinstance(key, int):
                 if key > self.fs.Nframes:
@@ -252,13 +251,15 @@ class frameseries:
         self.N = cfs.N
 
 
-    def accumframes(self):
+    def accumframes(self,first=0,nframes='all',**kwargs):
         '''
-        Accumulate all photons from frames
+        Accumulate all photons from frames ranging from first to first+nframes
+        defaults to all frames
 
         Parameters
         ---------
-
+        
+        'kwargs' : minphotons, maxphotons (filters out frames)
 
         Returns
         ---------
@@ -274,12 +275,34 @@ class frameseries:
         ---------
         '''
         # count photons in each pixel
-        accum = bincountnd(np.array(self.photons, dtype=self.dtype), self.shape)
+        frame_mask = np.ones(self.N.shape[0],dtype=np.bool)
+        
+        if (nframes != 'all' or first != 0):
+            if isinstance(first,int):
+                first = max(0,min(first,self.N.shape[0]))
+                if(nframes == 'all'): 
+                    nframes = max(self.N.shape[0] - first,0)
+                nframes = max(0,min(nframes,self.N.shape[0]))  
+                nrest = max(self.N.shape[0] - first - nframes,0)
+                frame_mask *= np.r_[np.zeros(first,dtype=np.bool),np.ones(nframes,dtype=np.bool),np.zeros(nrest,dtype=np.bool)] 
+            else:
+                raise KeyError
+        
+        if 'minphotons' in kwargs:
+            frame_mask *= (self.N >= kwargs['minphotons'])
+        if 'maxphotons' in kwargs:
+            frame_mask *= (self.N <= kwargs['maxphotons'])    
+        
+        mask = np.repeat(frame_mask, self.N)
+        phts = self.photons[mask]
+        
+        accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)    
         return accum
 
-    def delneighbours(self, r=5):
+    def delneighbours(self, r=5, metric='euclidean'):
         '''
         Find photon pairs that are too close to each other and remove second photon from the frame
+        args: radius, metric (c.f. scipy.spatial.distance.pdist)
         '''
         
         '''
@@ -301,8 +324,8 @@ class frameseries:
         self.concat = np.concatenate(self.frames)
         '''
         def outofrange(frame, rng):
-            tmp = pdist(frame, 'euclidean')
-            tmp = squareform(tmp)<=rng
+            tmp = pdist(frame, metric)
+            tmp = squareform(tmp)<rng
             plist = range(0,frame.shape[0])
             for j in plist:
                 tmp[:,j]=False
@@ -314,14 +337,17 @@ class frameseries:
             return plist
         
         masks = []
+        newN = []
         for i in range(len(self.idxs)-1):
             frame = self.photons[self.idxs[i]:self.idxs[i+1]]
-            masks.append(outofrange(frame, r))
-        mask = np.concatenate(masks)
+            tmp = self.idxs[i]+np.array(outofrange(frame, r),dtype=np.uint32)
+            masks.append(tmp)
+            newN.append(tmp.shape[0])
+            progress(i)
+        mask = np.array(np.hstack(masks),dtype=np.uint32)
         self.photons = self.photons[mask]
-        cmask = np.r_[0, np.cumsum(mask)]
-        self.idxs = np.r_[0, cmask[self.idxs[1:]]]
-        self.N = np.diff(self.idxs)
+        self.N = np.array(newN)
+        self.idxs = np.array(np.r_[0, np.cumsum(self.N)],dtype=np.int32)
         
     def accumautocoinc(self):
         '''
@@ -468,7 +494,7 @@ class frameseries:
         Examples
         ---------
         '''
-        self.photons = self.photons[self.idxs[n]:] + self.photons[:self.idxs[n]]
+        self.photons = np.r_[self.photons[self.idxs[n]:], self.photons[:self.idxs[n]]]
         self.N = np.roll(self.N, n)
         self.idxs = np.r_[0, np.cumsum(self.N)]
 
@@ -497,7 +523,7 @@ class frameseries:
         '''
         self.idxs = np.concatenate([self.idxs, self.idxs[-1] + fs.idxs[1:]])
         self.N = np.concatenate([self.N, fs.N])
-        self.photos = np.concatenate([self.photons, fs.photons])
+        self.photons = np.concatenate([self.photons, fs.photons])
         self.Nframes = self.Nframes + fs.Nframes
 
     def timeseries(self, samples=1000):
@@ -624,6 +650,23 @@ def fsmerge(fslist):
     for i in xrange(len(idxs)-1):
         new_photons.extend([fs.photons[fs.idxs[i]:fs.idxs[i+1]] for fs in fslist])
     return frameseries(np.concatenate(new_photons), idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
+
+def fsmerge2(fslist):
+    '''
+    Merge frame-by-frame
+    (wielka porazka)
+    ''' 
+    
+    idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
+    cidxs = np.cumsum(np.array([fs.idxs for fs in fslist]), axis=0)
+    didxs = np.diff(cidxs)
+    nidxs = np.insert(didxs+idxs[:-1],0,idxs[:-1],axis=0)
+    new_photons = np.zeros((len(idxs),2), dtype = fslist[0].dtype)
+    for i,fs in enumerate(fslist):
+        for j in xrange(len(idxs)-1):
+            new_photons[nidxs[i,j]:nidxs[i+1,j]] = fs.photons[fs.idxs[j]:fs.idxs[j+1]]
+    return frameseries(new_photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
+        
             
 def fsplot(fslist, samples=1000):
     '''
