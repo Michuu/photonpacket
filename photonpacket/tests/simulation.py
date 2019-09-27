@@ -31,13 +31,13 @@ plt.clf()
 plt.imshow(d)
 plt.show()
 #%%
-print 'calculating statistics'
-print pp.stat2d.g2(fs1,fs2)
+print('calculating statistics')
+print(pp.stat2d.g2(fs1,fs2))
 H=pp.stat2d.joint(fs1,fs2)
 pp.stat2d.plotjoint(H,showvalues=True)
-print H[0][0,1]
-print H[0][1,0]
-print H[0][1,1]
+print(H[0][0,1])
+print(H[0][1,0])
+print(H[0][1,1])
 plt.show()
 #%%
 d1=fs1.accumframes()
@@ -51,7 +51,7 @@ dac=pp.accum.acchist(d1,d2,signs)
 #    d2=np.flip(d2,axis=1)
 #dac=convolve2d(d1,d2)
 dac=dac/float(fs1.len())
-print np.sum(d-dac)
+print(np.sum(d-dac))
 plt.imshow(d)
 plt.show()
 plt.imshow(dac)
@@ -61,7 +61,7 @@ plt.show()
 #%%
 np.mean(fs1.N*fs2.N-np.mean(fs1.N)*np.mean(fs2.N))/(np.std(fs1.N)*np.std(fs2.N))
 #%%
-print 'coinc'
+print('coinc')
 plt.clf()
 d=pp.accum.accumcoinc(fs1,fs2,method='bincount')
 plt.imshow(np.sum(d,axis=(0,1)))

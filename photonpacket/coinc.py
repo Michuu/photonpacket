@@ -1,7 +1,7 @@
 import numpy as np
-import frameutils.coinc8 as coinc8
-import frameutils.coinc16 as coinc16
-import frameutils.coinc32 as coinc32
+from . import frameutils.coinc8 as coinc8
+from . import frameutils.coinc16 as coinc16
+from . import frameutils.coinc32 as coinc32
 
 def detectdtype(numfargs):
     def detectdtype_(func):
@@ -23,8 +23,8 @@ def detectdtype(numfargs):
                 raise ValueError("dtype {0} not supported".format(args[0].dtype))
         return coincfun
     return detectdtype_
-        
-@detectdtype(2)    
+
+@detectdtype(2)
 def coinc(frame1, frame2):
     '''
     Generate coincidences between two frames
@@ -76,28 +76,28 @@ def binautocoinc(frame, hist):
 
     '''
 
-@detectdtype(1)    
+@detectdtype(1)
 def binautocoincsd(frame, hist, signs, shape):
     '''
     Bin autocoincidences in sum/difference variables, adding them to hist
     '''
-    
+
 @detectdtype(1)
 def bincount2d(frame, hist):
     '''
     Bin counts with two cooridinates
 
     '''
-   
-@detectdtype(2)     
+
+@detectdtype(2)
 def bincoinc4sd(frame1, frame2, hist, signs, shape):
     '''
     Bin quad coincidences in total sum/difference variables, adding them to 2D hist
     order = s, i, s, i
 
     '''
-    
-@detectdtype(4)     
+
+@detectdtype(4)
 def bincoinc4sd2(frame1, frame2, frame3, frame4, hist, signs, shape):
     '''
     Bin quad coincidences in total sum/difference variables, adding them to 2D hist

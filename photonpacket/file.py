@@ -1,17 +1,17 @@
 import numpy as np
-from frameseries import frameseries
+from .frameseries import frameseries
 import re
 import os
-from message import message, progress
-import settings
-from helpers import siprefix
+from .message import message, progress
+from . import settings
+from .helpers import siprefix
 
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 class file:
     '''
-    
-    
+
+
     '''
     Nframes = 0
     name = ''
@@ -23,38 +23,38 @@ class file:
     def __init__(self, path,name):
         '''
         Create instance of class including path and name
-        
+
         Parameters
         ----------
         path : string
-        
+
         name : string
-            
+
         Returns
         ----------
-        
+
         See Also
         ----------
-        
+
         Notes
         ----------
-        
+
         Examples
         ----------
         '''
         self.name = name
-    
-    
+
+
     def __del__(self):
         del self.params
         del self.photons
         del self.idxs
-        
+
     @staticmethod
     def read(path, **kwargs):
         '''
         Read photon data file
-        
+
         Parameters
         ----------
         path : string
@@ -64,22 +64,22 @@ class file:
         mode : string
             'fit' to extract photon positions as fitted by photon-finder (default)
             'max' to extract raw maximal photon positions
-            
+
         Returns
         ----------
         file : :class:`file`
             instance of :class:`file` class
-            
+
         Notes
         ----------
-        
+
         References
         ----------
-        
+
         Examples
         ----------
-            
-        
+
+
         '''
         # extract name of file from path
         (directory, name) = os.path.split(path)
@@ -88,8 +88,9 @@ class file:
 
         # create file instance
         self = file(path, name)
-        
+
         # try to read params xml file
+        # TODO: add support for new *.json params from LV
         try:
             parse = settings.paramsparser
             self.params = parse(os.path.join(directory, name + '.' + settings.paramsext))
@@ -111,17 +112,17 @@ class file:
             self.nameversion = 1
         except NameError:
             # this means that parser is not defined
-            print "Error: File present, but params parser not defined!"
+            print("Error: File present, but params parser not defined!")
             shape = self.getshapefromname()
             Nf = self.getattributefromname('Nf')
             self.nameversion = 1
         except Exception as e:
             # this means there was an unexpected error when parsing
             # we will proceed with automatic shape detection and no frame limit
-            print "Unexpected Exception when parsing xml file (trying automatic shape detection): %s"%e
+            print("Unexpected Exception when parsing xml file (trying automatic shape detection): %s"%e)
             shape = False
             Nf = False
-            
+
         # try to set shape
         try:
             if isinstance(shape, np.ndarray):
@@ -131,7 +132,7 @@ class file:
         # if not possible, plan for shape detection
         except:
             shapedetect = True
-            
+
         # try to extract number of frames from params or filename
         # if number given both in filename and as argument
         if 'Nframes' in kwargs and Nf:
@@ -150,7 +151,7 @@ class file:
         else:
             maxframes = 0
             frames_limit = False
-        
+
         if 'div' in kwargs:
             div = float(kwargs['div'])
         else:
@@ -159,7 +160,7 @@ class file:
             rounding = kwargs['rounding']
         else:
             rounding = False
-            
+
         photinfoDim = 2
         photinfoMask = slice(None,2,None)
         if 'mode' in kwargs:
@@ -181,12 +182,12 @@ class file:
                 photinfoDim = 8
                 self.mode = 'all'
             else:
-                print 'Invalid mode selected, modes available: fit, max, fit_step_max,fit_step_val_max,all'
+                print('Invalid mode selected, modes available: fit, max, fit_step_max,fit_step_val_max,all')
                 return False
         nframes = 0
         # open file for binary reading
         f = open(path,'rb')
-        
+
         frames = []
         empty_frame = np.empty(shape=(0, photinfoDim), dtype=np.uint16)
         while(True):
@@ -217,19 +218,19 @@ class file:
         f.close()
         # set actual number of frames
         self.Nframes = nframes
-        
+
         message("\nRead " + str(nframes) + " frames", 1)
-        
+
         self.photons = np.concatenate(frames)
         self.idxs = (np.r_[0, np.cumsum([frame.shape[0] for frame in frames])])
-        
+
         if shapedetect:
             try:
                 shape = np.max(self.photons[:,0:2], axis=0)
             except ValueError:
-                print 'You must be joking... file contains 0 photons; aborting'
+                print('You must be joking... file contains 0 photons; aborting')
                 return False
-                     
+
         # set shape
         self.shape = np.array((np.round(shape*10/div)),dtype=int)
         return self
@@ -237,17 +238,17 @@ class file:
     def getframeseries(self):
         '''
         Get :class:`photonpacket.frameseries` from :class:`file`
-        
+
         Parameters
         ----------
-        
+
         Returns
         ----------
         fs : :class:`photonpacket.frameseries`
-        
+
         '''
         return frameseries(self.photons, self.idxs, self.shape, dtype=np.uint16)
-        
+
     def getattribute(self, attr):
         if self.nameversion == 1:
             return self.getattributefromname(attr)
@@ -258,25 +259,25 @@ class file:
                 return False
         else:
             return False
-            
+
     def getshapefromname(self):
         '''
         Get shape of frame
-        
+
         Parameters
         ----------
-            
+
         Returns
         ---------
         shape : tuple
             shape of frame
-            
+
         See Also
         ---------
-        
+
         Notes
         ---------
-        
+
         Examples
         ---------
         '''
@@ -292,31 +293,31 @@ class file:
             return False
         except IndexError:
             return False
-    
+
     def getattributefromname(self, attr):
         '''
         Get value for a given attribute in filename
-        
+
         Parameters
         ----------
         attr : string
             attribute name
-            
+
         Returns
         ---------
         val : int or float
             attribute value
-        
+
         See Also
         ---------
-        
+
         Notes
         ---------
-        
+
         Examples
         ---------
         '''
-        # search for a given attribute 
+        # search for a given attribute
         # pattern: (attribute_name)[number,dots,+-][optional si prefix]
         pattern = r"-" + attr + "(?P<attr>[\d.]+)(?P<si>[yafnumkMGTZ]{,1})"
         s = re.search(pattern, self.name)
@@ -331,4 +332,3 @@ class file:
             return False
         except IndexError:
             return False
-        

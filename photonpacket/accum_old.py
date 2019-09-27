@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.signal import convolve2d
-from bincountnd import bincountnd
-from message import message, progress
+from .bincountnd import bincountnd
+from .message import message, progress
 from collections import deque
-from coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2, binautocoincsd
+from .coinc import bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd2, binautocoincsd
 import itertools as it
 
 accumtype = np.uint32

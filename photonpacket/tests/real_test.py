@@ -13,7 +13,7 @@ f=pp.file.read(r"H:\dane\1703 testy MOTa\11 04\pom2-tw10.00u-tmem0.00u-tr10.00u-
 fs=f.getframeseries()
 
 #%%
-print 'accumulating'
+print('accumulating')
 c1 = pp.circle(60,(60,241))
 c2 = pp.circle(60,(61,540))
 d=fs.accumframes()
@@ -34,28 +34,28 @@ c4 = pp.circle(4,(60,60))
 fs3 = c3.getframeseries(fs1, reshape=True)
 fs4 = c4.getframeseries(fs2, reshape=True)
 #%%
-print pp.stat1d.mean(fs4)*pp.stat1d.mean(fs3)*300000
-print pp.stat1d.mean(fs4)*300000*0.1*0.3
+print(pp.stat1d.mean(fs4)*pp.stat1d.mean(fs3)*300000)
+print(pp.stat1d.mean(fs4)*300000*0.1*0.3)
 #%%
-print 'calculating statistics'
-print pp.stat2d.g2(fs3,fs4)
+print('calculating statistics')
+print(pp.stat2d.g2(fs3,fs4))
 H=pp.stat2d.joint(fs3,fs4)
 pp.stat2d.plotjoint(H,showvalues=True)
-print H[0][0,1]
-print H[0][1,0]
-print H[0][1,1]
+print(H[0][0,1])
+print(H[0][1,0])
+print(H[0][1,1])
 plt.show()
 #%%
-print 'calculating statistics'
-print pp.stat2d.g2(fs1,fs2)
+print('calculating statistics')
+print(pp.stat2d.g2(fs1,fs2))
 H=pp.stat2d.joint(fs1,fs2)
 pp.stat2d.plotjoint(H,showvalues=True)
-print H[0][0,1]
-print H[0][1,0]
-print H[0][1,1]
+print(H[0][0,1])
+print(H[0][1,0])
+print(H[0][1,1])
 plt.show()
 #%%
-print 'plotting'
+print('plotting')
 plt.clf()
 c1.plot()
 c2.plot()
@@ -64,19 +64,19 @@ d2=fs2.accumframes()
 plt.imshow(d)
 plt.show()
 #%%
-print 'coinc'
+print('coinc')
 plt.clf()
 d=pp.accum.accumcoinc(fs1,fs2)
 plt.imshow(np.sum(d,axis=(0,1)))
 plt.show()
 #%%
-print 'calculating statistics'
-print pp.stat2d.g2(fs1,fs2)
+print('calculating statistics')
+print(pp.stat2d.g2(fs1,fs2))
 H=pp.stat2d.joint(fs1,fs2)
 pp.stat2d.plotjoint(H,showvalues=True)
-print H[0][0,1]
-print H[0][1,0]
-print H[0][1,1]
+print(H[0][0,1])
+print(H[0][1,0])
+print(H[0][1,1])
 plt.show()
 #%%
 d1=fs1.accumframes()
@@ -88,7 +88,7 @@ dac=pp.accum.acchist(d1,d2,signs,Nframes=fs.len())
 #dac=dac/np.sum(dac)
 #d=np.array(d,dtype=np.float64)
 #print np.sum(d)
-print np.sum(dc-dac)
+print(np.sum(dc-dac))
 plt.imshow(dc)
 plt.show()
 plt.imshow(dac)

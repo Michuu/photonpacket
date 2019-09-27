@@ -4,33 +4,33 @@ import numpy as np
 def bincountnd(array, shape):
     '''
     Multidimensional histogram
-    
+
     Parameters
     ---------
     array : :class:`numpy.ndarray`
             2D array, first dimension being the coordinates, second subsequent counts
-        
+
     shape : tuple of ints
-            list of sizes of dimensions    
-        
+            list of sizes of dimensions
+
     Returns
     ----------
     histogram : :class:`numpy.ndarray`
             histogram of counts
-            
+
     See Also
     ----------
-         
+
     Notes
     ----------
     The behaviour of this function mimics :func:`numpy.bincount` in many dimensions.
-    
+
     References
     ----------
-    
+
     Examples
     ----------
-    
+
     '''
     # sorted shape
     aux_shape = np.sort(shape)[::-1]

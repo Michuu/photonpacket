@@ -1,5 +1,5 @@
-from __future__ import print_function
-import settings
+
+from . import settings
 from sys import stdout
 
 def message(str, v):
@@ -23,7 +23,7 @@ def progress(i):
         progressmessage(str(i/1000) + 'k')
     else:
         pass
-    
+
 def progressmessage(str):
     '''
     Print progress message
@@ -33,4 +33,3 @@ def progressmessage(str):
         stdout.flush()
     else:
         print(str)
-        

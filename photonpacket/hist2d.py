@@ -1,12 +1,12 @@
-from __future__ import division
+
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.special import gamma
-from frameseries import frameseries
-from hist1d import hist1d
+from .frameseries import frameseries
+from .hist1d import hist1d
 import matplotlib.cm as cmx
 import matplotlib as mpl
-from helpers import opcolor
+from .helpers import opcolor
 from mpl_toolkits.mplot3d import Axes3D
 
 class hist2d:
@@ -14,19 +14,19 @@ class hist2d:
     hist = np.array([])
     N = 0
     normed = False
-    
+
     @staticmethod
     def fromfs(fs1, fs2):
         '''
         Create joint statistics histogram
-        
-        
+
+
         '''
         maxn = max(np.max(fs1.N)+2, np.max(fs2.N)+2)
         bins = np.arange(maxn)
         hist = np.histogram2d(fs1.N, fs2.N, bins = bins, normed=False)
         return hist2d(hist[0], (hist[1], hist[2]))
-    
+
     @staticmethod
     def fromcount(N1, N2):
         '''
@@ -36,14 +36,14 @@ class hist2d:
         bins = np.arange(maxn)
         hist = np.histogram2d(N1, N2, bins = bins, normed=False)
         return hist2d(hist[0], (hist[1], hist[2]))
-    
+
     def __init__(self, hist, bins):
         '''
         '''
         self.hist = hist
         self.bins = bins
         self.N = np.sum(hist)
-    
+
     def __getitem__(self, i):
         '''
         '''
@@ -51,12 +51,12 @@ class hist2d:
             return self.hist[i]/self.N
         else:
             return self.hist[i]
-    
+
     def setnorm(self, normed):
         '''
         '''
         self.normed = normed
-        
+
     def gethist(self, normed=None):
         '''
         '''
@@ -66,7 +66,7 @@ class hist2d:
             return self.hist/self.N
         else:
             return self.hist
-        
+
     def plot(self, showvalues=False, normed=None, cmap=None, log=None, cut=None):
         '''
         Plot the joint statistics histogram generated with :func:`joint`
@@ -75,15 +75,15 @@ class hist2d:
             normed = self.normed
         X, Y = np.meshgrid(self.bins[0], self.bins[1])
         if normed:
-            data = self.hist/self.N  
+            data = self.hist/self.N
         else:
-			data = self.hist			
+            data = self.hist
         q=-1
         if cut:
-			data=data[:3,:3]
-			X=X[:3,:3]
-			Y=Y[:3,:3]
-			q=2
+            data=data[:3,:3]
+            X=X[:3,:3]
+            Y=Y[:3,:3]
+            q=2
         if log is None or log == False:
             norm = mpl.colors.Normalize(vmin=data.min(), vmax=data.max())
         else:
@@ -107,13 +107,13 @@ class hist2d:
                     plt.text(i[1]+0.4, i[0]+0.4, "%.3e" % v, color=rgba)
                 else:
                     plt.text(i[1]+0.4, i[0]+0.4, "%d" % v, color=rgba)
-                    
+
     def plot3d(self, normed=False, cmap=None, fill=0.7, alpha=0.95, log=False):
         '''
         Plot the histogram as 3D bar plot
         '''
         if normed:
-            data = self.hist/self.N  
+            data = self.hist/self.N
         else:
             data = self.hist
         X, Y = np.meshgrid(self.bins[0][:-1], self.bins[1][:-1])
@@ -131,7 +131,7 @@ class hist2d:
         values = (v.flatten()-mi)/(dv)
         cmap = cmx.get_cmap(cmap)
         colors = cmap(values)
-    
+
         dx = fill * np.ones_like(zpos)
         dy = dx.copy()
         dz = v.flatten()
@@ -148,7 +148,7 @@ class hist2d:
         '''
         '''
         return hist1d(np.sum(self.hist, axis=axis), self.bins[axis])
-    
+
     def csec(self, i, axis):
         '''
         '''
@@ -158,25 +158,25 @@ class hist2d:
             return hist1d(self.hist[i, :], self.bins[axis])
         else:
             raise ValueError
-    
+
     def g2(self):
         pass
-    
+
     def Wfactor(self):
         pass
-    
+
     def fanofactor(self):
         pass
-    
+
     def covar(self):
         pass
-    
+
     def cov(self):
         pass
-    
+
     def corr(self):
         pass
-    
+
     def R2(self):
         '''
         '''
@@ -184,17 +184,17 @@ class hist2d:
         g2b = self.mariginal(axis=1).g2()
         g2ab = self.g2()
         return g2ab**2/(g2a*g2b)
-    
+
     def p11(self):
         '''
         '''
         return self.hist[1,1]/self.N
-    
+
     def N11(self):
         '''
         '''
         return self.hist[1,1]
-    
+
     def mean(self, axis=None):
         '''
         '''
@@ -207,7 +207,7 @@ class hist2d:
                               weights=self.hist)
         else:
             raise ValueError
-         
+
     def var(self, axis):
         '''
         '''
@@ -217,4 +217,3 @@ class hist2d:
             return self.rawmoment(0,2)-self.rawmoment(0,1)**2
         else:
             raise ValueError
-        

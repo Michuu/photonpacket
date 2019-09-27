@@ -8,26 +8,26 @@ std = np.vectorize(lambda x: x.s)
 def siprefix(prefix):
     '''
     Obtain SI prefix factor from string prefix
-    
+
     Parameters
     ----------
     prefix : string
-        
+
     Returns
     ----------
     factor : double
-    
+
     See Also
     ----------
-    
+
     Notes
     ----------
-    
+
     Examples
     ----------
     >>> pp.file.siprefix('n')
     1e-9
-    
+
     '''
     # we will not be using da (deca)
     prefixes = {'y': 1e-24, 'z': 1e-21, 'a': 1e-18, 'f': 1e-15, 'p': 1e-12,
@@ -38,7 +38,7 @@ def siprefix(prefix):
         return prefixes[prefix]
     else:
         return False
-    
+
 def opcolor(rgba):
     '''
     Generate opposite color in rgba format

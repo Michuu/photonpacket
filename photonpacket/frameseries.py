@@ -1,15 +1,15 @@
 import numpy as np
-from bincountnd import bincountnd
+from .bincountnd import bincountnd
 from scipy.spatial import KDTree
 from scipy.spatial.distance import pdist, squareform
 from matplotlib import pyplot as plt
 from copy import deepcopy
-from message import message, progress
- 
-from frameutils.arraysplit import arraysplit
+from .message import message, progress
+
+from .frameutils.arraysplit import arraysplit
 
 try:
-    import cPickle as pickle
+    import pickle as pickle
 except:
     import pickle
 
@@ -30,7 +30,7 @@ class frameseries:
             '''
             '''
             self.fs =  fs
-           
+
         def __getitem__(self, key):
             '''
             '''
@@ -60,17 +60,17 @@ class frameseries:
                     return np.array([photons])
             else:
                 raise TypeError
-            
+
         def asarray(self):
             '''
             '''
             return np.array(arraysplit(self.fs.photons, self.fs.idxs[1:-1]), dtype=np.object)
-        
+
         def __repr__(self):
             '''
             '''
             return np.array(arraysplit(self.fs.photons, self.fs.idxs[1:-1]), dtype=np.object).__repr__()
-            
+
     def __init__(self, photons, idxs, shape, cut = True, dtype = np.uint16):
         '''
         Create `frameseries` object from photons and indices
@@ -80,7 +80,7 @@ class frameseries:
         photons : :class:`numpy.ndarray`
 
         idxs : :class:`numpy.ndarray`
-        
+
         shape : tuple
 
         cut : bool
@@ -149,7 +149,7 @@ class frameseries:
             st_idx = self.idxs[key]
             end_idx = self.idxs[key+1]
             photons = self.photons[st_idx:end_idx]
-            return singleframe(photons, np.array([0, end_idx - st_idx]), 
+            return singleframe(photons, np.array([0, end_idx - st_idx]),
                                self.shape, cut=False, dtype=self.dtype)
         else:
             raise TypeError
@@ -159,7 +159,7 @@ class frameseries:
         '''
         # fr is a numpy array
         if isinstance(fr, np.ndarray):
-            
+
             # fr is a series of frames
             if fr.dtype == np.object:
 
@@ -174,7 +174,7 @@ class frameseries:
                     pass
                 else:
                     raise KeyError
-                    
+
             # fr is a single frame
             elif fr.dtype == self.dtype:
                 if isinstance(key, int):
@@ -184,7 +184,7 @@ class frameseries:
                     raise KeyError
             else:
                 raise TypeError
-                
+
         # fr is a frameseries
         elif isinstance(fr, frameseries):
             if isinstance(key, int) and len(fr) == 1:
@@ -198,16 +198,16 @@ class frameseries:
                 pass
             else:
                 raise KeyError
-                
+
         else:
             raise KeyError
-            
+
     def __del__(self):
         del self.photons
         del self.idxs
         del self.N
         del self.frames
-        
+
     def store(self, fname):
         '''
         Store pickled frameseries
@@ -240,8 +240,8 @@ class frameseries:
         Examples
         ---------
         '''
-        from region import rect
-        
+        from .region import rect
+
         self.shape = shape
         # prepare a rectangle
         r = rect((0,0),(shape[0],shape[1]))
@@ -258,7 +258,7 @@ class frameseries:
 
         Parameters
         ---------
-        
+
         'kwargs' : minphotons, maxphotons (filters out frames)
 
         Returns
@@ -276,27 +276,27 @@ class frameseries:
         '''
         # count photons in each pixel
         frame_mask = np.ones(self.N.shape[0],dtype=np.bool)
-        
+
         if (nframes != 'all' or first != 0):
             if isinstance(first,int):
                 first = max(0,min(first,self.N.shape[0]))
-                if(nframes == 'all'): 
+                if(nframes == 'all'):
                     nframes = max(self.N.shape[0] - first,0)
-                nframes = max(0,min(nframes,self.N.shape[0]))  
+                nframes = max(0,min(nframes,self.N.shape[0]))
                 nrest = max(self.N.shape[0] - first - nframes,0)
-                frame_mask *= np.r_[np.zeros(first,dtype=np.bool),np.ones(nframes,dtype=np.bool),np.zeros(nrest,dtype=np.bool)] 
+                frame_mask *= np.r_[np.zeros(first,dtype=np.bool),np.ones(nframes,dtype=np.bool),np.zeros(nrest,dtype=np.bool)]
             else:
                 raise KeyError
-        
+
         if 'minphotons' in kwargs:
             frame_mask *= (self.N >= kwargs['minphotons'])
         if 'maxphotons' in kwargs:
-            frame_mask *= (self.N <= kwargs['maxphotons'])    
-        
+            frame_mask *= (self.N <= kwargs['maxphotons'])
+
         mask = np.repeat(frame_mask, self.N)
         phts = self.photons[mask]
-        
-        accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)    
+
+        accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)
         return accum
 
     def delneighbours(self, r=5, metric='euclidean'):
@@ -304,7 +304,7 @@ class frameseries:
         Find photon pairs that are too close to each other and remove second photon from the frame
         args: radius, metric (c.f. scipy.spatial.distance.pdist)
         '''
-        
+
         '''
         This is an old version of delneighbours that does not actually delete all neigbours that should be deleted
         for i, frame in enumerate(self.frames):
@@ -326,7 +326,7 @@ class frameseries:
         def outofrange(frame, rng):
             tmp = pdist(frame, metric)
             tmp = squareform(tmp)<rng
-            plist = range(0,frame.shape[0])
+            plist = list(range(0,frame.shape[0]))
             for j in plist:
                 tmp[:,j]=False
                 for i in np.where(tmp[j])[0]:
@@ -335,7 +335,7 @@ class frameseries:
                     except ValueError:
                         pass
             return plist
-        
+
         masks = []
         newN = []
         for i in range(len(self.idxs)-1):
@@ -348,7 +348,7 @@ class frameseries:
         self.photons = self.photons[mask]
         self.N = np.array(newN)
         self.idxs = np.array(np.r_[0, np.cumsum(self.N)],dtype=np.int32)
-        
+
     def accumautocoinc(self):
         '''
         Accumulate autocoincidences
@@ -549,49 +549,49 @@ class frameseries:
     def mean(self, uncert=False):
         '''
         '''
-        from stat1d import mean
+        from .stat1d import mean
         return mean(self, uncert)
 
     def g2(self, uncert=False):
         '''
         '''
-        from stat1d import g2
+        from .stat1d import g2
         return g2(self, uncert)
 
     def std(self, uncert=False):
         '''
         '''
-        from stat1d import std
+        from .stat1d import std
         return std(self, uncert)
 
     def thmodes(self, uncert=False):
         '''
         '''
-        from stat1d import thmodes
+        from .stat1d import thmodes
         return thmodes(self, uncert)
 
     def var(self, uncert=False):
         '''
         '''
-        from stat1d import var
+        from .stat1d import var
         return var(self, uncert)
 
     def imshow(self):
         '''
-        
+
         '''
         plt.imshow(self.accumframes())
-    
+
     def maskframes(self, frame_mask):
         '''
-        
+
         '''
         mask = np.repeat(frame_mask, self.N)
         self.photons = self.photons[mask]
         self.N = self.N[frame_mask]
         self.idxs = np.r_[0, np.cumsum(self.N)]
         self.Nframes = len(self.idxs) - 1
-        
+
     def delframes(self, max_photons=20):
         '''
         '''
@@ -643,11 +643,11 @@ def fsconcat(fslist):
 def fsmerge(fslist):
     '''
     Merge frame-by-frame
-    ''' 
-    
+    '''
+
     new_photons = []
     idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
-    for i in xrange(len(idxs)-1):
+    for i in range(len(idxs)-1):
         new_photons.extend([fs.photons[fs.idxs[i]:fs.idxs[i+1]] for fs in fslist])
     return frameseries(np.concatenate(new_photons), idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
 
@@ -655,19 +655,19 @@ def fsmerge2(fslist):
     '''
     Merge frame-by-frame
     (wielka porazka)
-    ''' 
-    
+    '''
+
     idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
     cidxs = np.cumsum(np.array([fs.idxs for fs in fslist]), axis=0)
     didxs = np.diff(cidxs)
     nidxs = np.insert(didxs+idxs[:-1],0,idxs[:-1],axis=0)
     new_photons = np.zeros((len(idxs),2), dtype = fslist[0].dtype)
     for i,fs in enumerate(fslist):
-        for j in xrange(len(idxs)-1):
+        for j in range(len(idxs)-1):
             new_photons[nidxs[i,j]:nidxs[i+1,j]] = fs.photons[fs.idxs[j]:fs.idxs[j+1]]
     return frameseries(new_photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
-        
-            
+
+
 def fsplot(fslist, samples=1000):
     '''
     Plot mutltiple frameseries as photon number time series
@@ -687,5 +687,4 @@ def loadfs(fname):
     if fs.__class__ == frameseries:
         return fs
     else:
-        print 'Error: pickled object not of class frameseries.'
-
+        print('Error: pickled object not of class frameseries.')

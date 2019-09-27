@@ -29,8 +29,8 @@ for fr in fs.frames:
         accum2[photon[0],photon[1]]=accum2[photon[0],photon[1]]+1
 m3=int(round(time.time() * 1000))
 
-print m2-m1
-print m3-m2
+print(m2-m1)
+print(m3-m2)
 #%%
 flat_fs = np.concatenate(fs.frames)
 shape=(100,400)
@@ -46,8 +46,8 @@ for dim, size in enumerate(aux_shape):
 accum = np.bincount(flat_array, minlength = np.prod(aux_shape))
 accum = np.reshape(accum,shape)
 #%%
-sk = np.argsort(map(len,fs.frames))
-sN = np.sort(map(len,fs.frames))
+sk = np.argsort(list(map(len,fs.frames)))
+sN = np.sort(list(map(len,fs.frames)))
 np.array(fs.frames)[sk]
 #%%
 signs = (True, True)
@@ -56,7 +56,7 @@ cframes = np.zeros(shape=(0,2),dtype=np.uint16)
 acc=np.zeros(shape=(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1),dtype=np.uint32)
 for frame in fs1.frames:
     if i%10000==0:
-        print i
+        print(i)
     frame2 = fs2.frames[i]
     if len(frame2) != 0 and len(frame) != 0:
         #cframe = np.hstack((

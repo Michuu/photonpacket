@@ -1,24 +1,24 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from frameseries import frameseries
-from exceptions import FrameSeriesLenError
-import stat1d
+from .frameseries import frameseries
+from .exceptions import FrameSeriesLenError
+from . import stat1d
 from uncertainties import ufloat, umath
 
 def prepcounts(func):
     '''
     Decorator preparing counts from counts or frameseries
-    
+
     Parameters
     ----------
     func : function
         function accepting a pair of :class:`photonpacket.frameseries` or counts :class:`numpy.ndarray`
-        
+
     Returns
     ----------
     func : function
         decorated function
-    
+
     '''
     def countsfunc(s1, s2, *args, **kwargs):
         if len(kwargs) == 0:
@@ -54,13 +54,13 @@ def prepcounts(func):
 def rawmoment(N1, N2, i, j, uncert=False):
     '''
     Raw statistical moment
-    
+
     Parameters
     ----------
     N1, N2 : a pair of :class:`photonpacket.frameseries` or counts :class:`numpy.ndarray`
     i, j : :int: number of moment
     uncert : :bool: uncertainty
-        
+
     '''
     if uncert:
         return ufloat(np.mean(N1**i * N2**j), np.std(N1**i * N2**j)/np.sqrt(len(N1)))
@@ -71,18 +71,18 @@ def rawmoment(N1, N2, i, j, uncert=False):
 def g2(N1, N2, uncert=False):
     '''
     Second order cross-correlation function.
-    
+
     Parameters
     ----------
     N1, N2 : a pair of :class:`photonpacket.frameseries` or counts :class:`numpy.ndarray`
-    
+
     '''
     return rawmoment(N1,N2,1,1,uncert)/(stat1d.rawmoment(N1,1,uncert)*stat1d.rawmoment(N2,1,uncert))
 
 def fanofactor(s1, s2, uncert=False):
     '''
     Fano photon number noise reduction factor.
-    
+
     Parameters
     ----------
     '''
@@ -93,16 +93,16 @@ def fanofactor(s1, s2, uncert=False):
 def Wfactor(N1,N2):
     '''
     Mean-weighted noise reduction factor. See Notes for details.
-    
+
     Parameters
     ----------
-    
+
     Returns
     ----------
-    
+
     Notes
     ----------
-    
+
     '''
     nor = np.sqrt(1.0/stat1d.mean(N1)+1.0/stat1d.mean(N2))
     w = N1/stat1d.mean(N1) - N2/stat1d.mean(N2)
@@ -111,7 +111,7 @@ def Wfactor(N1,N2):
 def checkfs(fs1,fs2):
     '''
     Check if frameseries have proper shapes
-    
+
     Parameters
     ----------
     '''
@@ -121,7 +121,7 @@ def checkfs(fs1,fs2):
 def checkcounts(N1,N2):
     '''
     Check if count vectors have proper shapes
-    
+
     Parameters
     ----------
     '''
@@ -132,7 +132,7 @@ def checkcounts(N1,N2):
 def covar(N1,N2, uncert=False):
     '''
     Photon number covariance
-    
+
     Parmaters
     ----------
     '''
@@ -141,7 +141,7 @@ def covar(N1,N2, uncert=False):
 def cov(s1, s2, uncert=False):
     '''
     Short for :func:`covar`
-    
+
     Parameters
     ----------
     '''
@@ -150,19 +150,19 @@ def cov(s1, s2, uncert=False):
 def corr(s1, s2, uncert=False):
     '''
     Normalized photon-number correlation coefficient
-    
+
     Parameters
     ----------
     '''
     if uncert:
-        return covar(s1,s2,uncert)/umath.sqrt(stat1d.var(s1,uncert)*stat1d.var(s2,uncert))      
+        return covar(s1,s2,uncert)/umath.sqrt(stat1d.var(s1,uncert)*stat1d.var(s2,uncert))
     else:
-        return covar(s1,s2,uncert)/np.sqrt(stat1d.var(s1,uncert)*stat1d.var(s2,uncert)) 
+        return covar(s1,s2,uncert)/np.sqrt(stat1d.var(s1,uncert)*stat1d.var(s2,uncert))
 
 def R2(s1,s2, uncert=False):
     '''
     R2 factor from the Cauchy-Scharz inequality
-    
+
     Parameters
     ----------
     '''

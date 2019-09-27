@@ -26,5 +26,5 @@ mpl.rcParams['axes.linewidth'] = 0.5
 Params file
 '''
 paramsext = 'xml'
-import labviewxmlparse as lxp
+from . import labviewxmlparse as lxp
 paramsparser = lxp.parse

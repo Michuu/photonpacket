@@ -77,7 +77,7 @@ d2=fs2.accumframes()
 plt.imshow(d1)
 plt.show()
 #%%
-print 'coinc'
+print('coinc')
 plt.clf()
 m1=int(round(time.time() * 1000))
 d=pp.accum.accumcoinc(fs1,fs2,method='bincount')
@@ -92,8 +92,8 @@ m4=int(round(time.time() * 1000))
 plt.imshow(np.sum(d,axis=(0,1)))
 plt.show()
 
-print m2-m1
-print m4-m3
+print(m2-m1)
+print(m4-m3)
 #%%
 #print 'coinc'
 #c1 = pp.circle(40,(130,160))
@@ -116,8 +116,8 @@ m4=int(round(time.time() * 1000))
 plt.imshow(np.sum(d,axis=(0,1)))
 plt.show()
 
-print m2-m1
-print m4-m3
+print(m2-m1)
+print(m4-m3)
 #%%
 
 c1 = pp.circle(5,(135,160))
@@ -126,13 +126,13 @@ fs1 = c1.getframeseries(fs, reshape=True)
 c2 = pp.circle(5,(135,440))
 fs2 = c2.getframeseries(fs, reshape=True)
 
-print 'calculating statistics'
-print pp.stat2d.g2(fs1,fs2)
+print('calculating statistics')
+print(pp.stat2d.g2(fs1,fs2))
 H=pp.stat2d.joint(fs1,fs2)
 pp.stat2d.plotjoint(H,showvalues=False)
-print H[0][0,1]
-print H[0][1,0]
-print H[0][1,1]
+print(H[0][0,1])
+print(H[0][1,0])
+print(H[0][1,1])
 plt.show()
 #%%
 d1=fs2.accumframes()
@@ -169,7 +169,7 @@ i=0
 cframes = []
 for frame in fs1.frames:
     if i%10000==0:
-        print i
+        print(i)
     frame2 = fs2.frames[i]
     if len(frame2) != 0 and len(frame) != 0:
         #cframe = np.hstack((
@@ -192,8 +192,8 @@ for frame in fs1.frames:
 t2=int(round(time.time() * 1000))
 accum = bincountnd(np.concatenate(cframes),(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[1]+fs2.shape[1]-1))
 t3=int(round(time.time() * 1000))
-print t2-t1
-print t3-t2
+print(t2-t1)
+print(t3-t2)
 #%%
 h=pp.stat1d.stat(fs2)
 pp.stat1d.plotstat(h)

@@ -21,11 +21,11 @@ def parse(xmlfile):
     '''
     tree = et.parse(xmlfile)
     root = tree.getroot()
-    
+
     params = {}
-    
+
     i = 0
-    
+
     for cluster in root.iter('Cluster'):
         try:
             key = cluster.find('String').find('Val').text
@@ -43,7 +43,7 @@ def parse(xmlfile):
                     else:
                         val = []
                         for v in variant[1].iter(dt):
-                            val.append(dtcast(v[1].text, dt))             
+                            val.append(dtcast(v[1].text, dt))
         except AttributeError:
             i+=1
             continue

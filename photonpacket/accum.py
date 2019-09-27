@@ -1,10 +1,10 @@
 import numpy as np
 from scipy.signal import fftconvolve
-from bincountnd import bincountnd
-from message import message, progress
+from .bincountnd import bincountnd
+from .message import message, progress
 from collections import deque
-from frameutils.coinc import bincount2d
-from frameutils.accum import accum_bincoinc, concat_coinc, accum_bincoincsd,\
+from .frameutils.coinc import bincount2d
+from .frameutils.accum import accum_bincoinc, concat_coinc, accum_bincoincsd,\
      accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd, concat_autocoinc
 import itertools as it
 
@@ -238,7 +238,7 @@ def coinchist4(*args):
     else:
         #error
         return -1
-        
+
 def autocoinchist(fs1, signs, **kwargs):
     '''
     Autocoincidence histogram in terms of sum/differnce variables
@@ -250,7 +250,7 @@ def autocoinchist(fs1, signs, **kwargs):
     fs2 : :class:`photonpacket.frameseries`
 
     signs :
-    
+
     kwargs : minphotons, maxphotons (filters out frames)
     kwargs : shape - tuple / 2 el. array - max. size of the accumulator (farther coindicences are neglected)
 
