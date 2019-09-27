@@ -13,16 +13,19 @@ cpdef coinc(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] fram
     '''
     cdef int f1l = frame1.shape[0]
     cdef int f2l = frame2.shape[0]
-    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*f2l, 4], dtype=frame1.dtype)
+    cdef int f1d = frame1.shape[1]
+    cdef int f2d = frame2.shape[1]
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*f2l, f1d+f2d], dtype=frame1.dtype)
     cdef int i = 0
     cdef int j = 0
     for i in range(f1l):
         for j in range(f2l):
             idx = i+f1l*j
-            cframe[idx,0] =  frame1[i,0]
-            cframe[idx,1] =  frame2[j,0]
-            cframe[idx,2] =  frame1[i,1]
-            cframe[idx,3] =  frame2[j,1]
+            jdx=0
+            for k,l in zip(range(f1d),range(f2d)):
+                cframe[idx,jdx] =  frame1[i,k]
+                cframe[idx,jdx+1] =  frame2[j,l]
+                jdx+=2
     return cframe
 
 @cython.boundscheck(False)
@@ -34,20 +37,26 @@ cpdef coinc3(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] fra
     cdef int f1l = frame1.shape[0]
     cdef int f2l = frame2.shape[0]
     cdef int f3l = frame3.shape[0]
-    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*f2l*f3l, 6], dtype=frame1.dtype)
+    cdef int f1d = frame1.shape[1]
+    cdef int f2d = frame2.shape[2]
+    cdef int f3d = frame3.shape[3]
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*f2l*f3l, f1d+f2d+f3d], dtype=frame1.dtype)
     cdef int i = 0
     cdef int j = 0
     cdef int k = 0
+    cdef int l = 0
+    cdef int m = 0
+    cdef int n = 0
     for i in range(f1l):
         for j in range(f2l):
             for k in range(f3l):
                 idx = i+f1l*j+f1l*f2l*k
-                cframe[idx,0] =  frame1[i,0]
-                cframe[idx,1] =  frame2[j,0]
-                cframe[idx,2] =  frame3[k,0]
-                cframe[idx,3] =  frame1[i,1]
-                cframe[idx,4] =  frame2[j,1]
-                cframe[idx,5] =  frame3[k,1]
+                jdx=0
+                for l,m,n in zip(range(f1d),range(f2d),range(f3d)):
+                    cframe[idx,jdx] =  frame1[i,l]
+                    cframe[idx,jdx+1] =  frame2[j,m]
+                    cframe[idx,jdx+2] =  frame3[k,n]
+                    jdx+=3
     return cframe
 
 @cython.boundscheck(False)
@@ -183,18 +192,22 @@ cpdef autocoinc(np.ndarray[DTYPE_t, ndim=2] frame):
 
     '''
     cdef int f1l = frame.shape[0]
-    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1), 4], dtype=frame.dtype)
+    cdef int f1d = frame.shape[1]
+    cdef np.ndarray[DTYPE_t, ndim=2] cframe = np.zeros([f1l*(f1l-1), 2*f1d], dtype=frame.dtype)
     cdef int i = 0
     cdef int j = 0
     cdef int k = 0
+    cdef int l = 0
+    cdef int idx = 0
     for i in range(f1l):
         for j in range(f1l):
             if i != j:
-                cframe[k,0] =  frame[i,0]
-                cframe[k,1] =  frame[j,0]
-                cframe[k,2] =  frame[i,1]
-                cframe[k,3] =  frame[j,1]
-                k += 1
+                jdx=0
+                for k,l in zip(range(f1d),range(f1d)):
+                    cframe[idx,jdx] =  frame[i,k]
+                    cframe[idx,jdx+1] =  frame[j,l]
+                    jdx += 2
+                idx += 1
     return cframe
 
 @cython.boundscheck(False)

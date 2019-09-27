@@ -77,13 +77,13 @@ class hist2d:
         if normed:
             data = self.hist/self.N  
         else:
-			data = self.hist			
+            data = self.hist			
         q=-1
         if cut:
-			data=data[:3,:3]
-			X=X[:3,:3]
-			Y=Y[:3,:3]
-			q=2
+            data=data[:3,:3]
+            X=X[:3,:3]
+            Y=Y[:3,:3]
+            q=2
         if log is None or log == False:
             norm = mpl.colors.Normalize(vmin=data.min(), vmax=data.max())
         else:

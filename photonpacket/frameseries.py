@@ -687,5 +687,5 @@ def loadfs(fname):
     if fs.__class__ == frameseries:
         return fs
     else:
-        print 'Error: pickled object not of class frameseries.'
+        print('Error: pickled object not of class frameseries.')
 

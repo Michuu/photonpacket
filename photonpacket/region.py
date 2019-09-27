@@ -178,7 +178,7 @@ class circle(region):
     shape = []
     corner = np.array([])
 
-    def __init__(self, r, (x0, y0)):
+    def __init__(self, r, xxx_todo_changeme):
         '''
 
         Paramterers
@@ -189,6 +189,7 @@ class circle(region):
             position of center
 
         '''
+        (x0, y0) = xxx_todo_changeme
         self.r = r
         self.x0 = x0
         self.y0 = y0
@@ -228,7 +229,7 @@ class rect(region):
     shape = []
     corner = np.array([])
 
-    def __init__(self, (x0,y0), (x1,y1)):
+    def __init__(self, xxx_todo_changeme1, xxx_todo_changeme2):
         '''
 
         Paramterers
@@ -239,6 +240,8 @@ class rect(region):
             top right corner
 
         '''
+        (x0,y0) = xxx_todo_changeme1
+        (x1,y1) = xxx_todo_changeme2
         self.x0 = x0
         self.y0 = y0
         self.x1 = x1
@@ -274,7 +277,7 @@ class rect2(rect):
     Rectangle defined by center
     '''
 
-    def __init__(self, (xc, yc), (a, b)):
+    def __init__(self, xxx_todo_changeme3, xxx_todo_changeme4):
         '''
 
         Paramterers
@@ -285,6 +288,8 @@ class rect2(rect):
             horizontal and vertical extent
 
         '''
+        (xc, yc) = xxx_todo_changeme3
+        (a, b) = xxx_todo_changeme4
         x0 = xc - a
         y0 = yc - b
         x1 = xc + a
@@ -295,7 +300,7 @@ class square(rect):
     '''
     Square region
     '''
-    def __init__(self, a, (xc, yc)):
+    def __init__(self, a, xxx_todo_changeme5):
         '''
 
         Paramterers
@@ -306,6 +311,7 @@ class square(rect):
             position of center
 
         '''
+        (xc, yc) = xxx_todo_changeme5
         x0 = xc - a
         y0 = yc - a
         x1 = xc + a
@@ -324,7 +330,7 @@ class ring(region):
     corner = np.array([])
 
 
-    def __init__(self,r1,r2,(x0,y0)):
+    def __init__(self,r1,r2, xxx_todo_changeme6):
         '''
 
         Paramterers
@@ -337,6 +343,7 @@ class ring(region):
             position of center
 
         '''
+        (x0,y0) = xxx_todo_changeme6
         self.r1 = r1
         self.r2 = r2
         self.x0 = x0
@@ -383,7 +390,7 @@ class ellpise(region):
     corner = np.array([])
 
 
-    def __init__(self,a,b,(x0,y0),angle):
+    def __init__(self,a,b, xxx_todo_changeme7,angle):
         '''
 
         Paramterers
@@ -398,6 +405,7 @@ class ellpise(region):
             rotation angle (in radians); not implemented
 
         '''
+        (x0,y0) = xxx_todo_changeme7
         self.a = b
         self.a = b
         self.x0 = x0
@@ -437,7 +445,7 @@ class halfcircle(region):
     corner = np.array([])
 
 
-    def __init__(self,r,angle,(x0,y0)):
+    def __init__(self,r,angle, xxx_todo_changeme8):
         '''
 
         Paramterers
@@ -450,6 +458,7 @@ class halfcircle(region):
             position of center
 
         '''
+        (x0,y0) = xxx_todo_changeme8
         self.r=r
         self.angle=angle
         self.x0=x0
@@ -484,7 +493,7 @@ class paramregion(region):
         fcomp - comparison function applied to an ARRAY of specified parameter values, yields true inside region
     '''
     paramid = 2 #subsequent radius redcution (SRR) step param by default
-    fcomp = lambda(x):True #do not filter out anything by default
+    fcomp = lambda x:True #do not filter out anything by default
     
     def __init__(self,fcomp,**kwargs):
         self.fcomp = fcomp
@@ -494,11 +503,11 @@ class paramregion(region):
             elif kwargs['param'] == 'pixel_value':
                 self.paramid = 3
             else:
-                print 'Unrecognized param, possible values: "step" (id=2), "pixel_value" (id=3)'
+                print('Unrecognized param, possible values: "step" (id=2), "pixel_value" (id=3)')
     def plot(self):
-        print self.fcomp
+        print(self.fcomp)
     def __repr__(self):
-        print self.fcomp, self.paramid
+        print(self.fcomp, self.paramid)
     def getmask(self,frame):
         return self.fcomp(frame[:,self.paramid]) 
         

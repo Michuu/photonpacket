@@ -1,4 +1,3 @@
-from itertools import izip
 import numpy as np
 from photonpacket.message import progress
 cimport numpy as np

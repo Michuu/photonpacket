@@ -111,14 +111,14 @@ class file:
             self.nameversion = 1
         except NameError:
             # this means that parser is not defined
-            print "Error: File present, but params parser not defined!"
+            print("Error: File present, but params parser not defined!")
             shape = self.getshapefromname()
             Nf = self.getattributefromname('Nf')
             self.nameversion = 1
         except Exception as e:
             # this means there was an unexpected error when parsing
             # we will proceed with automatic shape detection and no frame limit
-            print "Unexpected Exception when parsing xml file (trying automatic shape detection): %s"%e
+            print("Unexpected Exception when parsing xml file (trying automatic shape detection): %s"%e)
             shape = False
             Nf = False
             
@@ -181,7 +181,7 @@ class file:
                 photinfoDim = 8
                 self.mode = 'all'
             else:
-                print 'Invalid mode selected, modes available: fit, max, fit_step_max,fit_step_val_max,all'
+                print('Invalid mode selected, modes available: fit, max, fit_step_max,fit_step_val_max,all')
                 return False
         nframes = 0
         # open file for binary reading
@@ -227,7 +227,7 @@ class file:
             try:
                 shape = np.max(self.photons[:,0:2], axis=0)
             except ValueError:
-                print 'You must be joking... file contains 0 photons; aborting'
+                print('You must be joking... file contains 0 photons; aborting')
                 return False
                      
         # set shape
