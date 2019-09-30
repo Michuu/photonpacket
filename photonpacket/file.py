@@ -202,7 +202,9 @@ class file:
             # read frame data
 
             if N > 0:
-                # TODO: possibility of getting other info about photons
+                # TODO: possibility of getting other info about photons,
+                #       add dtype attribute basing on rounding parameter
+                #       (double or uint) and propagate it to getframeseries
                 # extract only photon positions
                 img = np.fromfile(f, '>u2', N)
                 if rounding:
