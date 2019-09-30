@@ -27,4 +27,6 @@ Params file
 '''
 paramsext = 'xml'
 from . import labviewxmlparse as lxp
-paramsparser = lxp.parse
+from . import labviewjsonparse as ljp
+paramsparserxlm = lxp.parse
+paramsparserjson = ljp.parse

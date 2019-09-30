@@ -89,11 +89,15 @@ class file:
         # create file instance
         self = file(path, name)
 
-        # try to read params xml file
-        # TODO: add support for new *.json params from LV
+        # try to read params json or xml file
+       
         try:
-            parse = settings.paramsparser
-            self.params = parse(os.path.join(directory, name + '.' + settings.paramsext))
+            if os.path.isfile(os.path.join(directory, name + '.json')) ==True:
+                parse=settings.paramsparserjson
+                self.params = parse(os.path.join(directory, name + '.json'))
+            else:
+                parse = settings.paramsparserxlm
+                self.params = parse(os.path.join(directory, name + '.xlm'))
             self.nameversion = 2
             try:
                 Nf = self.params['Nf']

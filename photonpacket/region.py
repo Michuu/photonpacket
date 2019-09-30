@@ -178,18 +178,18 @@ class circle(region):
     shape = []
     corner = np.array([])
 
-    def __init__(self, r, xxx_todo_changeme):
+    def __init__(self, r, r0):
         '''
 
         Paramterers
         ---------
         r : int
             radius
-        (x0, y0) : (int, int)
+        r0=(x0, y0) : (int, int)
             position of center
 
         '''
-        (x0, y0) = xxx_todo_changeme
+        (x0, y0) = r0
         self.r = r
         self.x0 = x0
         self.y0 = y0
@@ -229,19 +229,19 @@ class rect(region):
     shape = []
     corner = np.array([])
 
-    def __init__(self, xxx_todo_changeme1, xxx_todo_changeme2):
+    def __init__(self, r0, r1):
         '''
 
         Paramterers
         ---------
-        (x0, y0) : (int, int)
+        r0=(x0, y0) : (int, int)
             bottom left corner
-        (x1, y1) : (int, int)
+        r1=(x1, y1) : (int, int)
             top right corner
 
         '''
-        (x0,y0) = xxx_todo_changeme1
-        (x1,y1) = xxx_todo_changeme2
+        (x0,y0) = r0
+        (x1,y1) = r1
         self.x0 = x0
         self.y0 = y0
         self.x1 = x1
@@ -277,19 +277,19 @@ class rect2(rect):
     Rectangle defined by center
     '''
 
-    def __init__(self, xxx_todo_changeme3, xxx_todo_changeme4):
+    def __init__(self, rc, rab):
         '''
 
         Paramterers
         ---------
-        (xc, yc) : (int, int)
+        rc=(xc, yc) : (int, int)
             position of center
-        (a, b) : (int, int)
+        rab=(a, b) : (int, int)
             horizontal and vertical extent
 
         '''
-        (xc, yc) = xxx_todo_changeme3
-        (a, b) = xxx_todo_changeme4
+        (xc, yc) = rc
+        (a, b) = rab
         x0 = xc - a
         y0 = yc - b
         x1 = xc + a
@@ -300,18 +300,18 @@ class square(rect):
     '''
     Square region
     '''
-    def __init__(self, a, xxx_todo_changeme5):
+    def __init__(self, a, rc):
         '''
 
         Paramterers
         ---------
         a : int
             extent
-        (xc, yc) : (int, int)
+        rc=(xc, yc) : (int, int)
             position of center
 
         '''
-        (xc, yc) = xxx_todo_changeme5
+        (xc, yc) = rc
         x0 = xc - a
         y0 = yc - a
         x1 = xc + a
@@ -330,7 +330,7 @@ class ring(region):
     corner = np.array([])
 
 
-    def __init__(self,r1,r2, xxx_todo_changeme6):
+    def __init__(self,r1,r2, r0):
         '''
 
         Paramterers
@@ -339,11 +339,11 @@ class ring(region):
             inner radius
         r2 : int
             outer radius
-        (x0, y0) : (int, int)
+        r0=(x0, y0) : (int, int)
             position of center
 
         '''
-        (x0,y0) = xxx_todo_changeme6
+        (x0,y0) = r0
         self.r1 = r1
         self.r2 = r2
         self.x0 = x0
@@ -390,7 +390,7 @@ class ellpise(region):
     corner = np.array([])
 
 
-    def __init__(self,a,b, xxx_todo_changeme7,angle):
+    def __init__(self,a,b, r0,angle):
         '''
 
         Paramterers
@@ -399,13 +399,13 @@ class ellpise(region):
             semi-major axis
         b : int
             semi-minor axis
-        (x0,y0) : (int, int)
+        r0=(x0,y0) : (int, int)
             position of center
         angle : float
             rotation angle (in radians); not implemented
 
         '''
-        (x0,y0) = xxx_todo_changeme7
+        (x0,y0) = r0
         self.a = b
         self.a = b
         self.x0 = x0
@@ -445,7 +445,7 @@ class halfcircle(region):
     corner = np.array([])
 
 
-    def __init__(self,r,angle, xxx_todo_changeme8):
+    def __init__(self,r,angle, r0):
         '''
 
         Paramterers
@@ -454,11 +454,11 @@ class halfcircle(region):
             radius
         angle : float
             rotation angle (in radians)
-        (x0, y0) : (int, int)
+        r0=(x0, y0) : (int, int)
             position of center
 
         '''
-        (x0,y0) = xxx_todo_changeme8
+        (x0,y0) = r0
         self.r=r
         self.angle=angle
         self.x0=x0
