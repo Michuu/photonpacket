@@ -1,3 +1,4 @@
+#%%
 import numpy as np
 from .frameseries import frameseries
 import re
@@ -5,8 +6,17 @@ import os
 from .message import message, progress
 from . import settings
 from .helpers import siprefix
-
+import io
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
+
+def py3_fromfile(f, dtype, num):
+    #buf = np.empty(num, dtype,order='F')
+    #b = bytearray(num*np.dtype(dtype))
+    #f.readinto(b)
+    dt = np.dtype(dtype)
+    return np.frombuffer(f.read(num*dt.itemsize), dtype)
+    
+
 
 class file:
     '''
@@ -44,7 +54,7 @@ class file:
         '''
         self.name = name
 
-
+    
     def __del__(self):
         del self.params
         del self.photons
@@ -95,9 +105,10 @@ class file:
             if os.path.isfile(os.path.join(directory, name + '.json')) ==True:
                 parse=settings.paramsparserjson
                 self.params = parse(os.path.join(directory, name + '.json'))
+                
             else:
                 parse = settings.paramsparserxlm
-                self.params = parse(os.path.join(directory, name + '.xlm'))
+                self.params = parse(os.path.join(directory, name + '.xml'))
             self.nameversion = 2
             try:
                 Nf = self.params['Nf']
@@ -108,6 +119,9 @@ class file:
                 shape = np.array([roi[0], roi[2]])
             except AttributeError:
                 shape = False
+            
+        
+        
         # if this was not possible get them from filename
         except IOError:
             # this means that params file is not present
@@ -190,14 +204,17 @@ class file:
                 return False
         nframes = 0
         # open file for binary reading
-        f = open(path,'rb')
-
+        f = io.open(path,'rb')
+        #f=io.BytesIO(ff.read(-1))
         frames = []
         empty_frame = np.empty(shape=(0, photinfoDim), dtype=np.uint16)
+        nxy=0
+        img=0
+        frame=0
         while(True):
             # read number of photons in a frame
             # nxy = (number of photons, information per photon)
-            nxy = np.fromfile(f, '>i4', 2)
+            nxy = py3_fromfile(f, '>i4', 2) 
             # break if file ended or acquired enough frames
             if nxy.size == 0 or (nframes >= maxframes and frames_limit):
                 break
@@ -210,7 +227,7 @@ class file:
                 #       add dtype attribute basing on rounding parameter
                 #       (double or uint) and propagate it to getframeseries
                 # extract only photon positions
-                img = np.fromfile(f, '>u2', N)
+                img = py3_fromfile(f, '>u2', N)  
                 if rounding:
                     img = np.array(np.round(np.array(img,dtype=np.float)/div),dtype=np.uint16)
                 else:
