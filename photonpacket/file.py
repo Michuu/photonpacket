@@ -205,37 +205,42 @@ class file:
         nframes = 0
         # open file for binary reading
         f = io.open(path,'rb')
-        #f=io.BytesIO(ff.read(-1))
-        frames = []
-        empty_frame = np.empty(shape=(0, photinfoDim), dtype=np.uint16)
+
         nxy=0
         img=0
-        frame=0
+        
+        idxs=[]
+        photons=[]
+        i=0
+        idxs.append(i)
+
         while(True):
             # read number of photons in a frame
             # nxy = (number of photons, information per photon)
-            nxy = py3_fromfile(f, '>i4', 2) 
+            nxy = py3_fromfile(f, '>i4', 2)
+            
+            if i == 0:
+                photoDim = nxy[1]
+                
             # break if file ended or acquired enough frames
             if nxy.size == 0 or (nframes >= maxframes and frames_limit):
                 break
+            
             N = nxy[0] * nxy[1]
             nframes += 1
             # read frame data
 
+            i += nxy[0]
+            idxs.append(i)
+            
             if N > 0:
                 # TODO: possibility of getting other info about photons,
                 #       add dtype attribute basing on rounding parameter
                 #       (double or uint) and propagate it to getframeseries
                 # extract only photon positions
                 img = py3_fromfile(f, '>u2', N)  
-                if rounding:
-                    img = np.array(np.round(np.array(img,dtype=np.float)/div),dtype=np.uint16)
-                else:
-                    img = img/int(div)
-                frame = np.reshape(img, nxy)[:, photinfoMask]
-            else:
-                frame = empty_frame
-            frames.append(frame)
+                photons.append(img)
+
             progress(nframes)
         # close file access
         f.close()
@@ -244,9 +249,15 @@ class file:
 
         message("\nRead " + str(nframes) + " frames", 1)
 
-        self.photons = np.concatenate(frames)
-        self.idxs = (np.r_[0, np.cumsum([frame.shape[0] for frame in frames])])
+        self.photons=np.reshape(np.concatenate(photons),(idxs[-1],photoDim))[:, photinfoMask]
+        self.idxs=np.array(idxs)
 
+        # rounding photons positions
+        if rounding:
+            self.photons = np.array(np.round(np.array(self.photons,dtype=np.float)/div),dtype=np.uint16)
+        else:
+            self.photons = self.photons//div
+                    
         if shapedetect:
             try:
                 shape = np.max(self.photons[:,0:2], axis=0)
