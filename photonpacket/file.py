@@ -7,6 +7,7 @@ from .message import message, progress
 from . import settings
 from .helpers import siprefix
 import io
+import mmap
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 def py3_fromfile(f, dtype, num):
@@ -205,7 +206,16 @@ class file:
         nframes = 0
         # open file for binary reading
         f = io.open(path,'rb')
-
+        if 'mmap' in kwargs:
+            if kwargs['mmap'] == True:
+                print('Using mmap...')
+                fl=f
+                f = mmap.mmap(fl.fileno(), 0,access=mmap.ACCESS_READ)
+                mmapused =True
+            else:
+                mmapused=False
+        else:
+            mmapused=False
         nxy=0
         img=0
         
@@ -244,6 +254,8 @@ class file:
             progress(nframes)
         # close file access
         f.close()
+        if(mmapused):
+            fl.close()
         # set actual number of frames
         self.Nframes = nframes
 
@@ -256,7 +268,7 @@ class file:
         if rounding:
             self.photons = np.array(np.round(np.array(self.photons,dtype=np.float)/div),dtype=np.uint16)
         else:
-            self.photons = self.photons//div
+            self.photons = np.array(self.photons//div,dtype=np.uint16)
                     
         if shapedetect:
             try:
