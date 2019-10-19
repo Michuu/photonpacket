@@ -10,9 +10,21 @@ import io
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 def py3_fromfile(f, dtype, num):
-    #buf = np.empty(num, dtype,order='F')
-    #b = bytearray(num*np.dtype(dtype))
-    #f.readinto(b)
+    '''
+    Faster than np.fromfile
+    
+    Parameters
+    ----------
+    f : file handle
+    
+    dtype : data type
+    
+    num : number of elements to read
+    
+    Returns
+    ----------
+    data : :class:`numpy.ndarray`
+    '''
     dt = np.dtype(dtype)
     return np.frombuffer(f.read(num*dt.itemsize), dtype)
     
@@ -237,7 +249,7 @@ class file:
                 # TODO: possibility of getting other info about photons,
                 #       add dtype attribute basing on rounding parameter
                 #       (double or uint) and propagate it to getframeseries
-                # extract only photon positions
+                
                 img = py3_fromfile(f, '>u2', N)  
                 photons.append(img)
 
