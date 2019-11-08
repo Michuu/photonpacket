@@ -29,7 +29,26 @@ def py3_fromfile(f, dtype, num):
     dt = np.dtype(dtype)
     return np.frombuffer(f.read(num*dt.itemsize), dtype)
     
-
+# def index_raw_file(fname:str):
+#     dt_body=np.dtype('>u2')
+#     with open(fname,"rb") as f:
+#         #mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+#         #b = f.read()
+#         b = np.frombuffer(f.read(), dt_body)
+#     idxs=[]
+#     i=0
+#     idxs.append(i)
+#     nframes=0
+#     while i<b.shape[0]:
+#         x0,nph,y0,nc=b[i:i+4]
+#         #assert(x0==0&y0==0)
+#         if i==0:
+#             photoDim = nc
+#         i+=nph
+#         idxs.append(i)
+#         nframes+=1
+#         progress(nframes)
+#     return idxs, photoDim
 
 class file:
     '''
