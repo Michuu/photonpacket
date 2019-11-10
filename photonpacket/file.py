@@ -93,6 +93,84 @@ class file:
         del self.idxs
 
     @staticmethod
+    def createFromPath(path):
+        # extract name of file from path
+        (directory, name) = os.path.split(path)
+        # remove file extension
+        name = os.path.splitext(name)[0]
+        # create file instance
+        self = file(path, name)
+        self.directory=directory
+        return self
+    
+    def loadMetadata(self):
+        " try to read params json or xml file   "
+        try:
+            if os.path.isfile(os.path.join(directory, name + '.json')) ==True:
+                parse=settings.paramsparserjson
+                self.params = parse(os.path.join(directory, name + '.json'))                
+            else:
+                parse = settings.paramsparserxlm
+                self.params = parse(os.path.join(directory, name + '.xml'))
+            self.nameversion = 2
+            try:
+                Nf = self.params['Nf']
+            except AttributeError:
+                Nf = False
+            try:
+                roi = self.params['ROI']
+                shape = np.array([roi[0], roi[2]])
+            except AttributeError:
+                shape = False
+            
+            
+        # if this was not possible get them from filename
+        except IOError:
+            # this means that params file is not present
+            shape = self.getshapefromname()
+            Nf = self.getattributefromname('Nf')
+            self.nameversion = 1
+        except NameError:
+            # this means that parser is not defined
+            print("Error: File present, but params parser not defined!")
+            shape = self.getshapefromname()
+            Nf = self.getattributefromname('Nf')
+            self.nameversion = 1
+        except Exception as e:
+            # this means there was an unexpected error when parsing
+            # we will proceed with automatic shape detection and no frame limit
+            print("Unexpected Exception when parsing xml file (trying automatic shape detection): %s"%e)
+            shape = False
+            Nf = False
+        return (Nf, shape, roi)
+    
+    def parsephotinfoMask(self,**kwargs):
+        photinfoDim = 2
+        photinfoMask = slice(None,2,None)
+        if 'mode' in kwargs:
+            if kwargs['mode'] == 'fit':
+                pass
+            elif kwargs['mode'] == 'max':
+                photinfoMask = slice(6,8,None)
+                self.mode = 'max'
+            elif kwargs['mode'] == 'fit_step_max':
+                photinfoMask = np.r_[np.ones(3,dtype=np.bool),np.zeros(3,dtype=np.bool),np.ones(2,dtype=np.bool)]
+                photinfoDim = 5
+                self.mode = 'fit_step_max'
+            elif kwargs['mode'] == 'fit_step_val_max':
+                photinfoMask = np.r_[np.ones(4,dtype=np.bool),np.zeros(2,dtype=np.bool),np.ones(2,dtype=np.bool)]
+                photinfoDim = 6
+                self.mode = 'fit_step_val_max'
+            elif kwargs['mode'] == 'all':
+                photinfoMask = np.ones(8,dtype=np.bool)
+                photinfoDim = 8
+                self.mode = 'all'
+            else:
+                print('Invalid mode selected, modes available: fit, max, fit_step_max,fit_step_val_max,all')
+                return False
+        return photinfoMask
+    
+    @staticmethod
     def read(path, **kwargs):
         '''
         Read photon data file
@@ -123,132 +201,69 @@ class file:
 
 
         '''
-        # extract name of file from path
-        (directory, name) = os.path.split(path)
-        # remove file extension
-        name = os.path.splitext(name)[0]
+        self = file.createFromPath(path)
+        (Nf, shape, roi) = self.loadMetadata()
 
-        # create file instance
-        self = file(path, name)
-
-        # try to read params json or xml file
-       
-        try:
-            if os.path.isfile(os.path.join(directory, name + '.json')) ==True:
-                parse=settings.paramsparserjson
-                self.params = parse(os.path.join(directory, name + '.json'))
-                
-            else:
-                parse = settings.paramsparserxlm
-                self.params = parse(os.path.join(directory, name + '.xml'))
-            self.nameversion = 2
-            try:
-                Nf = self.params['Nf']
-            except AttributeError:
-                Nf = False
-            try:
-                roi = self.params['ROI']
-                shape = np.array([roi[0], roi[2]])
-            except AttributeError:
-                shape = False
-            
-        
-        
-        # if this was not possible get them from filename
-        except IOError:
-            # this means that params file is not present
-            shape = self.getshapefromname()
-            Nf = self.getattributefromname('Nf')
-            self.nameversion = 1
-        except NameError:
-            # this means that parser is not defined
-            print("Error: File present, but params parser not defined!")
-            shape = self.getshapefromname()
-            Nf = self.getattributefromname('Nf')
-            self.nameversion = 1
-        except Exception as e:
-            # this means there was an unexpected error when parsing
-            # we will proceed with automatic shape detection and no frame limit
-            print("Unexpected Exception when parsing xml file (trying automatic shape detection): %s"%e)
-            shape = False
-            Nf = False
 
         # try to set shape
+        # if not possible, plan for shape detection
+        shapedetect = True
         try:
             if isinstance(shape, np.ndarray):
-                shapedetect = False
-            else:
-                shapedetect = True
-        # if not possible, plan for shape detection
+                shapedetect = False            
         except:
-            shapedetect = True
+            pass            
 
         # try to extract number of frames from params or filename
         # if number given both in filename and as argument
         if 'Nframes' in kwargs and Nf:
             # select smaller
             maxframes = min(kwargs['Nframes'], Nf)
-            frames_limit = True
         # number given only by argument
         elif 'Nframes' in kwargs:
             maxframes = kwargs['Nframes']
-            frames_limit = True
         # number given only in params or filename
         elif Nf:
             maxframes = Nf
-            frames_limit = True
         # number not given, turn off frame number limit
         else:
-            maxframes = 0
-            frames_limit = False
+            maxframes = -1            
+        div=kwargs.get('div',10)
 
-        if 'div' in kwargs:
-            div = float(kwargs['div'])
+        photinfoMask = self.parsephotinfoMask(**kwargs)
+        
+        self.loadPhotonsV21(path, photinfoMask, maxframes)
+        # rounding photons positions
+        if kwargs.get('rounding',False):
+            self.photons = np.array(np.round(np.array(self.photons,dtype=np.float)/div),dtype=np.uint16)
         else:
-            div = 10.
-        if 'rounding' in kwargs:
-            rounding = kwargs['rounding']
-        else:
-            rounding = False
-
-        photinfoDim = 2
-        photinfoMask = slice(None,2,None)
-        if 'mode' in kwargs:
-            if kwargs['mode'] == 'fit':
-                pass
-            elif kwargs['mode'] == 'max':
-                photinfoMask = slice(6,8,None)
-                self.mode = 'max'
-            elif kwargs['mode'] == 'fit_step_max':
-                photinfoMask = np.r_[np.ones(3,dtype=np.bool),np.zeros(3,dtype=np.bool),np.ones(2,dtype=np.bool)]
-                photinfoDim = 5
-                self.mode = 'fit_step_max'
-            elif kwargs['mode'] == 'fit_step_val_max':
-                photinfoMask = np.r_[np.ones(4,dtype=np.bool),np.zeros(2,dtype=np.bool),np.ones(2,dtype=np.bool)]
-                photinfoDim = 6
-                self.mode = 'fit_step_val_max'
-            elif kwargs['mode'] == 'all':
-                photinfoMask = np.ones(8,dtype=np.bool)
-                photinfoDim = 8
-                self.mode = 'all'
-            else:
-                print('Invalid mode selected, modes available: fit, max, fit_step_max,fit_step_val_max,all')
+            self.photons = np.array(self.photons//div,dtype=np.uint16)
+                    
+        if shapedetect:
+            try:
+                shape = np.max(self.photons[:,0:2], axis=0)
+            except ValueError:
+                print('You must be joking... file contains 0 photons; aborting')
                 return False
+
+        # set shape
+        self.shape = np.array((np.round(shape*10/div)),dtype=int)
+        return self
+    
+    def loadPhotonsV21(self, path, photinfoMask, maxframes):
         nframes = 0
         # open file for binary reading
         with io.open(path,'rb') as f:
-            file_datab = f.read()
-        nxy=0
-        img=0
+            file_datab = f.read()        
         from struct import unpack
-        from collections import deque
+        #from collections import deque
         idxs=[]
         npht=[]
-        photons=[]
+        #photons=[]
         i=0
         idxs.append(i)
         len_b=len(file_datab)
-        while i<len_b:
+        while i<len_b and (maxframes<=0 or nframes<=maxframes):
             # 2d array size from LV
             nph,nc=unpack('>ii',file_datab[i:i+8])            
             if i == 0:
@@ -271,22 +286,7 @@ class file:
         #self.idxs=np.array(i//2-k for k,i in enumerate(idxs))
         message("\nRead+reshape " + str(nframes) + " frames", 1)
 
-        # rounding photons positions
-        if rounding:
-            self.photons = np.array(np.round(np.array(self.photons,dtype=np.float)/div),dtype=np.uint16)
-        else:
-            self.photons = np.array(self.photons//div,dtype=np.uint16)
-                    
-        if shapedetect:
-            try:
-                shape = np.max(self.photons[:,0:2], axis=0)
-            except ValueError:
-                print('You must be joking... file contains 0 photons; aborting')
-                return False
-
-        # set shape
-        self.shape = np.array((np.round(shape*10/div)),dtype=int)
-        return self
+        
 
     def getframeseries(self):
         '''

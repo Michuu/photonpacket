@@ -1,32 +1,28 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Nov  9 19:45:48 2019
+Created on Sun Nov 10 15:21:40 2019
 
 @author: wwasil
 """
 
 
-#%%
 import glob, json
-#os.chdir("/mydir")
-folder = r"\\Astrosciema\f\dane\1909 BELL\09_11_test_nowego_formatu"+"\\"
-def getAlljsons(folder):
+def getAlljsons(folder,version='3.03'):
     lst=[]
-    for file in glob.glob(folder+"*.json"):
+    for jsonfile in glob.glob(folder+"*.json"):
         #print(file)
-        with open(file, "r") as f:
+        with open(jsonfile, "r") as f:
             s=f.read()
             jsondata1, end1 = json.JSONDecoder().raw_decode(s)
-            if type(jsondata1)==dict and jsondata1.get('version',None)=='3.02':
+            if type(jsondata1)==dict and jsondata1.get('version',None)==version:
                 #print(file)
                 jsondata2, end2 = json.JSONDecoder().raw_decode(s[end1:])
                 jsondata1.update(jsondata2)
-                lst.append(jsondata1)
+                lst.append((jsonfile,jsondata1))
     return lst
 
-alljsons=getAlljsons(folder)
-#%%
 def jsonToClass(name,data):
+    "automatyczny generator klasy odpowiadajacej jsonowi"
     pretab=' '*4
     npretab='\n'+pretab
     typlst=[]
@@ -53,14 +49,9 @@ def jsonToClass(name,data):
     #         print('list',len(data),name,len(ss))
     ssd="_data['{k}'] # {typ}".format(k=name,typ=type(data).__name__)
     return '',ssd
-        
-t,d=jsonToClass('302_autogen',alljsons[1])    
-print('-'*4)
-print(t)
-#print(d)
-#%%
+
 # autogen using above
-class LV302_autogen(object):
+class LV303_autogen(object):
     class LVsave_params(object):
         def __init__(self,_data):
             self.krok_sekwencji=_data['krok sekwencji'] # int
@@ -69,23 +60,30 @@ class LV302_autogen(object):
             self.nf=_data['nf'] # int
     class LVfile_names(object):
         def __init__(self,_data):
-            #self.positions=_data['positions'] # str
-            #self.indexes=_data['indexes'] # str
-            self.indexes=_data['positions'] # str
-            self.positions=_data['indexes'] # str
+            self.positions=_data['positions'] # str
+            self.indexes=_data['indexes'] # str
+            #self.indexes=_data['positions'] # str
+            #self.positions=_data['indexes'] # str
             self.json=_data['json'] # str
             self.sequence=_data['sequence'] # str
+    # dodane            
+    class LVctrl_param(object):
+        def __init__(self,_data):
+            self.ctrl_path=_data['ctrl_path'] # str
+            self.Value=_data['Value'] # int
     def __init__(self,_data):
         self.version=_data['version'] # str
-        self.ctrl_params=_data['ctrl_params'] # list
+        # reczna poprawka
+        self.ctrl_params=[self.LVctrl_param(e) for e in _data['ctrl_params']] 
         self.save_params=self.LVsave_params(_data['save_params'])
         self.file_names=self.LVfile_names(_data['file_names'])
         self.start=_data['seconds since 1Jan1904'] # str
         self.end=_data['end'] # str
         self.Nph=_data['Nph'] # int
         self.nframes=_data['nframes'] # int
+        self.ctrl_dict={e.ctrl_path:e.Value for e in self.ctrl_params}
 
-class LV302(LV302_autogen):        
+class LV303(LV303_autogen):        
     def pathreplace(self,old,new):
         for k,v in self.file_names.__dict__.items():
             nn=v.replace(old,new)
@@ -101,8 +99,9 @@ class LV302(LV302_autogen):
         name = os.path.splitext(name)[0]
         # create file instance
         return file(path, name)        
-    def loadPhotons(self):
+    def loadPhotons(self,**kwargs):
         import numpy as np
+        div=kwargs.get('div',10)
         # create file instance
         file=self.createfileclass()
         dtype = np.dtype('>i4')        
@@ -114,15 +113,14 @@ class LV302(LV302_autogen):
             data=np.frombuffer(f.read(), dtype) 
             file.photons=data.reshape((-1,2),order='F')
         file.params=self
+        roi = self.save_params.ROI
+        shape = np.array([roi[0], roi[2]])
+        if False:
+            shape = np.max(self.photons[:,0:2], axis=0)
+        file.shape = np.array((np.round(shape*10/div)),dtype=int)        
+        if kwargs.get('rounding',False):
+            file.photons = np.array(np.round(np.array(file.photons,dtype=np.float)/div),dtype=np.uint16)
+        else:
+            file.photons = np.array(file.photons//div,dtype=np.uint16)
         #TODO: file.shape, rounding
         return file
-        
-folder = r"\\Astrosciema\f\dane\1909 BELL\09_11_test_nowego_formatu"+"\\"
-jsobjs=[LV302(js) for js in getAlljsons(folder)]
-#% %
-for o in jsobjs[1:]:
-    #print('pxy',o.file_names.positions)
-    #print('pnn',o.file_names.indexes)
-    o.pathreplace(r'F:\dane',r"\\Astrosciema\f\dane")
-    file=o.loadPhotons()
-    

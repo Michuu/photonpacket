@@ -23,9 +23,17 @@ def parse(jsonfile):
     '''
     '''
     try:
-        jsonfile=open(jsonfile, "r")  
-        jsondata = json.load(jsonfile)
-        jsonfile.close()
+        with open(jsonfile, "r") as f:
+            s=f.read()
+            jsondata1, end1 = json.JSONDecoder().raw_decode(s)
+            if type(jsondata1)==dict and jsondata1.get('version','xxx')[:2]=='3.':
+                #print(file)
+                try:
+                    jsondata2, end2 = json.JSONDecoder().raw_decode(s[end1:])
+                    jsondata1.update(jsondata2)
+                    
+                except:
+                    pass                
     except Exception as error:
             print(error)
             #TODO raise exception?
