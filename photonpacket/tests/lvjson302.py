@@ -42,14 +42,11 @@ folder = r"\\Astrosciema\f\dane\1909 BELL\09_11_test_nowego_formatu"+"\\"
 Nframes=10000000
 files = [r"305a-sr1.pxy"]
 fnames = [folder+s for s in files]
-files=[pp.file.read(fname,Nframes=Nframes,rounding=True) for fname in fnames]
-fs=pp.fsconcat([f.getframeseries() for f in files])
-fs.imshow()
+files2=[pp.file.read(fname,Nframes=Nframes,rounding=True, shapedetect=True) for fname in fnames]
+fs2=pp.fsconcat([f.getframeseries() for f in files2])
+print(fs2.N[:12])
 #%%
-import os
-print(os.path.splitdrive(fnames[0]))
+fs2.imshow()
 #%%
-import numpy as np
-print(file.idxs[:10])
-print(np.insert(file.idxs,0,0)[:10])
-print(file.idxs[:10])
+import matplotlib.pyplot as plt
+plt.plot(fs2.N)

@@ -215,7 +215,8 @@ class file:
             if isinstance(shape, np.ndarray):
                 shapedetect = False            
         except:
-            pass            
+            pass         
+        shapedetect = kwargs.get('shapedetect',shapedetect)
 
         # try to extract number of frames from params or filename
         # if number given both in filename and as argument
@@ -291,7 +292,7 @@ class file:
         npxyz = np.frombuffer(b''.join(file_datab[i+8:i+8+2*nph*nc] 
                             for i,nph in zip(idxs,npht)), np.dtype('>u2'))
         self.photons=np.reshape(npxyz,(len(npxyz)//photoDim,photoDim))[:, photinfoMask] 
-        self.idxs=np.cumsum(np.array(npht))
+        self.idxs=np.insert(np.cumsum(np.array(npht)),0,0)
         #self.idxs=np.array(i//2-k for k,i in enumerate(idxs))
         message("\nRead+reshape " + str(nframes) + " frames", 1)        
 
