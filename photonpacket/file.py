@@ -7,7 +7,6 @@ from .message import message, progress
 from . import settings
 from .helpers import siprefix
 import io
-import mmap
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 def py3_fromfile(f, dtype, num):
@@ -88,9 +87,9 @@ class file:
 
     
     def __del__(self):
-        del self.params
-        del self.photons
-        del self.idxs
+        if 'params' in dir(self): del self.params
+        if 'photons' in dir(self): del self.photons
+        if 'idxs' in dir(self): del self.idxs
 
     @staticmethod
     def createFromPath(path):
@@ -104,7 +103,9 @@ class file:
         return self
     
     def loadMetadata(self):
-        " try to read params json or xml file   "
+        "try to read params json or xml file"
+        directory=self.directory
+        name = self.name
         try:
             if os.path.isfile(os.path.join(directory, name + '.json')) ==True:
                 parse=settings.paramsparserjson
@@ -130,19 +131,21 @@ class file:
             shape = self.getshapefromname()
             Nf = self.getattributefromname('Nf')
             self.nameversion = 1
-        except NameError:
+        except NameError:            
             # this means that parser is not defined
             print("Error: File present, but params parser not defined!")
+            raise
             shape = self.getshapefromname()
             Nf = self.getattributefromname('Nf')
-            self.nameversion = 1
+            self.nameversion = 1        
         except Exception as e:
             # this means there was an unexpected error when parsing
             # we will proceed with automatic shape detection and no frame limit
             print("Unexpected Exception when parsing xml file (trying automatic shape detection): %s"%e)
             shape = False
             Nf = False
-        return (Nf, shape, roi)
+            raise
+        return (Nf, shape)
     
     def parsephotinfoMask(self,**kwargs):
         photinfoDim = 2
@@ -202,7 +205,7 @@ class file:
 
         '''
         self = file.createFromPath(path)
-        (Nf, shape, roi) = self.loadMetadata()
+        (Nf, shape) = self.loadMetadata()
 
 
         # try to set shape
@@ -232,7 +235,12 @@ class file:
 
         photinfoMask = self.parsephotinfoMask(**kwargs)
         
-        self.loadPhotonsV21(path, photinfoMask, maxframes)
+        if 'loadToFile' in dir(self.params):
+            # see lvjson3 LV305.loadToFile
+            self.params.loadToFile(self, path, maxframes)
+        else:
+            self.loadPhotonsV21(path, photinfoMask, maxframes)
+        
         # rounding photons positions
         if kwargs.get('rounding',False):
             self.photons = np.array(np.round(np.array(self.photons,dtype=np.float)/div),dtype=np.uint16)
@@ -251,6 +259,7 @@ class file:
         return self
     
     def loadPhotonsV21(self, path, photinfoMask, maxframes):
+        "faster indexing of v2 binary save files"
         nframes = 0
         # open file for binary reading
         with io.open(path,'rb') as f:
@@ -284,9 +293,7 @@ class file:
         self.photons=np.reshape(npxyz,(len(npxyz)//photoDim,photoDim))[:, photinfoMask] 
         self.idxs=np.cumsum(np.array(npht))
         #self.idxs=np.array(i//2-k for k,i in enumerate(idxs))
-        message("\nRead+reshape " + str(nframes) + " frames", 1)
-
-        
+        message("\nRead+reshape " + str(nframes) + " frames", 1)        
 
     def getframeseries(self):
         '''
