@@ -40,7 +40,7 @@ for o in jsobjs[0:1]:
 import photonpacket as pp
 folder = r"\\Astrosciema\f\dane\1909 BELL\09_11_test_nowego_formatu"+"\\"
 Nframes=10000000
-files = [r"305a-sr1.pxy"]
+files = [r"ciemne2-sr0.pxy"]
 fnames = [folder+s for s in files]
 files2=[pp.file.read(fname,Nframes=Nframes,rounding=True, shapedetect=True) for fname in fnames]
 fs2=pp.fsconcat([f.getframeseries() for f in files2])

@@ -31,14 +31,14 @@ def parse(jsonfile):
                 try:
                     jsondata2, end2 = json.JSONDecoder().raw_decode(s[end1:])
                     jsondata1.update(jsondata2)
-                    if jsondata1['version']=='3.05':
-                        from .lvjson3 import LV305
-                        print('labviewjsonparse LV305')
-                        return LV305(jsondata1)
-                    print('labviewjsonparse V3 json')
-                    return jsondata1
                 except:
-                    pass                
+                    pass   
+                if jsondata1['version']=='3.05':
+                    from .lvjson3 import LV305
+                    print('labviewjsonparse LV305')
+                    return LV305(jsondata1)
+                print('labviewjsonparse V3 json')
+                return jsondata1             
     except Exception as error:
             print('labviewjsonparse.parse:',error)
             #TODO raise exception?

@@ -80,10 +80,13 @@ class LV305_autogen(object):
         self.save_params=self.LVsave_params(_data['save_params'])
         self.file_names=self.LVfile_names(_data['file_names'])
         self.seconds_since_1Jan1904=_data['seconds since 1Jan1904'] # str
-        self.end=_data['end'] # str
-        self.Nph=_data['Nph'] # int
-        self.nframes=_data['nframes'] # int
-        self.Nf=self.nframes
+        try:
+            self.end=_data['end'] # str
+            self.Nph=_data['Nph'] # int
+            self.nframes=_data['nframes'] # int
+            self.Nf=self.nframes
+        except:
+            pass
         self.ROI=self.save_params.ROI
         self.ctrl_dict={e.ctrl_path:e.Value for e in self.ctrl_params}
         

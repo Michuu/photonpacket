@@ -118,6 +118,8 @@ class file:
                 Nf = self.params['Nf']
             except AttributeError:
                 Nf = False
+            except KeyError:
+                Nf = False
             try:
                 roi = self.params['ROI']
                 shape = np.array([roi[0], roi[2]])
