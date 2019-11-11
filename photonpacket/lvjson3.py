@@ -15,9 +15,11 @@ def getAlljsons(folder,version='3.03'):
             s=f.read()
             jsondata1, end1 = json.JSONDecoder().raw_decode(s)
             if type(jsondata1)==dict and jsondata1.get('version',None)==version:
-                #print(file)
-                jsondata2, end2 = json.JSONDecoder().raw_decode(s[end1:])
-                jsondata1.update(jsondata2)
+                try:
+                    jsondata2, end2 = json.JSONDecoder().raw_decode(s[end1:])
+                    jsondata1.update(jsondata2)
+                except:
+                    pass
                 lst.append((jsonfile,jsondata1))
     return lst
 
@@ -157,7 +159,7 @@ class LV305(LV305_autogen):
         dtype = np.dtype('>u2')   
         with open(self.file_names.positions,'rb') as f:
             data=np.frombuffer(f.read(), dtype) 
-            file.photons=data.reshape((-1,2),order='F')
+            file.photons=data.reshape((-1,2),order='C')
         file.params=self
     
     def __getitem__(self,key):
