@@ -146,6 +146,7 @@ class LV305(LV305_autogen):
         return file    
     
     def loadToFile(self, file, path=None, maxframes=-1):
+        from sys import stdout
         if path:
             self.pathshift(path)
         print('loading idxs',self.file_names.indexes)
@@ -155,12 +156,22 @@ class LV305(LV305_autogen):
             data=np.frombuffer(f.read(), dtype) 
             self.list_nph,file.idxs=data.reshape((2,-1),order='F')
         file.idxs=np.insert(file.idxs,0,0)
-        print('loading photons',self.file_names.positions,'\nnframes =',len(file.idxs),'nphotons =',file.idxs[-1])
+        print('loading photons',self.file_names.positions,'\nnframes =',len(file.idxs)/1000,'k, nphotons =',file.idxs[-1]/1000,'k')
         dtype = np.dtype('>u2')   
+        bytelen = 4*file.idxs[-1]
+        pos=0; data=[]
         with open(self.file_names.positions,'rb') as f:
-            data=np.frombuffer(f.read(), dtype) 
+            while pos<bytelen:
+                nb=min(8<<20,bytelen-pos)
+                data.append(f.read(nb))
+                pos+=nb
+                stdout.write("\r%dMB" % (pos>>20))
+                stdout.flush()          
+            data=np.frombuffer(b''.join(data), dtype)
+            print(' read data #%d=%d. reshaping_'%(len(data), file.idxs[-1]*2),end='')
             file.photons=data.reshape((-1,2),order='C')
         file.params=self
+        print('loaded.')
     
     def __getitem__(self,key):
         return self.__dict__[key] #.get(key,None)
