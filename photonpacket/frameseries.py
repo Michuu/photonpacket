@@ -404,6 +404,12 @@ class frameseries:
         self.photons = np.array(np.around(rcc_frames), dtype=self.dtype)
         self.cuttoshape(self.shape)
 
+    def rescalediv(fs,factor):
+        'rescale photon positions by factor = old_div / new_div'
+        shpsc = lambda shp: tuple(np.array(np.round(np.array(shp)*factor),dtype=np.int32))
+        shp = shpsc(fs.shape)
+        phts = np.array(np.around(fs.photons*factor),dtype=fs.photons.dtype)
+        fs.__init__(photons=phts,idxs=fs.idxs,shape=shp,cut=True,dtype=fs.dtype)
 
     def rescale(self, scale, centerpoint):
         '''
