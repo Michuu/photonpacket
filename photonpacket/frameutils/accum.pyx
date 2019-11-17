@@ -2,7 +2,7 @@ import numpy as np
 from photonpacket.message import progress
 cimport numpy as np
 from coinc cimport bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd, \
-bincoinc4sd2,  binautocoincsd, coinc4, coinc4_2, autocoinc, coinc3
+bincoinc4sd2,  binautocoincsd, coinc4, coinc4_2, autocoinc, coinc3, bincoinc_4d_sd
 cimport cython
 
 ctypedef fused DTYPE_t:
@@ -113,6 +113,21 @@ def accum_bincoinc(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, 
             frame1 = photons1[idxs1[i]:idxs1[i+1]]
             frame2 = photons2[idxs2[i]:idxs2[i+1]]
             bincoinc(frame1, frame2, accum)
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def accum_bincoinc_4d_sd(np.ndarray[DTYPE_t, ndim=2] photons1, np.ndarray[np.int32_t, ndim=1] idxs1,
+                   np.ndarray[DTYPE_t, ndim=2] photons2, np.ndarray[np.int32_t, ndim=1] idxs2,
+                                                         np.ndarray[accum_DTYPE_t, ndim=4] accum, np.ndarray[accum_DTYPE_t, ndim=1] shape):
+    cdef int i = 0
+    cdef np.ndarray[DTYPE_t, ndim=2] frame1
+    cdef np.ndarray[DTYPE_t, ndim=2] frame2
+    for i in xrange(len(idxs1)-1):
+        progress(i)
+        if idxs1[i] != idxs1[i+1] and idxs2[i] != idxs2[i+1]:
+            frame1 = photons1[idxs1[i]:idxs1[i+1]]
+            frame2 = photons2[idxs2[i]:idxs2[i+1]]
+            bincoinc_4d_sd(frame1, frame2, accum,shape)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)

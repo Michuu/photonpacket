@@ -186,6 +186,30 @@ cpdef bincoincsd(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2]
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
+cpdef bincoinc_4d_sd(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2,
+             np.ndarray[hist_DTYPE_t, ndim=4] hist, np.ndarray[hist_DTYPE_t, ndim=1] shape):
+    '''
+    Bin coincidences in sum/difference variables (4 dimensional, sum_y, diff_y=y1-y2, s_x d_x), adding them to  hist
+    '''
+    cdef int f1l = frame1.shape[0]
+    cdef int f2l = frame2.shape[0]
+    cdef int i = 0
+    cdef int j = 0
+    cdef int shift1 = 0
+    cdef int shift3 = 0
+    shift1 = shape[0]-1
+    shift3 = shape[1]-1
+    for i in range(f1l):
+        for j in range(f2l):
+            hist[
+            frame1[i,0] + frame2[j,0],
+            frame1[i,0] - frame2[j,0] + shift1,
+            frame1[i,1] + frame2[j,1],
+            frame1[i,1] - frame2[j,1] + shift3
+            ] += 1
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef autocoinc(np.ndarray[DTYPE_t, ndim=2] frame):
     '''
     Generate autocoincidences inside a single frame
@@ -241,9 +265,9 @@ cpdef binautocoincsd(np.ndarray[DTYPE_t, ndim=2] frame1,
     cdef int sign0 = signs[0]
     cdef int sign1 = signs[1]
     if sign0 == -1:
-        shift1 = (hist.shape[0]+1)/2-1
+        shift1 = (hist.shape[0]+1)//2-1
     if sign1 == -1:
-        shift2 = (hist.shape[1]+1)/2-1
+        shift2 = (hist.shape[1]+1)//2-1
     for i in range(f1l):
         for j in range(f1l):
             if i != j:

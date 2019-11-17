@@ -38,3 +38,5 @@ cpdef bincoinc4sd(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2
 cpdef bincoinc4sd2(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2,
                 np.ndarray[DTYPE_t, ndim=2] frame3, np.ndarray[DTYPE_t, ndim=2] frame4,
              np.ndarray[hist_DTYPE_t, ndim=2] hist, signs, shape)
+cpdef bincoinc_4d_sd(np.ndarray[DTYPE_t, ndim=2] frame1, np.ndarray[DTYPE_t, ndim=2] frame2,
+             np.ndarray[hist_DTYPE_t, ndim=4] hist, np.ndarray[hist_DTYPE_t, ndim=1] shape)

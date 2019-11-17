@@ -5,7 +5,7 @@ from .message import message, progress
 from collections import deque
 from .frameutils.coinc import bincount2d
 from .frameutils.accum import accum_bincoinc, concat_coinc, accum_bincoincsd,\
-     accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd, concat_autocoinc
+     accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd, concat_autocoinc, accum_bincoinc_4d_sd
 import itertools as it
 
 accumtype = np.uint16
@@ -62,6 +62,13 @@ def accumcoinc(fs1, fs2):
     accum = np.zeros(shape=(fs1.shape[0],fs2.shape[0],
                           fs1.shape[1],fs2.shape[1]), dtype=accumtype)
     accum_bincoinc(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs, accum)
+    return accum
+
+def accumcoinc_4d_sd(fs1,fs2):
+    'accum full 4dim coincidences in sum/difference variables, s_y,d_y=y1-y2,s_x,d_x'
+    accum = np.zeros(shape=(fs1.shape[0]+fs2.shape[0]-1,fs1.shape[0]+fs2.shape[0]-1,
+                          fs1.shape[1]+fs2.shape[1]-1,fs1.shape[1]+fs2.shape[1]-1), dtype=accumtype)
+    accum_bincoinc_4d_sd(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs, accum,np.array(fs2.shape,dtype=np.uint16))
     return accum
 
 def accumcoinc2d(fs1, fs2, axis=0, constr=None):
