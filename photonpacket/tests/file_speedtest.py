@@ -75,7 +75,7 @@ f.close()
 print(time.time()-s)
 #%%
 import time
-folder = r"\\Astrosciema\f\dane"+r"\1909 BELL\poszukiwania g2\31_10"+"\\"
+folder = r"\\Astrosciema\f\dane\1909 BELL\poszukiwania g2\31_10"+"\\"
 file = r"pom_interf_shift70-sr0.dat"
 fname= folder + file
 
