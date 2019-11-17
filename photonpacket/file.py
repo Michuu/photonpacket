@@ -11,9 +11,21 @@ import mmap
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix
 
 def py3_fromfile(f, dtype, num):
-    #buf = np.empty(num, dtype,order='F')
-    #b = bytearray(num*np.dtype(dtype))
-    #f.readinto(b)
+    '''
+    Faster than np.fromfile
+    
+    Parameters
+    ----------
+    f : file handle
+    
+    dtype : data type
+    
+    num : number of elements to read
+    
+    Returns
+    ----------
+    data : :class:`numpy.ndarray`
+    '''
     dt = np.dtype(dtype)
     return np.frombuffer(f.read(num*dt.itemsize), dtype)
     
@@ -205,64 +217,40 @@ class file:
                 return False
         nframes = 0
         # open file for binary reading
-        f = io.open(path,'rb')
-        if 'mmap' in kwargs:
-            if kwargs['mmap'] == True:
-                print('Using mmap...')
-                fl=f
-                f = mmap.mmap(fl.fileno(), 0,access=mmap.ACCESS_READ)
-                mmapused =True
-            else:
-                mmapused=False
-        else:
-            mmapused=False
+        with io.open(path,'rb') as f:
+            file_datab = f.read()
         nxy=0
         img=0
-        
+        from struct import unpack
+        from collections import deque
         idxs=[]
+        npht=[]
         photons=[]
         i=0
         idxs.append(i)
-
-        while(True):
-            # read number of photons in a frame
-            # nxy = (number of photons, information per photon)
-            nxy = py3_fromfile(f, '>i4', 2)
-            
+        len_b=len(file_datab)
+        while i<len_b:
+            # 2d array size from LV
+            nph,nc=unpack('>ii',file_datab[i:i+8])            
             if i == 0:
-                photoDim = nxy[1]
-                
-            # break if file ended or acquired enough frames
-            if nxy.size == 0 or (nframes >= maxframes and frames_limit):
-                break
-            
-            N = nxy[0] * nxy[1]
-            nframes += 1
-            # read frame data
+                photoDim = nc        
+            i+=8+2*nph*nc # byte advance
+            idxs.append(i) # header position
+            npht.append(nph)
+            #photons.append(b[i+8:i+8+2*nph*nc])
+            nframes+=1
+            progress(nframes)               
 
-            i += nxy[0]
-            idxs.append(i)
-            
-            if N > 0:
-                # TODO: possibility of getting other info about photons,
-                #       add dtype attribute basing on rounding parameter
-                #       (double or uint) and propagate it to getframeseries
-                # extract only photon positions
-                img = py3_fromfile(f, '>u2', N)  
-                photons.append(img)
-
-            progress(nframes)
-        # close file access
-        f.close()
-        if(mmapused):
-            fl.close()
         # set actual number of frames
         self.Nframes = nframes
-
-        message("\nRead " + str(nframes) + " frames", 1)
-
-        self.photons=np.reshape(np.concatenate(photons),(idxs[-1],photoDim))[:, photinfoMask]
-        self.idxs=np.array(idxs)
+        
+        #npxyz = np.frombuffer(b''.join(photons), dt_body)
+        npxyz = np.frombuffer(b''.join(file_datab[i+8:i+8+2*nph*nc] 
+                            for i,nph in zip(idxs,npht)), np.dtype('>u2'))
+        self.photons=np.reshape(npxyz,(len(npxyz)//photoDim,photoDim))[:, photinfoMask] 
+        self.idxs=np.cumsum(np.array(npht))
+        #self.idxs=np.array(i//2-k for k,i in enumerate(idxs))
+        message("\nRead+reshape " + str(nframes) + " frames", 1)
 
         # rounding photons positions
         if rounding:
