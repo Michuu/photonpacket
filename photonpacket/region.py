@@ -52,12 +52,12 @@ class region(object):
         elif self.logic == 'not':
             return np.logical_not(self.component_regions.getmask(frame.copy()))
 
-    def plot(self):
+    def plot(self, **kwargs):
         if self.component_regions.__class__ == tuple:
             for reg in self.component_regions:
-                reg.plot()
+                reg.plot(**kwargs)
         else:
-            self.component_regions.plot()
+            self.component_regions.plot(**kwargs)
 
     def isinregion(self):
         pass
@@ -249,15 +249,15 @@ class rect(region):
         self.shape = [x1-x0, y1-y0]
         self.corner = np.array([self.x0, self.y0])
 
-    def plot(self):
+    def plot(self,color='r', **kwargs):
         v1 = np.array([[self.y0,self.y1],[self.x0,self.x0]])
         v2 = np.array([[self.y0,self.y0],[self.x0,self.x1]])
         v3 = np.array([[self.y1,self.y0],[self.x1,self.x1]])
         v4 = np.array([[self.y1,self.y1],[self.x1,self.x0]])
-        plt.plot(v1[0],v1[1],color='r')
-        plt.plot(v2[0],v2[1],color='r')
-        plt.plot(v3[0],v3[1],color='r')
-        plt.plot(v4[0],v4[1],color='r')
+        plt.plot(v1[0],v1[1],color=color,**kwargs)
+        plt.plot(v2[0],v2[1],color=color,**kwargs)
+        plt.plot(v3[0],v3[1],color=color,**kwargs)
+        plt.plot(v4[0],v4[1],color=color,**kwargs)
 
     def isinregion(self,R):
         # TODO: implement

@@ -277,3 +277,28 @@ def autocoinchist(fs1, signs, **kwargs):
     accum = np.zeros(shape, dtype=accumtype)
     accum_binautocoincsd(fs1.photons, fs1.idxs, accum, signs, fs1.shape, **kwargs)
     return accum
+
+def ccoinc(fs1, fs2):
+    '''
+    Concatenate coincidences
+
+    Parameters
+    ----------
+    fs1 : :class:`photonpacket.frameseries`
+
+    fs2 : :class:`photonpacket.frameseries`
+
+    Returns
+    ----------
+
+    See Also
+    ----------
+
+    Notes
+    ----------
+
+    Examples
+    ----------
+    '''
+    return concat_coinc(fs1.photons, fs1.idxs, fs2.photons, fs2.idxs)
+    
