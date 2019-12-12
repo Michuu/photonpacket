@@ -5,7 +5,7 @@ from .message import message, progress
 from collections import deque
 from .frameutils.coinc import bincount2d
 from .frameutils.accum import accum_bincoinc, concat_coinc, accum_bincoincsd,\
-     accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd, concat_autocoinc, accum_bincoinc_4d_sd
+     accum_bincoinc4sd, accum_bincoinc4sd2, accum_binautocoincsd, concat_autocoinc#, accum_bincoinc_4d_sd
 import itertools as it
 
 accumtype = np.uint16

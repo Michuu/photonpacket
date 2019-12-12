@@ -116,7 +116,9 @@ class LV305(LV305_autogen):
             print('fail')
                 
     def createfileclass(self):
-        ' compatibility with photonpacket'
+        '''
+        compatibility with photonpacket
+        '''
         import os
         from photonpacket import file
         path=self.file_names.positions
@@ -146,6 +148,9 @@ class LV305(LV305_autogen):
         return file    
     
     def loadToFile(self, file, path=None, maxframes=-1):
+        '''
+        ?
+        '''
         from sys import stdout
         if path:
             self.pathshift(path)
@@ -159,7 +164,8 @@ class LV305(LV305_autogen):
         print('loading photons',self.file_names.positions,'\nnframes =',len(file.idxs)/1000,'k, nphotons =',file.idxs[-1]/1000,'k')
         dtype = np.dtype('>u2')   
         bytelen = 4*file.idxs[-1]
-        pos=0; data=[]
+        pos = 0
+        data = []
         with open(self.file_names.positions,'rb') as f:
             while pos<bytelen:
                 nb=min(8<<20,bytelen-pos)
