@@ -70,7 +70,46 @@ class frameseries:
             '''
             '''
             return np.array(arraysplit(self.fs.photons, self.fs.idxs[1:-1]), dtype=np.object).__repr__()
+    
+    @classmethod
+    def from_dict(cls, d):
+        '''
+        Create `frameseries` object from dictionary
 
+        Parameters
+        ---------
+        photons : :class:`numpy.ndarray`
+
+        idxs : :class:`numpy.ndarray`
+
+        shape : tuple
+
+        cut : bool
+
+        dtype : data-type
+
+        Returns
+        ---------
+
+        See Also
+        ---------
+
+        Notes
+        ---------
+
+        Examples
+        ---------
+        '''
+        d = dict(d)
+        photons =  d.pop('photons', [[]])
+        idxs = d.pop('idxs', [])
+        if len(photons)>1:
+            shape = photons.max(0)
+        shape = d.pop('shape', shape)
+        fs = cls(photons, idxs, shape, cut = False)
+        fs.__dict__.update(d)
+        return fs
+    
     def __init__(self, photons, idxs, shape, cut = True, dtype = np.uint16):
         '''
         Create `frameseries` object from photons and indices
