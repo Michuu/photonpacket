@@ -621,11 +621,11 @@ class frameseries:
         from .stat1d import var
         return var(self, uncert)
 
-    def imshow(self):
+    def imshow(self, **kwargs):
         '''
 
         '''
-        plt.imshow(self.accumframes())
+        plt.imshow(self.accumframes(), **kwargs)
 
     def maskframes(self, frame_mask):
         '''
