@@ -196,12 +196,18 @@ class circle(region):
         self.shape = [2*r, 2*r]
         self.corner = np.array([self.x0-self.r, self.y0-self.r])
 
-    def plot(self,reshaped = False):
-        ax=plt.gca()
-        if reshaped:
-            c1=plt.Circle((self.y0-self.corner[1],self.x0-self.corner[0]),self.r,fill=False,color='r')
+    def plot(self,reshaped = False, **kwargs):
+        if 'ax' in kwargs:
+            ax=kwargs.pop('ax')
         else:
-            c1=plt.Circle((self.y0,self.x0),self.r,fill=False,color='r')
+            ax=plt.gca()
+            
+        if 'color' not in kwargs:
+            kwargs['color']='r'
+        if reshaped:
+            c1=plt.Circle((self.y0-self.corner[1],self.x0-self.corner[0]),self.r,fill=False,**kwargs)
+        else:
+            c1=plt.Circle((self.y0,self.x0),self.r,fill=False,**kwargs)
         ax.add_artist(c1)
 
     def r2dist(self,R):
