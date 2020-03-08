@@ -331,6 +331,12 @@ class frameseries:
             frame_mask *= (self.N >= kwargs['minphotons'])
         if 'maxphotons' in kwargs:
             frame_mask *= (self.N <= kwargs['maxphotons'])
+            
+        if 'nphotons' in kwargs:
+            nphotons = kwargs['nphotons']
+            if nphotons>0:
+                phot_frame_mask = np.cumsum(self.N)<=nphotons
+                frame_mask = frame_mask & phot_frame_mask
 
         mask = np.repeat(frame_mask, self.N)
         phts = self.photons[mask]
