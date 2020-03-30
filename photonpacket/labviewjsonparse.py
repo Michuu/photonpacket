@@ -1,7 +1,7 @@
 #%%
 #tu parser jsona
 import json
-
+from .message import message
 singledimdtypes = ('U32', 'I32', 'U16', 'I16', 'U8', 'I8', 'DBL', 'Boolean', 'String')
 
 
@@ -36,9 +36,9 @@ def parse(jsonfile):
                         pass   
                     if jsondata1['version']=='3.05':
                         from .lvjson3 import LV305
-                        print('labviewjsonparse LV305')
+                        message('labviewjsonparse LV305', 3, False)
                         return LV305(jsondata1)
-                    print('labviewjsonparse V3 json')
+                    message('labviewjsonparse V3 json', 3, False)
                     return jsondata1    
                 elif str(jsondata1.get('version','xxx'))[:3]=='20.':
                     try:
@@ -48,9 +48,9 @@ def parse(jsonfile):
                         pass   
                     if str(jsondata1['version'])=='20.01':
                         from .lvjson20 import LV2001
-                        print('labviewjsonparse LV2001')
+                        message('labviewjsonparse LV2001', 3, False)
                         return LV2001(jsondata1)
-                    print('labviewjsonparse V20 json')
+                    message('labviewjsonparse V20 json', 3, False)
                     return jsondata1  
                     
     except Exception as error:

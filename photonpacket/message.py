@@ -2,12 +2,19 @@
 from . import settings
 from sys import stdout
 
-def message(str, v):
+def message(str, v, overwrite=None):
     '''
     Print message if verbosity is sufficient
     '''
+    if overwrite == None:
+        overwrite = settings.overwrite
     if v <= settings.verbose:
-        print(str)
+        if overwrite:
+            stdout.write(str)
+            stdout.flush()
+        else:
+            print(str)
+
 
 def progress(i):
     '''

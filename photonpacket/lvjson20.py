@@ -5,6 +5,7 @@ Created on Mon Jan 13 18:28:35 2020
 @author: lab
 """  
 import glob, json
+from .message import message, progress
 def getAlljsons(folder,version='3.03'):
     lst=[]
     for jsonfile in glob.glob(folder+"*.json"):
@@ -96,7 +97,7 @@ class LV2001(LV2001_autogen):
                 if a!=b: 
                     if i>2:                
                         self.pathreplace(d2[:-i],d1[:-i])
-                        print('pathshift "%s"->"%s"'%(d2[:-i],d1[:-i]),self.file_names.positions)
+                        message('pathshift "%s"->"%s"'%(d2[:-i],d1[:-i]), 3, False)
                         return
                     else:
                         break
@@ -141,14 +142,15 @@ class LV2001(LV2001_autogen):
         from sys import stdout
         if path:
             self.pathshift(path)
-        print('loading idxs',self.file_names.indexes)
+        message('loading idxs '+str(self.file_names.indexes), 2, False)
         import numpy as np
         dtype = np.dtype('>i4')        
         with open(self.file_names.indexes,'rb') as f:
             data=np.frombuffer(f.read(), dtype) 
             self.list_nph,file.idxs=data.reshape((2,-1),order='F')
         file.idxs=np.insert(file.idxs,0,0)
-        print('loading photons',self.file_names.positions,'\nnframes =',len(file.idxs)/1000,'k, nphotons =',file.idxs[-1]/1000,'k')
+        message('loading photons '+str(self.file_names.positions), 2, False)
+        msg='nframes={}k, nphotons={}k'.format(len(file.idxs)/1000,file.idxs[-1]/1000)
         dtype = np.dtype('>u2')   
         bytelen = 4*file.idxs[-1]
         pos = 0
@@ -158,13 +160,16 @@ class LV2001(LV2001_autogen):
                 nb=min(8<<20,bytelen-pos)
                 data.append(f.read(nb))
                 pos+=nb
-                stdout.write("\r%dMB" % (pos>>20))
-                stdout.flush()          
+                message("\r"+msg+"  %dMB" % (pos>>20)+' '*1, 1)
+                #stdout.write("\r%dMB" % (pos>>20))
+                #tdout.flush()          
             data=np.frombuffer(b''.join(data), dtype)
-            print(' read data #%d=%d. reshaping_'%(len(data), file.idxs[-1]*2),end='')
+            message(' read data #%d=%d.'%(len(data), file.idxs[-1]*2)+' '*50,1)
+            message('\n',2)
+            message('reshaping...', 3, False)
             file.photons=data.reshape((-1,2),order='C')
         file.params=self
-        print('loaded.')
+        message('loaded.',2, False)
     
     def __getitem__(self,key):
         return self.__dict__[key] #.get(key,None)
