@@ -155,35 +155,24 @@ class frameseries:
         '''
         if isinstance(key, slice):
             start, stop, step = key.indices(self.Nframes)
-            photons = []
-            i = start
-            idx = 0
-            idxs = [0,]
-            while i < stop:
-                st = self.idxs[i]
-                end = self.idxs[i+1]
-                photons.append(self.photons[st:end])
-                i += step
-                idx += end - st
-                idxs.append(idx)
-            photons = np.concatenate(photons)
-            return frameseries(photons, np.array(idxs), self.shape, cut=False, dtype=self.dtype)
+            frame_mask = np.full(self.Nframes, False)
+            frame_mask[start:stop:step] = True
+            ph_mask = np.repeat(frame_mask, self.N)
+            photons = self.photons[ph_mask]
+            N = self.N[frame_mask]
+            idxs = np.r_[0, np.cumsum(N)]
+            return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
         elif isinstance(key, list) or isinstance(key, np.ndarray):
             if max(key) > self.Nframes:
                 raise KeyError
             else:
-                photons = []
-                idxs = np.zeros(len(key) + 1)
-                idxs[0] = 0
-                idx = 0
-                for i in key:
-                    st = self.idxs[i]
-                    end = self.idxs[i+1]
-                    photons.append(self.photons[st:end])
-                    idx += end - st
-                    idxs[i+1] = idx
-                photons = np.concatenate(photons)
-                return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
+            	frame_mask = np.full(self.Nframes, False)
+            	frame_mask[key] = True
+            	ph_mask = np.repeat(frame_mask, self.N)
+            	photons = self.photons[ph_mask]
+            	N = self.N[frame_mask]
+            	idxs = np.r_[0, np.cumsum(N)]
+            	return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
         elif isinstance(key, int):
             st_idx = self.idxs[key]
             end_idx = self.idxs[key+1]
