@@ -298,7 +298,7 @@ class frameseries:
         Parameters
         ---------
 
-        'kwargs' : minphotons, maxphotons (filters out frames)
+        'kwargs' : minphotons, maxphotons (filters out frames), nphotons
 
         Returns
         ---------
@@ -331,15 +331,14 @@ class frameseries:
             frame_mask *= (self.N >= kwargs['minphotons'])
         if 'maxphotons' in kwargs:
             frame_mask *= (self.N <= kwargs['maxphotons'])
-            
-        if 'nphotons' in kwargs:
-            nphotons = kwargs['nphotons']
-            if nphotons>0:
-                phot_frame_mask = np.cumsum(self.N)<=nphotons
-                frame_mask = frame_mask & phot_frame_mask
 
         mask = np.repeat(frame_mask, self.N)
         phts = self.photons[mask]
+
+        if 'nphotons' in kwargs:
+            nphotons = kwargs['nphotons']
+            if (nphotons>0) and (len(phts)>nphotons):
+            	phts = phts[:nphotons]
 
         accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)
         return accum
@@ -692,32 +691,20 @@ def fsconcat(fslist):
     return frameseries(photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
 
 def fsmerge(fslist):
-    '''
+	'''
     Merge frame-by-frame
     '''
 
-    new_photons = []
-    idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
-    for i in range(len(idxs)-1):
-        new_photons.extend([fs.photons[fs.idxs[i]:fs.idxs[i+1]] for fs in fslist])
-    return frameseries(np.concatenate(new_photons), idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
-
-def fsmerge2(fslist):
-    '''
-    Merge frame-by-frame
-    (wielka porazka)
-    '''
-
-    idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
-    cidxs = np.cumsum(np.array([fs.idxs for fs in fslist]), axis=0)
-    didxs = np.diff(cidxs)
-    nidxs = np.insert(didxs+idxs[:-1],0,idxs[:-1],axis=0)
-    new_photons = np.zeros((len(idxs),2), dtype = fslist[0].dtype)
-    for i,fs in enumerate(fslist):
-        for j in range(len(idxs)-1):
-            new_photons[nidxs[i,j]:nidxs[i+1,j]] = fs.photons[fs.idxs[j]:fs.idxs[j+1]]
-    return frameseries(new_photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
-
+	N = np.sum(np.array([fs.N for fs in fslist]), axis=0)
+	idxs = np.r_[0,np.cumsum(N)]
+	new_photons = np.zeros((idxs[-1],2),dtype=fslist[0].dtype)
+	tN=0
+	for fs in fslist:
+		r = np.arange(fs.idxs[-1])
+		rN = np.repeat((idxs-np.r_[0,np.cumsum(fs.N)])[:-1]+tN,fs.N)
+		tN+=fs.N
+		new_photons[r+rN] = np.copy(fs.photons)
+	return frameseries(new_photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
 
 def fsplot(fslist, samples=1000):
     '''
