@@ -3,8 +3,8 @@ import numpy as np
 from .frameseries import frameseries
 import re
 import os
-from .message import message, progress
 from . import settings
+from .message import message, progress
 from .helpers import siprefix
 import io
 # from scipy.sparse import dok_matrix, kron, csr_matrix, coo_matrix

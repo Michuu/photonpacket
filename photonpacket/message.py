@@ -15,7 +15,6 @@ def message(str, v, overwrite=None):
         else:
             print(str)
 
-
 def progress(i):
     '''
     Display progress message

@@ -1,7 +1,6 @@
 #%%
 #tu parser jsona
 import json
-from .message import message
 singledimdtypes = ('U32', 'I32', 'U16', 'I16', 'U8', 'I8', 'DBL', 'Boolean', 'String')
 
 
@@ -22,6 +21,7 @@ def dtcast(val, dtype):
 def parse(jsonfile):
     '''
     '''
+    from .message import message
     try:
         with open(jsonfile, "r") as f:
             s=f.read()
