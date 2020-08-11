@@ -486,6 +486,53 @@ class halfcircle(region):
     def getmask(self, frame):
         pass
 
+class line(region):
+    '''
+    1d line
+    '''
+    # TODO: add rotation angle?
+    x0 = 0
+    x1 = 0
+    shape = []
+    corner = np.array([])
+
+    def __init__(self, x0, x1):
+        '''
+
+        Paramterers
+        ---------
+        r0=(x0, y0) : (int, int)
+            bottom left corner
+        r1=(x1, y1) : (int, int)
+            top right corner
+
+        '''
+        self.x0 = x0
+        self.x1 = x1
+        self.shape = [x1-x0, ]
+        self.corner = np.array([self.x0, 0])
+
+    def plot(self,color='r', **kwargs):
+        y0=0
+        y1=10
+        v1 = np.array([[self.x0,self.x0],[y0,y1]])
+        v2 = np.array([[self.x0,self.x1],[y0,y0]])
+        v3 = np.array([[self.x1,self.x1],[y1,y0]])
+        v4 = np.array([[self.x1,self.x0],[y1,y1]])
+        plt.plot(v1[0],v1[1],color=color,**kwargs)
+        plt.plot(v2[0],v2[1],color=color,**kwargs)
+        plt.plot(v3[0],v3[1],color=color,**kwargs)
+        plt.plot(v4[0],v4[1],color=color,**kwargs)
+
+    def isinregion(self,R):
+        # TODO: implement
+        pass
+
+    def getmask(self, frame):
+        mask1 = frame[:,0] > self.x0
+        mask2 = frame[:,0] < self.x1
+        return mask1 * mask2
+    
 class paramregion(region):
     '''
     Represtents abstract region in the space of additional photon paramters accesible via file loading with non-standard 'mode'
