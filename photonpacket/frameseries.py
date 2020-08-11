@@ -329,16 +329,12 @@ class frameseries:
         mask = np.repeat(frame_mask, self.N)
         phts = self.photons[mask]
 
-<<<<<<< HEAD
-        accum = bincountnd(np.array(phts[:,coords], dtype=self.dtype), self.shape)
-=======
         if 'nphotons' in kwargs:
             nphotons = kwargs['nphotons']
             if (nphotons>0) and (len(phts)>nphotons):
             	phts = phts[:nphotons]
 
-        accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)
->>>>>>> b0f31e149f9dc18837ddd79965ecb8345dfddda3
+        accum = bincountnd(np.array(phts[:,coords], dtype=self.dtype), self.shape)
         return accum
 
     def delneighbours(self, r=5, metric='euclidean'):
