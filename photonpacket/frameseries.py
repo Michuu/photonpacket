@@ -70,7 +70,46 @@ class frameseries:
             '''
             '''
             return np.array(arraysplit(self.fs.photons, self.fs.idxs[1:-1]), dtype=np.object).__repr__()
+    
+    @classmethod
+    def from_dict(cls, d):
+        '''
+        Create `frameseries` object from dictionary
 
+        Parameters
+        ---------
+        photons : :class:`numpy.ndarray`
+
+        idxs : :class:`numpy.ndarray`
+
+        shape : tuple
+
+        cut : bool
+
+        dtype : data-type
+
+        Returns
+        ---------
+
+        See Also
+        ---------
+
+        Notes
+        ---------
+
+        Examples
+        ---------
+        '''
+        d = dict(d)
+        photons =  d.pop('photons', [[]])
+        idxs = d.pop('idxs', [])
+        if len(photons)>1:
+            shape = photons.max(0)
+        shape = d.pop('shape', shape)
+        fs = cls(photons, idxs, shape, cut = False)
+        fs.__dict__.update(d)
+        return fs
+    
     def __init__(self, photons, idxs, shape, cut = True, dtype = np.uint16):
         '''
         Create `frameseries` object from photons and indices
@@ -116,35 +155,24 @@ class frameseries:
         '''
         if isinstance(key, slice):
             start, stop, step = key.indices(self.Nframes)
-            photons = []
-            i = start
-            idx = 0
-            idxs = [0,]
-            while i < stop:
-                st = self.idxs[i]
-                end = self.idxs[i+1]
-                photons.append(self.photons[st:end])
-                i += step
-                idx += end - st
-                idxs.append(idx)
-            photons = np.concatenate(photons)
-            return frameseries(photons, np.array(idxs), self.shape, cut=False, dtype=self.dtype)
+            frame_mask = np.full(self.Nframes, False)
+            frame_mask[start:stop:step] = True
+            ph_mask = np.repeat(frame_mask, self.N)
+            photons = self.photons[ph_mask]
+            N = self.N[frame_mask]
+            idxs = np.r_[0, np.cumsum(N)]
+            return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
         elif isinstance(key, list) or isinstance(key, np.ndarray):
             if max(key) > self.Nframes:
                 raise KeyError
             else:
-                photons = []
-                idxs = np.zeros(len(key) + 1)
-                idxs[0] = 0
-                idx = 0
-                for i in key:
-                    st = self.idxs[i]
-                    end = self.idxs[i+1]
-                    photons.append(self.photons[st:end])
-                    idx += end - st
-                    idxs[i+1] = idx
-                photons = np.concatenate(photons)
-                return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
+            	frame_mask = np.full(self.Nframes, False)
+            	frame_mask[key] = True
+            	ph_mask = np.repeat(frame_mask, self.N)
+            	photons = self.photons[ph_mask]
+            	N = self.N[frame_mask]
+            	idxs = np.r_[0, np.cumsum(N)]
+            	return frameseries(photons, idxs, self.shape, cut=False, dtype=self.dtype)
         elif isinstance(key, int):
             st_idx = self.idxs[key]
             end_idx = self.idxs[key+1]
@@ -259,7 +287,7 @@ class frameseries:
         Parameters
         ---------
 
-        'kwargs' : minphotons, maxphotons (filters out frames)
+        'kwargs' : minphotons, maxphotons (filters out frames), nphotons
 
         Returns
         ---------
@@ -301,7 +329,16 @@ class frameseries:
         mask = np.repeat(frame_mask, self.N)
         phts = self.photons[mask]
 
+<<<<<<< HEAD
         accum = bincountnd(np.array(phts[:,coords], dtype=self.dtype), self.shape)
+=======
+        if 'nphotons' in kwargs:
+            nphotons = kwargs['nphotons']
+            if (nphotons>0) and (len(phts)>nphotons):
+            	phts = phts[:nphotons]
+
+        accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)
+>>>>>>> b0f31e149f9dc18837ddd79965ecb8345dfddda3
         return accum
 
     def delneighbours(self, r=5, metric='euclidean'):
@@ -587,11 +624,11 @@ class frameseries:
         from .stat1d import var
         return var(self, uncert)
 
-    def imshow(self):
+    def imshow(self, **kwargs):
         '''
 
         '''
-        plt.imshow(self.accumframes())
+        plt.imshow(self.accumframes(), **kwargs)
 
     def maskframes(self, frame_mask):
         '''
@@ -652,32 +689,20 @@ def fsconcat(fslist):
     return frameseries(photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
 
 def fsmerge(fslist):
-    '''
+	'''
     Merge frame-by-frame
     '''
 
-    new_photons = []
-    idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
-    for i in range(len(idxs)-1):
-        new_photons.extend([fs.photons[fs.idxs[i]:fs.idxs[i+1]] for fs in fslist])
-    return frameseries(np.concatenate(new_photons), idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
-
-def fsmerge2(fslist):
-    '''
-    Merge frame-by-frame
-    (wielka porazka)
-    '''
-
-    idxs = np.sum(np.array([fs.idxs for fs in fslist]), axis=0)
-    cidxs = np.cumsum(np.array([fs.idxs for fs in fslist]), axis=0)
-    didxs = np.diff(cidxs)
-    nidxs = np.insert(didxs+idxs[:-1],0,idxs[:-1],axis=0)
-    new_photons = np.zeros((len(idxs),2), dtype = fslist[0].dtype)
-    for i,fs in enumerate(fslist):
-        for j in range(len(idxs)-1):
-            new_photons[nidxs[i,j]:nidxs[i+1,j]] = fs.photons[fs.idxs[j]:fs.idxs[j+1]]
-    return frameseries(new_photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
-
+	N = np.sum(np.array([fs.N for fs in fslist]), axis=0)
+	idxs = np.r_[0,np.cumsum(N)]
+	new_photons = np.zeros((idxs[-1],2),dtype=fslist[0].dtype)
+	tN=0
+	for fs in fslist:
+		r = np.arange(fs.idxs[-1])
+		rN = np.repeat((idxs-np.r_[0,np.cumsum(fs.N)])[:-1]+tN,fs.N)
+		tN+=fs.N
+		new_photons[r+rN] = np.copy(fs.photons)
+	return frameseries(new_photons, idxs, shape = fslist[0].shape, cut=False, dtype=fslist[0].dtype)
 
 def fsplot(fslist, samples=1000):
     '''

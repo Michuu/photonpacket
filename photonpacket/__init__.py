@@ -9,5 +9,5 @@ from .hist1d import hist1d
 from .hist2d import hist2d
 from .bincountnd import bincountnd
 from . import settings
-from .message import message
+#from .message import message
 from . import frameutils
