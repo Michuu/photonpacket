@@ -62,7 +62,7 @@ class region(object):
     def isinregion(self):
         pass
 
-    def getframeseries(self, fs, reshape = False):
+    def getframeseries(self, fs, reshape = False, dtype=None):
         '''
         Select photon in region and obtain frameseries
 
@@ -84,15 +84,19 @@ class region(object):
         Examples
         ---------
         '''
-        photons = fs.photons.copy()
+        if dtype is None:
+            dtype = fs.dtype
+            photons = fs.photons.copy()
+        else:
+            photons = fs.photons.astype(dtype)
         mask = self.getmask(photons[:,:2].copy())
         cmask = np.r_[0, np.cumsum(mask)]
         idxs = np.r_[0, cmask[fs.idxs[1:]]]
         if reshape:
             photons = self.reshape(photons)
-            return frameseries(photons[mask], idxs, self.shape, cut=False, dtype=fs.dtype)
+            return frameseries(photons[mask], idxs, self.shape, cut=False, dtype=dtype)
         else:
-            return frameseries(photons[mask], idxs, fs.shape, cut=False, dtype=fs.dtype)
+            return frameseries(photons[mask], idxs, fs.shape, cut=False, dtype=dtype)
 
     def getcounts(self, fs):
         '''
@@ -260,10 +264,14 @@ class rect(region):
         v2 = np.array([[self.y0,self.y0],[self.x0,self.x1]])
         v3 = np.array([[self.y1,self.y0],[self.x1,self.x1]])
         v4 = np.array([[self.y1,self.y1],[self.x1,self.x0]])
-        plt.plot(v1[0],v1[1],color=color,**kwargs)
-        plt.plot(v2[0],v2[1],color=color,**kwargs)
-        plt.plot(v3[0],v3[1],color=color,**kwargs)
-        plt.plot(v4[0],v4[1],color=color,**kwargs)
+        if 'ax' in kwargs:
+            ax = kwargs.pop('ax')
+        else:
+            ax=plt.gca()
+        ax.plot(v1[0],v1[1],color=color,**kwargs)
+        ax.plot(v2[0],v2[1],color=color,**kwargs)
+        ax.plot(v3[0],v3[1],color=color,**kwargs)
+        ax.plot(v4[0],v4[1],color=color,**kwargs)
 
     def isinregion(self,R):
         # TODO: implement
