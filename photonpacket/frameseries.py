@@ -321,6 +321,11 @@ class frameseries:
         if 'maxphotons' in kwargs:
             frame_mask *= (self.N <= kwargs['maxphotons'])
 
+        if 'coords' in kwargs:
+            coords = kwargs['coords']
+        else:
+            coords = slice(0,2)
+            
         mask = np.repeat(frame_mask, self.N)
         phts = self.photons[mask]
 
@@ -329,7 +334,7 @@ class frameseries:
             if (nphotons>0) and (len(phts)>nphotons):
             	phts = phts[:nphotons]
 
-        accum = bincountnd(np.array(phts[:,0:2], dtype=self.dtype), self.shape)
+        accum = bincountnd(np.array(phts[:,coords], dtype=self.dtype), self.shape)
         return accum
 
     def delneighbours(self, r=5, metric='euclidean'):

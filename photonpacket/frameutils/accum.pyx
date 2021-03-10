@@ -1,7 +1,7 @@
 import numpy as np
 from photonpacket.message import progress
 cimport numpy as np
-from coinc cimport bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd, \
+from photonpacket.frameutils.coinc cimport bincoinc, bincoincsd, bincount2d, coinc, bincoinc4sd, \
 bincoinc4sd2,  binautocoincsd, coinc4, coinc4_2, autocoinc, coinc3, bincoinc_4d_sd
 cimport cython
 
