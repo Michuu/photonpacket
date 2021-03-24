@@ -11,6 +11,8 @@ extensions = [
         ]
 
 setup(
+	name = "photonpacket",
+	packages=setuptools.find_packages(),
     ext_modules=cythonize(extensions, language_level = "3"),
     include_dirs=[numpy.get_include()]
 )

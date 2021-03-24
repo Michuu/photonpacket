@@ -12,3 +12,5 @@
 *.pyd
 .spyproject/workspace.ini
 doc/build/
+
+*.egg-info
