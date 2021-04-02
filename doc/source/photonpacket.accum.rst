@@ -1,7 +1,7 @@
-photonpacket\.accum module
-==========================
+photonpacket.accum module
+=========================
 
 .. automodule:: photonpacket.accum
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

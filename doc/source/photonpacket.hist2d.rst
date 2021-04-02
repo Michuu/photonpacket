@@ -1,7 +1,7 @@
-photonpacket\.hist2d module
-===========================
+photonpacket.hist2d module
+==========================
 
 .. automodule:: photonpacket.hist2d
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

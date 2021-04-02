@@ -1,7 +1,7 @@
-photonpacket\.exceptions module
-===============================
+photonpacket.exceptions module
+==============================
 
 .. automodule:: photonpacket.exceptions
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

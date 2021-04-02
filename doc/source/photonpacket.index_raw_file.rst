@@ -1,7 +1,7 @@
-photonpacket.frameutils.coinc module
+photonpacket.index\_raw\_file module
 ====================================
 
-.. automodule:: photonpacket.frameutils.coinc
+.. automodule:: photonpacket.index_raw_file
    :members:
    :undoc-members:
    :show-inheritance:

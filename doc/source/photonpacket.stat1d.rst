@@ -1,7 +1,7 @@
-photonpacket\.stat1d module
-===========================
+photonpacket.stat1d module
+==========================
 
 .. automodule:: photonpacket.stat1d
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

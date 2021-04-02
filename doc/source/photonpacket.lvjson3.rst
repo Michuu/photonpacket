@@ -1,7 +1,7 @@
-photonpacket.helpers module
+photonpacket.lvjson3 module
 ===========================
 
-.. automodule:: photonpacket.helpers
+.. automodule:: photonpacket.lvjson3
    :members:
    :undoc-members:
    :show-inheritance:

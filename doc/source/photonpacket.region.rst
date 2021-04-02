@@ -1,7 +1,7 @@
-photonpacket\.region module
-===========================
+photonpacket.region module
+==========================
 
 .. automodule:: photonpacket.region
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

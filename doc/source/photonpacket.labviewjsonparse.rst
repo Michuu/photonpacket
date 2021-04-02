@@ -1,7 +1,7 @@
-photonpacket.frameutils.coinc module
+photonpacket.labviewjsonparse module
 ====================================
 
-.. automodule:: photonpacket.frameutils.coinc
+.. automodule:: photonpacket.labviewjsonparse
    :members:
    :undoc-members:
    :show-inheritance:

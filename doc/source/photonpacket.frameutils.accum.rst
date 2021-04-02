@@ -1,7 +1,7 @@
-photonpacket.frameutils.coinc module
+photonpacket.frameutils.accum module
 ====================================
 
-.. automodule:: photonpacket.frameutils.coinc
+.. automodule:: photonpacket.frameutils.accum
    :members:
    :undoc-members:
    :show-inheritance:

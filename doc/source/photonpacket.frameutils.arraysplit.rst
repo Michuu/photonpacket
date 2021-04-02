@@ -1,7 +1,7 @@
-photonpacket\.frameutils\.arraysplit module
-===========================================
+photonpacket.frameutils.arraysplit module
+=========================================
 
 .. automodule:: photonpacket.frameutils.arraysplit
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

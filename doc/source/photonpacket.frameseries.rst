@@ -1,7 +1,7 @@
-photonpacket\.frameseries module
-================================
+photonpacket.frameseries module
+===============================
 
 .. automodule:: photonpacket.frameseries
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

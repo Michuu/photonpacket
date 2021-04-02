@@ -1,7 +1,7 @@
-photonpacket\.message module
-============================
+photonpacket.message module
+===========================
 
 .. automodule:: photonpacket.message
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
