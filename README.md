@@ -2,7 +2,7 @@
 Photonpacket is used to analyze photon data.
 
 # Documentation
-See documentation at the [FUW server][https://www.fuw.edu.pl/~mparniak/photonpacket/].
+See documentation at the [FUW server](https://www.fuw.edu.pl/~mparniak/photonpacket/).
 
 # Installation
 You need [Build Tools for Visual Studio 2019](https://visualstudio.microsoft.com/pl/downloads/#build-tools-for-visual-studio-2019) (C++ Build Tools) to compile the Cython extensions.
